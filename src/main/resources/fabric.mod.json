@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "greg-utils",
+	"version": "${version}",
+	"name": "Greg Utils",
+	"description": "utilities for gregory our lord and saviour",
+	"authors": [
+		"catboylei (fuckass cat)"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "AGPL-3.0",
+	"icon": "assets/greg-utils/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "lei.greg.GregUtils",
+				"adapter": "kotlin"
+			}
+		],
+		"fabric-datagen": [
+			{
+				"value": "lei.greg.GregUtilsDataGenerator",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"greg-utils.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}

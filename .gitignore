@@ -1,0 +1,19 @@
+# gr*dle
+.gradle/
+build/
+
+# ide slop
+.idea/
+.kotlin/
+*.iml
+*.ipr
+*.iws
+
+# fabric
+run/
+
+# java slop
+hs_err_*.log
+replay_*.log
+*.hprof
+*.jfr

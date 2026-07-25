@@ -6,8 +6,11 @@ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayers
 import net.minecraft.text.Text
+import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.random.Random
+import net.minecraft.world.RaycastContext
 
 fun registerBlockHighlights() {
     WorldRenderEvents.AFTER_ENTITIES.register(WorldRenderEvents.AfterEntities { context ->
@@ -20,6 +23,10 @@ fun registerBlockHighlights() {
 }
 
 private fun highlightBlock(pos: BlockPos, context: WorldRenderContext) {
+
+    // explode if block isnt visible
+    // todo tie this to a compliance constant
+    if (!isBlockVisible(pos)) return
 
     // cast as my accessor mixin because fabric is stupid and hates me personally
     val accessor = MinecraftClient.getInstance().worldRenderer as WorldRendererAccessor
@@ -45,4 +52,36 @@ private fun highlightBlock(pos: BlockPos, context: WorldRenderContext) {
         client.blockRenderManager.getModel(state).getParts(Random.create(42L))
     )
     matrices.pop()
+
+    client.player!!.sendMessage(Text.literal("is visible : ${isBlockVisible(pos)}"), false)
+}
+
+private fun isBlockVisible(pos: BlockPos): Boolean {
+    val client = MinecraftClient.getInstance()
+    val world = client.world ?: return false
+    val camera = client.gameRenderer.camera
+    val camPos = camera.cameraPos
+
+    val samplePoints = listOf(
+        Vec3d(pos.x + 0.5, pos.y + 1.0, pos.z + 0.5),
+        Vec3d(pos.x + 0.0, pos.y + 0.5, pos.z + 0.5),
+        Vec3d(pos.x + 1.0, pos.y + 0.5, pos.z + 0.5),
+        Vec3d(pos.x + 0.5, pos.y + 0.5, pos.z + 0.0),
+        Vec3d(pos.x + 0.5, pos.y + 0.5, pos.z + 1.0),
+    )
+
+    for (point in samplePoints) {
+        val context = RaycastContext(
+            camPos,
+            point,
+            RaycastContext.ShapeType.COLLIDER,
+            RaycastContext.FluidHandling.NONE,
+            client.player
+        )
+        val result = world.raycast(context)
+        if (result.type == HitResult.Type.MISS || result.blockPos == pos) {
+            return true
+        }
+    }
+    return false
 }

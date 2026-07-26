@@ -4,7 +4,6 @@ plugins {
 	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
 	id "org.jetbrains.kotlin.jvm" version "2.4.10"
-    id "org.jetbrains.kotlin.kapt" version '2.4.10'
 }
 
 version = project.mod_version
@@ -45,8 +44,6 @@ dependencies {
 	// modmenu and owolib go here
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modImplementation "io.wispforest:owo-lib:${project.owo_version}"
-	annotationProcessor "io.wispforest:owo-lib:${project.owo_version}"
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
 processResources {

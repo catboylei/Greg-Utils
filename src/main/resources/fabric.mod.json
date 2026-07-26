@@ -8,8 +8,8 @@
 		"catboylei (the fuckass cat)"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/catboylei/Greg-Utils",
+		"sources": "https://github.com/catboylei/Greg-Utils"
 	},
 	"license": "AGPL-3.0",
 	"icon": "assets/greg-utils/icon.png",
@@ -26,6 +26,9 @@
 				"value": "lei.greg.GregUtilsDataGenerator",
 				"adapter": "kotlin"
 			}
+		],
+		"modmenu": [
+			"lei.greg.config.GregUtilsModMenuApi"
 		]
 	},
 	"mixins": [

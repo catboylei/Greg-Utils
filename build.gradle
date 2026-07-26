@@ -4,6 +4,7 @@ plugins {
 	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
 	id "org.jetbrains.kotlin.jvm" version "2.4.10"
+    id "org.jetbrains.kotlin.kapt" version '2.4.10'
 }
 
 version = project.mod_version
@@ -17,7 +18,12 @@ repositories {
 	// for more information about repositories.
 
 	// modmenu repo
-	maven {url "https://maven.terraformersmc.com/releases"}
+	maven { url "https://maven.terraformersmc.com/releases" }
+
+	// owolib repos
+	maven { url "https://maven.wispforest.io" }
+	maven { url "https://jitpack.io" }
+    mavenCentral()
 }
 
 fabricApi {
@@ -38,6 +44,9 @@ dependencies {
 
 	// modmenu and owolib go here
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation "io.wispforest:owo-lib:${project.owo_version}"
+	annotationProcessor "io.wispforest:owo-lib:${project.owo_version}"
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
 processResources {

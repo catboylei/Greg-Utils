@@ -29,7 +29,6 @@ object Debug {
         }
     }
 
-    // todo this is offset by one block bruh
     private fun highlightCommand(context: CommandContext<ServerCommandSource>): Int {
         val pos = Vec3ArgumentType.getVec3(context, "pos")
         val state = BoolArgumentType.getBool(context, "state")

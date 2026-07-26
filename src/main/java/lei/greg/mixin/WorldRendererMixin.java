@@ -18,7 +18,5 @@ public class WorldRendererMixin {
     private WorldRenderState worldRenderState;
 
     @Inject(method = "renderMain", at = @At("HEAD"))
-    private void onRenderMainHead(CallbackInfo ci) {
-        this.worldRenderState.hasOutline = true;
-    }
+    private void onRenderMainHead(CallbackInfo ci) { this.worldRenderState.hasOutline = true; }
 }

@@ -24,7 +24,7 @@ fun registerBlockHighlights() {
 
 private fun highlightBlock(pos: BlockPos, context: WorldRenderContext) {
 
-    // explode if block isnt visible
+    // explode if block is not visible
     // todo tie this to a compliance constant
     if (!isBlockVisible(pos)) return
 
@@ -62,18 +62,16 @@ private fun isBlockVisible(pos: BlockPos): Boolean {
     val camera = client.gameRenderer.camera
     val camPos = camera.cameraPos
 
-    val samplePoints = listOf(
+    listOf(
         Vec3d(pos.x + 0.5, pos.y + 1.0, pos.z + 0.5),
         Vec3d(pos.x + 0.0, pos.y + 0.5, pos.z + 0.5),
         Vec3d(pos.x + 1.0, pos.y + 0.5, pos.z + 0.5),
         Vec3d(pos.x + 0.5, pos.y + 0.5, pos.z + 0.0),
         Vec3d(pos.x + 0.5, pos.y + 0.5, pos.z + 1.0),
-    )
-
-    for (point in samplePoints) {
+    ).iterator().forEach {
         val context = RaycastContext(
             camPos,
-            point,
+            it,
             RaycastContext.ShapeType.COLLIDER,
             RaycastContext.FluidHandling.NONE,
             client.player
@@ -83,5 +81,6 @@ private fun isBlockVisible(pos: BlockPos): Boolean {
             return true
         }
     }
+
     return false
 }

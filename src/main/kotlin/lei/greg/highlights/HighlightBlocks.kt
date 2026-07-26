@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayers
-import net.minecraft.text.Text
 import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
@@ -53,6 +52,7 @@ private fun highlightBlock(pos: BlockPos, context: WorldRenderContext) {
     matrices.pop()
 }
 
+// todo add blindness/darkness check here
 private fun isBlockVisible(pos: BlockPos): Boolean {
     val client = MinecraftClient.getInstance()
     val world = client.world ?: return false

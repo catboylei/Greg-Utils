@@ -1,0 +1,10 @@
+{
+  "texture": "greg-utils:textures/window.png",
+  "texture_width": 15,
+  "texture_height": 15,
+  "repeat": false,
+  "patch_size": {
+    "width": 5,
+    "height": 5
+  }
+}

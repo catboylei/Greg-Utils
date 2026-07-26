@@ -2,10 +2,39 @@
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
     <components>
         <stack-layout id="root">
-            <children/>
-            <surface>
-                <vanilla-translucent/>
-            </surface>
+            <children>
+                <flow-layout direction="horizontal" id="window">
+                    <children>
+                        <flow-layout direction="vertical" id="window-left">
+                            <children></children>
+                            <vertical-alignment>top</vertical-alignment>
+                            <horizontal-alignment>center</horizontal-alignment>
+                            <sizing>
+                                <horizontal method="fixed">110</horizontal>
+                                <vertical method="fixed">195</vertical>
+                            </sizing>
+                        </flow-layout>
+
+                        <flow-layout direction="horizontal" id="separator">
+                            <children></children>
+                            <sizing>
+                                <horizontal method="fixed">6</horizontal>
+                                <vertical method="fixed">195</vertical>
+                            </sizing>
+                        </flow-layout>
+                    </children>
+
+                    <sizing>
+                        <!-- roughly 2x and 1.1x the sizes of the survival inventory -->
+                        <horizontal method="fixed">334</horizontal>
+                        <vertical method="fixed">195</vertical>
+                    </sizing>
+                    <allow-overflow>true</allow-overflow>
+                </flow-layout>
+            </children>
+
+            <horizontal-alignment>center</horizontal-alignment>
+            <vertical-alignment>center</vertical-alignment>
         </stack-layout>
     </components>
 

@@ -1,0 +1,10 @@
+{
+  "texture": "greg-utils:textures/separator.png",
+  "texture_width": 6,
+  "texture_height": 15,
+  "repeat": false,
+  "patch_size": {
+    "width": 2,
+    "height": 5
+  }
+}

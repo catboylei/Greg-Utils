@@ -1,5 +1,6 @@
 package lei.greg.highlights
 
+import lei.greg.config.ConfigManager
 import lei.greg.mixin.WorldRendererAccessor
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
@@ -25,8 +26,7 @@ fun registerBlockHighlights() {
 private fun highlightBlock(pos: BlockPos, context: WorldRenderContext) {
 
     // explode if block is not visible
-    // todo tie this to a compliance constant
-    if (!isBlockVisible(pos)) return
+    if (!isBlockVisible(pos) && !ConfigManager.getBool("debug mode")) return
 
     // cast as my accessor mixin because fabric is stupid and hates me personally
     val accessor = MinecraftClient.getInstance().worldRenderer as WorldRendererAccessor
@@ -40,8 +40,7 @@ private fun highlightBlock(pos: BlockPos, context: WorldRenderContext) {
     val camPos = client.gameRenderer.camera.cameraPos
     val matrices = context.matrices()
 
-    // todo constants
-    consumers.setColor(0xFFCEFF)
+    consumers.setColor(ConfigManager.getInt("highlight color"))
 
     matrices.push()
     matrices.translate(pos.x - camPos.x, pos.y - camPos.y, pos.z - camPos.z)
@@ -52,8 +51,6 @@ private fun highlightBlock(pos: BlockPos, context: WorldRenderContext) {
         client.blockRenderManager.getModel(state).getParts(Random.create(42L))
     )
     matrices.pop()
-
-    client.player!!.sendMessage(Text.literal("is visible : ${isBlockVisible(pos)}"), false)
 }
 
 private fun isBlockVisible(pos: BlockPos): Boolean {

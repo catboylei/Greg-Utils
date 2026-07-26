@@ -13,9 +13,8 @@ import java.util.Properties
 // these are defaults, value will only be applied if no file or missing option
 // only keys listed here are kept in the config file (non-matching keys get deleted on init)
 private val defaults: Map<String, *> = mapOf(
-    "bigpaws" to true,
-    "smolpaws" to false,
-    "humongouspaws" to true
+    "debug mode" to false,
+    "highlight color" to 0xFFCEFF
 )
 
 object ConfigManager {
@@ -52,9 +51,9 @@ object ConfigManager {
         save()
     }
 
-    fun getOption(key: String): String? {
-        return properties.getProperty(key)
-    }
+    fun getString(key: String): String? = properties.getProperty(key)
+    fun getBool(key: String): Boolean = properties.getProperty(key).toBoolean()
+    fun getInt(key: String): Int = properties.getProperty(key).toIntOrNull() ?: 0
 
     private fun save() {
         properties.store(FileOutputStream(path.toFile()), "meaow nrrp mrroww :3")

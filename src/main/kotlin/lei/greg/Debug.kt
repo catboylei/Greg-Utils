@@ -1,7 +1,9 @@
 package lei.greg
 
 import com.mojang.brigadier.arguments.BoolArgumentType
+import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
+import lei.greg.config.ConfigManager
 import lei.greg.highlights.Highlights
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.argument.Vec3ArgumentType
@@ -14,6 +16,7 @@ import net.minecraft.util.math.BlockPos
 object Debug {
     fun register() {
         registerHighlightCommand()
+        registerConfigCommand()
     }
 
     private fun registerHighlightCommand() {
@@ -44,7 +47,28 @@ object Debug {
             Highlights.removeBlockCoords(blockPos)
         }
 
-        context.source.sendFeedback({Text.literal("MEOW MEOW = ${Highlights.getBlockCoords()}")}, false)
+        return 1
+    }
+
+    private fun registerConfigCommand() {
+        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+            dispatcher.register(
+                CommandManager.literal("gregconfig")
+                    .then(CommandManager.argument("key", StringArgumentType.string())
+                        .then(CommandManager.argument("value", StringArgumentType.string())
+                            .executes { context -> configCommand(context) }
+                        )
+                    )
+            )
+        }
+    }
+
+    private fun configCommand(context: CommandContext<ServerCommandSource>): Int {
+        val key = StringArgumentType.getString(context, "key")
+        val value = StringArgumentType.getString(context, "value")
+
+        ConfigManager.setOption(key, value)
+        context.source.sendFeedback({ Text.literal("Set $key to $value")}, false)
 
         return 1
     }

@@ -10,14 +10,16 @@ import io.wispforest.owo.ui.core.ParentUIComponent
 import io.wispforest.owo.ui.core.Surface
 import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import java.awt.Button
 
 class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("ui-model"))) {
 
     override fun build(rootComponent: StackLayout) {
-        applyCustomTextures(rootComponent)
         updateTopBar(rootComponent)
+        updateEntries(rootComponent)
+        applyCustomTextures(rootComponent)
     }
 
     private fun applyCustomTextures(rootComponent: StackLayout) {
@@ -40,6 +42,7 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
                 component.onPress {
                     ConfigManager.setOption("open category", component.id()!!.removePrefix("category-"))
                     updateTopBar(rootComponent)
+                    updateEntries(rootComponent)
                 }
             }
         }
@@ -77,5 +80,39 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
         rootComponent.childById(LabelComponent::class.java, "top-bar-label").text(
             Text.literal(ConfigManager.getString("open category"))
         )
+    }
+
+    private fun getBoolEntry(title: String, desc: String, configId: String): FlowLayout {
+        val entry = model.expandTemplate(
+            FlowLayout::class.java,
+            "entry",
+            mapOf("title" to title, "desc" to desc, "configId" to configId))
+        entry.surface{ctx, component ->
+            NinePatchTexture.draw(GregUtils.id("entry"), ctx, component)
+        }
+        entry.forEachDescendant { component ->
+            if (component is ButtonComponent && component.id() == configId) {
+                component.renderer { ctx, component, _ ->
+                    val texture =  if (ConfigManager.getBool(configId)) (GregUtils.id("switch-active")) else GregUtils.id("switch-inactive")
+                    NinePatchTexture.draw(texture, ctx, component)
+                }
+                component.onPress {
+                    ConfigManager.setOption(configId, (!ConfigManager.getBool(configId)).toString())
+                }
+            }
+        }
+        return entry
+    }
+
+    private fun updateEntries(rootComponent: StackLayout) {
+        val holder = rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "entry-holder")!!
+
+        holder.clearChildren()
+        for ((type, title, desc, configId, category) in ScreenEntries.entries) {
+            if (category != ConfigManager.getString("open category")) { continue }
+            if (type == "bool") {
+                holder.child(getBoolEntry(title, desc, configId))
+            }
+        }
     }
 }

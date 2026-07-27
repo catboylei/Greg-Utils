@@ -1,0 +1,14 @@
+{
+  "texture": "greg-utils:textures/entry.png",
+  "texture_width": 40,
+  "texture_height": 15,
+  "repeat": false,
+  "corner_patch_size": {
+    "width": 4,
+    "height": 4
+  },
+  "center_patch_size": {
+    "width": 32,
+    "height": 7
+  }
+}

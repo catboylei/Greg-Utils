@@ -5,7 +5,7 @@ import net.fabricmc.loader.api.FabricLoader
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.file.Files
-import java.util.Properties
+import java.util.*
 
 // owoconfig hates me and so does every other option
 // so this is what we are doing now <3
@@ -13,10 +13,20 @@ import java.util.Properties
 // these are defaults, value will only be applied if no file or missing option
 // only keys listed here are kept in the config file (non-matching keys get deleted on init)
 private val defaults: Map<String, *> = mapOf(
+    "master toggle" to true,
     "debug mode" to false,
     "highlight color" to 0xFFCEFF,
-    "open category" to "General Settings"
+    "open category" to "General Settings",
+    "big paws" to true,
 )
+
+object ScreenEntries {
+    val entries = listOf(
+        SettingEntry("bool", "Enable Greg Utils", "Toggles whether the mod should be \nactive or not", "master toggle", "General Settings"),
+        SettingEntry("bool", "Debug Mode", "", "debug mode", "General Settings"),
+        SettingEntry("bool", "Big Paws", "mrraow mrrp purrr nyaaa :333", "big paws", "General Settings"),
+        )
+}
 
 object ConfigManager {
     private val path = FabricLoader.getInstance().configDir.resolve("greg.properties")
@@ -60,3 +70,5 @@ object ConfigManager {
         properties.store(FileOutputStream(path.toFile()), "meaow nrrp mrroww :3")
     }
 }
+
+data class SettingEntry(val type: String, val title: String, val desc: String, val configId: String, val category: String)

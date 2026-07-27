@@ -6,13 +6,81 @@
                 <flow-layout direction="horizontal" id="window">
                     <children>
                         <flow-layout direction="vertical" id="window-left">
-                            <children></children>
-                            <vertical-alignment>top</vertical-alignment>
+                            <children>
+                                <button id="category-general">
+                                    <sizing>
+                                        <horizontal method="fixed">50</horizontal>
+                                        <vertical method="fixed">15</vertical>
+                                    </sizing>
+                                    <text>General</text>
+                                </button>
+
+                                <button id="category-holes">
+                                    <sizing>
+                                        <horizontal method="fixed">40</horizontal>
+                                        <vertical method="fixed">15</vertical>
+                                    </sizing>
+                                    <text>Holes</text>
+                                </button>
+
+                                <button id="category-hold">
+                                    <sizing>
+                                        <horizontal method="fixed">40</horizontal>
+                                        <vertical method="fixed">15</vertical>
+                                    </sizing>
+                                    <text>Hold</text>
+                                </button>
+
+                                <button id="category-tree">
+                                    <sizing>
+                                        <horizontal method="fixed">40</horizontal>
+                                        <vertical method="fixed">15</vertical>
+                                    </sizing>
+                                    <text>Tree</text>
+                                </button>
+
+                                <button id="category-light">
+                                    <sizing>
+                                        <horizontal method="fixed">40</horizontal>
+                                        <vertical method="fixed">15</vertical>
+                                    </sizing>
+                                    <text>Light</text>
+                                </button>
+
+                                <button id="category-bulb">
+                                    <sizing>
+                                        <horizontal method="fixed">40</horizontal>
+                                        <vertical method="fixed">15</vertical>
+                                    </sizing>
+                                    <text>Bulb</text>
+                                </button>
+
+                                <button id="category-gather">
+                                    <sizing>
+                                        <horizontal method="fixed">40</horizontal>
+                                        <vertical method="fixed">15</vertical>
+                                    </sizing>
+                                    <text>Gather</text>
+                                </button>
+
+                                <button id="category-greg">
+                                    <sizing>
+                                        <horizontal method="fixed">50</horizontal>
+                                        <vertical method="fixed">15</vertical>
+                                    </sizing>
+                                    <text>Gregory</text>
+                                </button>
+                            </children>
+                            <vertical-alignment>center</vertical-alignment>
                             <horizontal-alignment>center</horizontal-alignment>
                             <sizing>
-                                <horizontal method="fixed">110</horizontal>
+                                <horizontal method="fixed">62</horizontal>
                                 <vertical method="fixed">195</vertical>
                             </sizing>
+                            <padding>
+                                <left>4</left>
+                            </padding>
+                            <gap>6</gap>
                         </flow-layout>
 
                         <flow-layout direction="horizontal" id="separator">

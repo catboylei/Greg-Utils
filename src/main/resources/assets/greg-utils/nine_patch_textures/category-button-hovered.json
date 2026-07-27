@@ -1,0 +1,15 @@
+{
+  "texture": "greg-utils:textures/category-button.png",
+  "texture_width": 40,
+  "texture_height": 45,
+  "repeat": false,
+  "v": 30,
+  "corner_patch_size": {
+    "width": 1,
+    "height": 1
+  },
+  "center_patch_size": {
+    "width": 38,
+    "height": 13
+  }
+}

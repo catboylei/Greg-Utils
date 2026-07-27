@@ -14,7 +14,8 @@ import java.util.Properties
 // only keys listed here are kept in the config file (non-matching keys get deleted on init)
 private val defaults: Map<String, *> = mapOf(
     "debug mode" to false,
-    "highlight color" to 0xFFCEFF
+    "highlight color" to 0xFFCEFF,
+    "open category" to "category-general"
 )
 
 object ConfigManager {

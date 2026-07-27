@@ -5,11 +5,11 @@
   "repeat": false,
   "v": 30,
   "corner_patch_size": {
-    "width": 1,
-    "height": 1
+    "width": 4,
+    "height": 4
   },
   "center_patch_size": {
-    "width": 38,
-    "height": 13
+    "width": 32,
+    "height": 7
   }
 }

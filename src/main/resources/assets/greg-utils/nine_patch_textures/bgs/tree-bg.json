@@ -1,0 +1,14 @@
+{
+  "texture": "greg-utils:textures/bgs/tree-bg.png",
+  "texture_width": 262,
+  "texture_height": 187,
+  "repeat": false,
+  "corner_patch_size": {
+    "width": 1,
+    "height": 1
+  },
+  "center_patch_size": {
+    "width": 260,
+    "height": 185
+  }
+}

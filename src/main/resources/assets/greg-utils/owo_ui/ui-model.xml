@@ -7,7 +7,7 @@
                     <children>
                         <flow-layout direction="vertical" id="window-left">
                             <children>
-                                <button id="category-general">
+                                <button id="category-General Settings">
                                     <sizing>
                                         <horizontal method="fixed">50</horizontal>
                                         <vertical method="fixed">15</vertical>
@@ -15,7 +15,7 @@
                                     <text>General</text>
                                 </button>
 
-                                <button id="category-holes">
+                                <button id="category-Flooding Canyon (Void Holes) Room">
                                     <sizing>
                                         <horizontal method="fixed">40</horizontal>
                                         <vertical method="fixed">15</vertical>
@@ -23,7 +23,7 @@
                                     <text>Holes</text>
                                 </button>
 
-                                <button id="category-hold">
+                                <button id="category-Sunken Grotto (Hold) Room">
                                     <sizing>
                                         <horizontal method="fixed">40</horizontal>
                                         <vertical method="fixed">15</vertical>
@@ -31,15 +31,7 @@
                                     <text>Hold</text>
                                 </button>
 
-                                <button id="category-tree">
-                                    <sizing>
-                                        <horizontal method="fixed">40</horizontal>
-                                        <vertical method="fixed">15</vertical>
-                                    </sizing>
-                                    <text>Tree</text>
-                                </button>
-
-                                <button id="category-light">
+                                <button id="category-Nameless Cave (Light) Room">
                                     <sizing>
                                         <horizontal method="fixed">40</horizontal>
                                         <vertical method="fixed">15</vertical>
@@ -47,7 +39,15 @@
                                     <text>Light</text>
                                 </button>
 
-                                <button id="category-bulb">
+                                <button id="category-Weeping Soulroot (Tree) Room">
+                                    <sizing>
+                                        <horizontal method="fixed">40</horizontal>
+                                        <vertical method="fixed">15</vertical>
+                                    </sizing>
+                                    <text>Tree</text>
+                                </button>
+
+                                <button id="category-Blueshift Wilds (Bulb) Room">
                                     <sizing>
                                         <horizontal method="fixed">40</horizontal>
                                         <vertical method="fixed">15</vertical>
@@ -55,7 +55,7 @@
                                     <text>Bulb</text>
                                 </button>
 
-                                <button id="category-gather">
+                                <button id="category-Twisted Jungle (Gather) Room">
                                     <sizing>
                                         <horizontal method="fixed">40</horizontal>
                                         <vertical method="fixed">15</vertical>
@@ -63,7 +63,7 @@
                                     <text>Gather</text>
                                 </button>
 
-                                <button id="category-greg">
+                                <button id="category-Gregory Bossfight">
                                     <sizing>
                                         <horizontal method="fixed">50</horizontal>
                                         <vertical method="fixed">15</vertical>
@@ -90,6 +90,48 @@
                                 <vertical method="fixed">195</vertical>
                             </sizing>
                         </flow-layout>
+
+                        <stack-layout id="right-window">
+                            <children>
+                                <flow-layout direction="vertical" id="bg-holder">
+                                    <children>
+                                        <flow-layout direction="horizontal" id="top-bar">
+                                            <children>
+                                                <label id="top-bar-label">
+                                                    <sizing>
+                                                        <horizontal method="content">100</horizontal>
+                                                        <vertical method="content">100</vertical>
+                                                    </sizing>
+                                                </label>
+                                            </children>
+                                            <sizing>
+                                                <vertical method="fixed">15</vertical>
+                                                <horizontal method="fixed">254</horizontal>
+                                            </sizing>
+                                            <horizontal-alignment>center</horizontal-alignment>
+                                            <vertical-alignment>center</vertical-alignment>
+                                        </flow-layout>
+                                    </children>
+                                    <sizing>
+                                        <horizontal method="fixed">262</horizontal>
+                                        <vertical method="fixed">187</vertical>
+                                    </sizing>
+                                    <horizontal-alignment>center</horizontal-alignment>
+                                    <vertical-alignment>top</vertical-alignment>
+                                    <padding>
+                                        <top>4</top>
+                                    </padding>
+                                </flow-layout>
+                            </children>
+                            <sizing>
+                                <horizontal method="fixed">266</horizontal>
+                                <vertical method="fixed">195</vertical>
+                            </sizing>
+                            <padding>
+                                <right>4</right>
+                                <vertical>4</vertical>
+                            </padding>
+                        </stack-layout>
                     </children>
 
                     <sizing>

@@ -15,7 +15,7 @@ import java.util.Properties
 private val defaults: Map<String, *> = mapOf(
     "debug mode" to false,
     "highlight color" to 0xFFCEFF,
-    "open category" to "category-general"
+    "open category" to "General Settings"
 )
 
 object ConfigManager {

@@ -104,7 +104,6 @@
                                                     </sizing>
                                                     <!--horizontal-text-alignment>center</horizontal-text-alignment-->
                                                     <vertical-text-alignment>center</vertical-text-alignment>
-                                                    <shadow>true</shadow>
                                                 </label>
                                             </children>
                                             <sizing>
@@ -179,12 +178,16 @@
                             <label>
                                 <text>{{title}}</text>
                                 <color>#e66aff</color>
+                                <margins>
+                                    <top>1</top>
+                                    <left>4</left>
+                                </margins>
                             </label>
                             <label>
                                 <text>{{desc}}</text>
                                 <color>#bfbfbf</color>
                                 <margins>
-                                    <left>4</left>
+                                    <left>8</left>
                                 </margins>
                             </label>
                         </children>
@@ -208,7 +211,7 @@
                 </children>
                 <sizing>
                     <horizontal method="fixed">248</horizontal>
-                    <vertical method="fixed">38</vertical>
+                    <vertical method="fixed">45</vertical>
                 </sizing>
                 <vertical-alignment>center</vertical-alignment>
             </flow-layout>

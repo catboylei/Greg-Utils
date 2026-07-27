@@ -51,13 +51,15 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
     private fun buttonRendering(ctx: OwoUIGraphics, component: ButtonComponent) {
         var texture = GregUtils.id("category-button-inactive")
 
+        // i wrote this at 5 am
         if (component.isHovered) {
             texture = GregUtils.id("category-button-hovered")
         } else if ("category-${ConfigManager.getString("open category")}" == component.id()) {
             texture = GregUtils.id("category-button-active")
         }
 
-        NinePatchTexture.draw(texture, ctx, component)
+        // splendid
+        NinePatchTexture.draw(texture, ctx, component.x, component.y, component.width, component.height - 1)
     }
 
     private fun backgroundRendering(ctx: OwoUIGraphics, component: ParentUIComponent) {

@@ -95,6 +95,21 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
         NinePatchTexture.draw(texture, ctx, component)
     }
 
+    private fun switchRendering(ctx: OwoUIGraphics, component: ButtonComponent) {
+        var texture = GregUtils.id("switch-inactive")
+        val state = ConfigManager.getBool(component.id()!!)
+
+        if (state && component.isHovered) {
+            texture = GregUtils.id("switch-active-hovered")
+        } else if (!state && component.isHovered) {
+            texture = GregUtils.id("switch-inactive-hovered")
+        } else if (state) {
+            texture = GregUtils.id("switch-active")
+        }
+
+        NinePatchTexture.draw(texture, ctx, component)
+    }
+
     private fun getEntry(title: String, desc: String, configId: String, type: String): FlowLayout {
         val entry = model.expandTemplate(
             FlowLayout::class.java,
@@ -107,8 +122,7 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
             if (component.id() != configId) return@forEachDescendant
             if (component is ButtonComponent) {
                 component.renderer { ctx, component, _ ->
-                    val texture =  if (ConfigManager.getBool(configId)) (GregUtils.id("switch-active")) else GregUtils.id("switch-inactive")
-                    NinePatchTexture.draw(texture, ctx, component)
+                    switchRendering(ctx, component)
                 }
                 component.onPress {
                     ConfigManager.setOption(configId, (!ConfigManager.getBool(configId)).toString())

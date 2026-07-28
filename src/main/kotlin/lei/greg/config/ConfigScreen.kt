@@ -3,16 +3,14 @@ package lei.greg.config
 import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.ButtonComponent
 import io.wispforest.owo.ui.component.LabelComponent
+import io.wispforest.owo.ui.component.TextBoxComponent
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.owo.ui.container.StackLayout
 import io.wispforest.owo.ui.core.OwoUIGraphics
 import io.wispforest.owo.ui.core.ParentUIComponent
-import io.wispforest.owo.ui.core.Surface
 import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
-import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
-import java.awt.Button
 
 class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("ui-model"))) {
 
@@ -63,7 +61,7 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
     }
 
     private fun backgroundRendering(ctx: OwoUIGraphics, component: ParentUIComponent) {
-        var texture = when (ConfigManager.getString("open category")) {
+        val texture = when (ConfigManager.getString("open category")) {
             "General Settings" -> GregUtils.id("bgs/general-bg")
             "Flooding Canyon (Void Holes) Room" -> GregUtils.id("bgs/holes-bg")
             "Sunken Grotto (Hold) Room" -> GregUtils.id("bgs/hold-bg")
@@ -84,22 +82,46 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
         )
     }
 
-    private fun getBoolEntry(title: String, desc: String, configId: String): FlowLayout {
+    private fun fieldRendering(ctx: OwoUIGraphics, component: FlowLayout) {
+        var texture = GregUtils.id("category-button-inactive")
+        val textbox = component.parent()!!.childById(TextBoxComponent::class.java, component.id()!!)
+
+        if (textbox.isHovered) {
+            texture = GregUtils.id("category-button-hovered")
+        } else if (textbox.isSelected) {
+            texture = GregUtils.id("category-button-active")
+        }
+
+        NinePatchTexture.draw(texture, ctx, component)
+    }
+
+    private fun getEntry(title: String, desc: String, configId: String, type: String): FlowLayout {
         val entry = model.expandTemplate(
             FlowLayout::class.java,
-            "entry",
+            "entry-${type}",
             mapOf("title" to title, "desc" to desc, "configId" to configId))
         entry.surface{ctx, component ->
             NinePatchTexture.draw(GregUtils.id("entry"), ctx, component)
         }
         entry.forEachDescendant { component ->
-            if (component is ButtonComponent && component.id() == configId) {
+            if (component.id() != configId) return@forEachDescendant
+            if (component is ButtonComponent) {
                 component.renderer { ctx, component, _ ->
                     val texture =  if (ConfigManager.getBool(configId)) (GregUtils.id("switch-active")) else GregUtils.id("switch-inactive")
                     NinePatchTexture.draw(texture, ctx, component)
                 }
                 component.onPress {
                     ConfigManager.setOption(configId, (!ConfigManager.getBool(configId)).toString())
+                }
+            } else if (component is TextBoxComponent) {
+                component.onChanged().subscribe { value ->
+                    ConfigManager.setOption(configId, value)
+                }
+                component.text(ConfigManager.getString(configId))
+                component.setPlaceholder(Text.literal("Input..."))
+            } else if (component is FlowLayout) {
+                component.surface {ctx, component ->
+                    fieldRendering(ctx, component as FlowLayout)
                 }
             }
         }
@@ -112,9 +134,7 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
         holder.clearChildren()
         for ((type, title, desc, configId, category) in ScreenEntries.entries) {
             if (category != ConfigManager.getString("open category")) { continue }
-            if (type == "bool") {
-                holder.child(getBoolEntry(title, desc, configId))
-            }
+            holder.child(getEntry(title, desc, configId, type))
         }
     }
 }

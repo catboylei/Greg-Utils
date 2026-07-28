@@ -84,7 +84,7 @@
                         </flow-layout>
 
                         <flow-layout direction="horizontal" id="separator">
-                            <children></children>
+                            <children/>
                             <sizing>
                                 <horizontal method="fixed">6</horizontal>
                                 <vertical method="fixed">195</vertical>
@@ -100,7 +100,7 @@
                                                 <label id="top-bar-label">
                                                     <sizing>
                                                         <vertical method="fixed">15</vertical>
-                                                        <horizontal method="content">100</horizontal>
+                                                        <horizontal method="content">0</horizontal>
                                                     </sizing>
                                                     <!--horizontal-text-alignment>center</horizontal-text-alignment-->
                                                     <vertical-text-alignment>center</vertical-text-alignment>
@@ -116,10 +116,10 @@
 
                                         <scroll direction="vertical">
                                             <flow-layout direction="vertical" id="entry-holder">
-                                                <children></children>
+                                                <children/>
                                                 <sizing>
                                                     <horizontal method="fixed">248</horizontal>
-                                                    <vertical method="content">100</vertical>
+                                                    <vertical method="content">0</vertical>
                                                 </sizing>
                                                 <gap>4</gap>
                                                 <padding>
@@ -170,7 +170,7 @@
     </components>
     
     <templates>
-        <template name="entry">
+        <template name="entry-bool">
             <flow-layout direction="horizontal">
                 <children>
                     <flow-layout direction="vertical">
@@ -208,6 +208,76 @@
                             <vertical method="fixed">13</vertical>
                         </sizing>
                     </button>
+                </children>
+                <sizing>
+                    <horizontal method="fixed">248</horizontal>
+                    <vertical method="fixed">45</vertical>
+                </sizing>
+                <vertical-alignment>center</vertical-alignment>
+            </flow-layout>
+        </template>
+
+        <template name="entry-field">
+            <flow-layout direction="horizontal">
+                <children>
+                    <flow-layout direction="vertical">
+                        <children>
+                            <label>
+                                <text>{{title}}</text>
+                                <color>#e66aff</color>
+                                <margins>
+                                    <top>1</top>
+                                    <left>4</left>
+                                </margins>
+                            </label>
+                            <label>
+                                <text>{{desc}}</text>
+                                <color>#bfbfbf</color>
+                                <margins>
+                                    <left>8</left>
+                                </margins>
+                            </label>
+                        </children>
+                        <sizing>
+                            <horizontal method="fixed">181</horizontal>
+                            <vertical method="fixed">38</vertical>
+                        </sizing>
+                        <vertical-alignment>center</vertical-alignment>
+                        <padding>
+                            <left>8</left>
+                        </padding>
+                        <gap>2</gap>
+                    </flow-layout>
+
+                    <stack-layout>
+                        <children>
+                            <flow-layout direction="horizontal" id="{{configId}}">
+                                <children/>
+                                <sizing>
+                                    <horizontal method="fixed">53</horizontal>
+                                    <vertical method="fixed">19</vertical>
+                                </sizing>
+                            </flow-layout>
+
+                            <text-box id="{{configId}}">
+                                <sizing>
+                                    <horizontal method="fixed">44</horizontal>
+                                    <vertical method="fixed">10</vertical>
+                                </sizing>
+                                <show-background>false</show-background>
+                                <margins>
+                                    <top>3</top>
+                                    <left>3</left>
+                                    <right>2</right>
+                                </margins>
+                            </text-box>
+                        </children>
+                        <sizing>
+                            <vertical method="fixed">38</vertical>
+                            <horizontal method="fixed">53</horizontal>
+                        </sizing>
+                        <vertical-alignment>center</vertical-alignment>
+                    </stack-layout>
                 </children>
                 <sizing>
                     <horizontal method="fixed">248</horizontal>

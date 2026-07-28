@@ -32,6 +32,7 @@ object Debug {
         }
     }
 
+    @Suppress("SameReturnValue") // shut up clanker this always returns 1 because minecraft is ancient
     private fun highlightCommand(context: CommandContext<ServerCommandSource>): Int {
         val pos = Vec3ArgumentType.getVec3(context, "pos")
         val state = BoolArgumentType.getBool(context, "state")
@@ -63,6 +64,7 @@ object Debug {
         }
     }
 
+    @Suppress("SameReturnValue")
     private fun configCommand(context: CommandContext<ServerCommandSource>): Int {
         val key = StringArgumentType.getString(context, "key")
         val value = StringArgumentType.getString(context, "value")

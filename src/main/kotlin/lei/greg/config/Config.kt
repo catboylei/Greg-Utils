@@ -18,14 +18,19 @@ private val defaults: Map<String, *> = mapOf(
     "highlight color" to 0xFFCEFF,
     "open category" to "General Settings",
     "big paws" to true,
+    "smol paws" to "map mraow"
 )
 
+// define entries for the config here
 object ScreenEntries {
     val entries = listOf(
         SettingEntry("bool", "Enable Greg Utils", "Toggles whether the mod should be \nactive or not", "master toggle", "General Settings"),
         SettingEntry("bool", "Debug Mode", "", "debug mode", "General Settings"),
         SettingEntry("bool", "Big Paws", "mrraow mrrp purrr nyaaa :333", "big paws", "General Settings"),
-        )
+        SettingEntry("field", "This is scrollable btw", "meow \nmeow", "smol paws", "General Settings"),
+
+        SettingEntry("bool", "placeholder but light room :3", "meow", "big paws", "Nameless Cave (Light) Room")
+    )
 }
 
 object ConfigManager {

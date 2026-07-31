@@ -33,7 +33,11 @@ object ScreenEntries {
 
         SettingEntry("separator", "Highlights", "", "", "General Settings"),
         SettingEntry("field", "Highlight Color", "Color of highlights in hex and \ndefaults to \"#FFCEFF\"", "highlight color", "General Settings"),
-    )
+
+        SettingEntry("separator", "Tree Path", "", "", "Weeping Soulroot (Tree) Room"),
+        SettingEntry("bool", "Highlight Next Door", "", "tree route highlight", "Weeping Soulroot (Tree) Room"),
+        SettingEntry("bool", "Avoid High Exit", "Avoid high door from tree entrance \ndefaults to true", "avoid high exit", "Weeping Soulroot (Tree) Room"),
+        )
 }
 
 object ConfigManager {

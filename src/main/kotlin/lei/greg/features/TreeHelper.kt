@@ -42,6 +42,7 @@ object TreeHelper {
 
         TnaTreeEntered.EVENT.register { grotto ->
             cleanup()
+            if (!ConfigManager.getBool("master toggle") || !ConfigManager.getBool("tree route highlight")) return@register
 
             isInTree = true
             currentRoom = TreeGrotto.Exit

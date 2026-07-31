@@ -38,8 +38,12 @@ private fun highlightBlock(pos: BlockPos, context: WorldRenderContext) {
 
     val camPos = client.gameRenderer.camera.cameraPos
     val matrices = context.matrices()
+    var color = 0xFFCEFF
+    try {
+        color = ConfigManager.getString("highlight color")!!.removePrefix("#").hexToInt()
+    } catch (_: Exception) {}
 
-    consumers.setColor(ConfigManager.getInt("highlight color"))
+    consumers.setColor(color)
 
     matrices.push()
     matrices.translate(pos.x - camPos.x, pos.y - camPos.y, pos.z - camPos.z)

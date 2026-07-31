@@ -13,23 +13,21 @@ import java.util.*
 // these are defaults, value will only be applied if no file or missing option
 // only keys listed here are kept in the config file (non-matching keys get deleted on init)
 private val defaults: Map<String, *> = mapOf(
+    // internal
+    "open category" to "General Settings",
+
     "master toggle" to true,
     "debug mode" to false,
-    "highlight color" to 0xFFCEFF,
-    "open category" to "General Settings",
-    "big paws" to true,
-    "smol paws" to "map mraow"
+    "highlight color" to "#FFCEFF",
 )
 
+// todo setting for global color
 // define entries for the config here
 object ScreenEntries {
     val entries = listOf(
         SettingEntry("bool", "Enable Greg Utils", "Toggles whether the mod should be \nactive or not", "master toggle", "General Settings"),
         SettingEntry("bool", "Debug Mode", "", "debug mode", "General Settings"),
-        SettingEntry("bool", "Big Paws", "mrraow mrrp purrr nyaaa :333", "big paws", "General Settings"),
-        SettingEntry("field", "This is scrollable btw", "meow \nmeow", "smol paws", "General Settings"),
-
-        SettingEntry("bool", "placeholder but light room :3", "meow", "big paws", "Nameless Cave (Light) Room")
+        SettingEntry("field", "Highlight Color", "Color of highlights in hex and \ndefaults to \"#FFCEFF\"", "highlight color", "General Settings"),
     )
 }
 

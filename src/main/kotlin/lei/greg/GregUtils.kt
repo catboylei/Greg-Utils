@@ -1,6 +1,7 @@
 package lei.greg
 
 import lei.greg.config.ConfigManager
+import lei.greg.features.TreeHelper
 import lei.greg.highlights.Highlights
 import net.fabricmc.api.ModInitializer
 import net.minecraft.util.Identifier
@@ -17,5 +18,7 @@ object GregUtils : ModInitializer {
 		ConfigManager.initConfig()
 		Debug.register()
 		Highlights.register()
+
+		TreeHelper.register()
 	}
 }

@@ -1,6 +1,5 @@
 package lei.greg.config
 
-// todo category separator title thing entry
 // todo switches
 
 import io.wispforest.owo.ui.base.BaseUIModelScreen

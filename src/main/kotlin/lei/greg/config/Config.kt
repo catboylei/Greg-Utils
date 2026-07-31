@@ -19,6 +19,9 @@ private val defaults: Map<String, *> = mapOf(
     "master toggle" to true,
     "debug mode" to false,
     "highlight color" to "#FFCEFF",
+
+    "tree route highlight" to false,
+    "avoid high exit" to true,
 )
 
 // define entries for the config here

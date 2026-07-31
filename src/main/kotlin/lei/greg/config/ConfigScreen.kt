@@ -73,6 +73,7 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
             "Blueshift Wilds (Bulb) Room" -> GregUtils.id("bgs/bulb-bg")
             "Twisted Jungle (Gather) Room" -> GregUtils.id("bgs/gather-bg")
             "Gregory Bossfight" -> GregUtils.id("bgs/greg-bg")
+            "Random" -> GregUtils.id("bgs/other-bg")
             else -> GregUtils.id("bgs/general-bg")
         }
 

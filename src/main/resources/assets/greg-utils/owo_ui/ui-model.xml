@@ -65,10 +65,18 @@
 
                                 <button id="category-Gregory Bossfight">
                                     <sizing>
+                                        <horizontal method="fixed">40</horizontal>
+                                        <vertical method="fixed">15</vertical>
+                                    </sizing>
+                                    <text>Greg</text>
+                                </button>
+
+                                <button id="category-Random">
+                                    <sizing>
                                         <horizontal method="fixed">50</horizontal>
                                         <vertical method="fixed">15</vertical>
                                     </sizing>
-                                    <text>Gregory</text>
+                                    <text>Random</text>
                                 </button>
                             </children>
                             <vertical-alignment>center</vertical-alignment>

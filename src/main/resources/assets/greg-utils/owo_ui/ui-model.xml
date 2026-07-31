@@ -286,6 +286,25 @@
                 <vertical-alignment>center</vertical-alignment>
             </flow-layout>
         </template>
+
+        <template name="entry-separator">
+            <flow-layout direction="horizontal">
+                <children>
+                    <label>
+                        <text>{{title}}</text>
+                    </label>
+                </children>
+                <sizing>
+                    <horizontal method="fixed">248</horizontal>
+                    <vertical method="fixed">15</vertical>
+                </sizing>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>center</horizontal-alignment>
+                <margins>
+                    <top>6</top>
+                </margins>
+            </flow-layout>
+        </template>
     </templates>
 
 </owo-ui>

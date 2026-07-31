@@ -21,12 +21,14 @@ private val defaults: Map<String, *> = mapOf(
     "highlight color" to "#FFCEFF",
 )
 
-// todo setting for global color
 // define entries for the config here
 object ScreenEntries {
     val entries = listOf(
+        SettingEntry("separator", "General", "", "", "General Settings"),
         SettingEntry("bool", "Enable Greg Utils", "Toggles whether the mod should be \nactive or not", "master toggle", "General Settings"),
         SettingEntry("bool", "Debug Mode", "", "debug mode", "General Settings"),
+
+        SettingEntry("separator", "Highlights", "", "", "General Settings"),
         SettingEntry("field", "Highlight Color", "Color of highlights in hex and \ndefaults to \"#FFCEFF\"", "highlight color", "General Settings"),
     )
 }

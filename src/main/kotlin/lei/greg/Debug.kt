@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import lei.greg.config.ConfigManager
+import lei.greg.features.DiscordChat
 import lei.greg.highlights.Highlights
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.argument.Vec3ArgumentType
@@ -17,6 +18,7 @@ object Debug {
     fun register() {
         registerHighlightCommand()
         registerConfigCommand()
+        registerAwawaTestCommand()
     }
 
     private fun registerHighlightCommand() {
@@ -62,6 +64,25 @@ object Debug {
                     )
             )
         }
+    }
+
+    private fun registerAwawaTestCommand() {
+        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+            dispatcher.register(
+                CommandManager.literal("awawa")
+                    .then(CommandManager.argument("message", StringArgumentType.string())
+                        .executes { context -> awawaTestCommand(context) }
+                    )
+            )
+        }
+    }
+
+    @Suppress("SameReturnValue")
+    private fun awawaTestCommand(context: CommandContext<ServerCommandSource>): Int {
+        val msg = StringArgumentType.getString(context, "message")
+
+        DiscordChat.send(msg)
+        return 1
     }
 
     @Suppress("SameReturnValue")

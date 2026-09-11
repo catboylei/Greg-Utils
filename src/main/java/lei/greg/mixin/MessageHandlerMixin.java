@@ -1,9 +1,9 @@
 package lei.greg.mixin;
 
-import lei.catboyaddons.client.events.RaidChallengeCompletedEvent;
-import lei.catboyaddons.client.events.TnaTreeEntered;
-import lei.catboyaddons.client.events.TnaTreeGrottoEntered;
-import lei.catboyaddons.client.events.TnaTreeIsopteraKilled;
+import lei.greg.events.RaidChallengeCompletedEvent;
+import lei.greg.events.TnaTreeEntered;
+import lei.greg.events.TnaTreeGrottoEntered;
+import lei.greg.events.TnaTreeIsopteraKilled;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;

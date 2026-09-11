@@ -1,4 +1,4 @@
-package lei.catboyaddons.client.events
+package lei.greg.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory

@@ -1,8 +1,8 @@
 package lei.greg.features
 
-import lei.catboyaddons.client.events.RaidChallengeCompletedEvent
-import lei.catboyaddons.client.events.TnaTreeEntered
-import lei.catboyaddons.client.events.TnaTreeGrottoEntered
+import lei.greg.events.RaidChallengeCompletedEvent
+import lei.greg.events.TnaTreeEntered
+import lei.greg.events.TnaTreeGrottoEntered
 import lei.greg.config.ConfigManager
 import lei.greg.data.TreeGrotto
 import lei.greg.data.TreeGrottoDoor

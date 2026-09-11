@@ -1,6 +1,7 @@
 package lei.greg.features
 
 import lei.greg.GregUtils.PLAYER_UUID
+import lei.greg.Utils
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
@@ -15,7 +16,7 @@ object DiscordChat {
 
     fun register() {
         connect(PLAYER_UUID) { message ->
-            println("Received: $message")
+            Utils.discordMessage(message)
         }
     }
 

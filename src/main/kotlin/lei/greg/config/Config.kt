@@ -1,6 +1,7 @@
 package lei.greg.config
 
 import lei.greg.GregUtils
+import lei.greg.features.DiscordChat
 import net.fabricmc.loader.api.FabricLoader
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -22,6 +23,8 @@ private val defaults: Map<String, *> = mapOf(
 
     "tree route highlight" to false,
     "avoid high exit" to true,
+
+    "fkl discord bridge" to false,
 )
 
 // define entries for the config here
@@ -37,7 +40,9 @@ object ScreenEntries {
         SettingEntry("separator", "Tree Path", "", "", "Weeping Soulroot (Tree) Room"),
         SettingEntry("bool", "Highlight Next Door", "", "tree route highlight", "Weeping Soulroot (Tree) Room"),
         SettingEntry("bool", "Avoid High Exit", "Avoid high door from tree entrance \ndefaults to true", "avoid high exit", "Weeping Soulroot (Tree) Room"),
-        )
+
+        SettingEntry("bool", "FKL Bridge", "bridge to fkl discord \nneed to be in the guild and linked", "fkl discord bridge", "Random"),
+    )
 }
 
 object ConfigManager {
@@ -70,6 +75,14 @@ object ConfigManager {
     }
 
     fun setOption(key: String, value: String) {
+        if (key == "fkl discord bridge") {
+            if (value.toBoolean()) {
+                DiscordChat.register()
+            } else {
+                DiscordChat.close()
+            }
+        }
+
         properties.setProperty(key, value)
         save()
     }

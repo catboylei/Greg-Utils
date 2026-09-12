@@ -25,6 +25,7 @@ private val defaults: Map<String, *> = mapOf(
     "avoid high exit" to true,
 
     "fkl discord bridge" to false,
+    "fkl key" to "",
 )
 
 // define entries for the config here
@@ -41,7 +42,9 @@ object ScreenEntries {
         SettingEntry("bool", "Highlight Next Door", "", "tree route highlight", "Weeping Soulroot (Tree) Room"),
         SettingEntry("bool", "Avoid High Exit", "Avoid high door from tree entrance \ndefaults to true", "avoid high exit", "Weeping Soulroot (Tree) Room"),
 
+        SettingEntry("separator", "FKL Bridge", "", "", "Random"),
         SettingEntry("bool", "FKL Bridge", "bridge to fkl discord \nneed to be in the guild and linked", "fkl discord bridge", "Random"),
+        SettingEntry("field", "FKL Bridge Key", "Your personal key \nre-request with \"f!key\"", "fkl key", "Random"),
     )
 }
 
@@ -75,6 +78,9 @@ object ConfigManager {
     }
 
     fun setOption(key: String, value: String) {
+        properties.setProperty(key, value)
+        save()
+
         if (key == "fkl discord bridge") {
             if (value.toBoolean()) {
                 DiscordChat.register()
@@ -82,9 +88,6 @@ object ConfigManager {
                 DiscordChat.close()
             }
         }
-
-        properties.setProperty(key, value)
-        save()
     }
 
     fun getString(key: String): String? = properties.getProperty(key)

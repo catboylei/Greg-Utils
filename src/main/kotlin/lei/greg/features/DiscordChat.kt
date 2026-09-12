@@ -16,6 +16,7 @@ object DiscordChat {
     private val url = "ws://fi15.bot-hosting.net:26529"
 
     fun register() {
+        if (!ConfigManager.getBool("fkl discord bridge")) return
         Utils.discordMessage("Attempting to connect...")
         connect(PLAYER_UUID) { message ->
             if (ConfigManager.getBool("fkl discord bridge")) {

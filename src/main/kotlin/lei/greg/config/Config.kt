@@ -26,6 +26,8 @@ private val defaults: Map<String, *> = mapOf(
 
     "fkl discord bridge" to false,
     "fkl password" to "",
+    "raid pings" to true,
+    "bridge chat" to true,
 )
 
 // define entries for the config here
@@ -45,6 +47,8 @@ object ScreenEntries {
         SettingEntry("separator", "FKL Bridge", "", "", "Random"),
         SettingEntry("bool", "FKL Bridge", "bridge to fkl discord \nneed to be in the guild and linked", "fkl discord bridge", "Random"),
         SettingEntry("field", "FKL Bridge Password", "Your personal FKL password \nrequest with \"f!resetPassword\"", "fkl password", "Random"),
+        SettingEntry("bool", "Raid Pings", "whether to show raid pings \nfrom discord", "raid pings", "Random"),
+        SettingEntry("bool", "Show Chat", "whether to display messages \nfrom discord chats", "bridge chat", "Random"),
     )
 }
 

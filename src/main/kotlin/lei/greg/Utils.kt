@@ -1,5 +1,6 @@
 package lei.greg
 
+import lei.greg.config.ConfigManager
 import net.minecraft.client.MinecraftClient
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
@@ -97,11 +98,13 @@ object Utils {
             if (type == "info") {
                 msg = Text.literal(message).withColor(0xAAAAAA).styled { it.withItalic(true) }
             } else if (type == "chat") {
+                if (!ConfigManager.getBool("bridge chat")) return@execute
                 msg = Text.empty()
                     .append(Text.literal("#$channel ").withColor(0xAAAAAA).styled { it.withItalic(true) })
                     .append(Text.literal("$player: ").withColor(0x00AAAA))
                     .append(Text.literal(message).withColor(0x55FFFF))
             } else if (type == "raid") {
+                if (!ConfigManager.getBool("raid pings")) return@execute
                 client.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f)
                 client.inGameHud.chatHud.addMessage(Text.empty())
                 msg = Text.empty()

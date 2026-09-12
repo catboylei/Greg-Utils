@@ -25,7 +25,7 @@ private val defaults: Map<String, *> = mapOf(
     "avoid high exit" to true,
 
     "fkl discord bridge" to false,
-    "fkl key" to "",
+    "fkl password" to "",
 )
 
 // define entries for the config here
@@ -44,7 +44,7 @@ object ScreenEntries {
 
         SettingEntry("separator", "FKL Bridge", "", "", "Random"),
         SettingEntry("bool", "FKL Bridge", "bridge to fkl discord \nneed to be in the guild and linked", "fkl discord bridge", "Random"),
-        SettingEntry("field", "FKL Bridge Key", "Your personal key \nre-request with \"f!key\"", "fkl key", "Random"),
+        SettingEntry("field", "FKL Bridge Password", "Your personal FKL password \nrequest with \"f!resetPassword\"", "fkl password", "Random"),
     )
 }
 

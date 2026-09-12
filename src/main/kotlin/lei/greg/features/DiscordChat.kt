@@ -9,6 +9,8 @@ import java.net.http.WebSocket
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
+// todo use secure socket (i cba rn)
+
 object DiscordChat {
 
     private val client: HttpClient = HttpClient.newHttpClient()
@@ -33,7 +35,7 @@ object DiscordChat {
 
             override fun onOpen(webSocket: WebSocket) {
                 println("BotSocket: onOpen fired, sending auth")
-                webSocket.sendText(uuid, true)
+                webSocket.sendText("{\"uuid\": \"$uuid\", \"password\": \"${ConfigManager.getString("fkl password")}\"}", true)
                 webSocket.request(1)
             }
 
@@ -54,6 +56,7 @@ object DiscordChat {
             }
 
             override fun onClose(webSocket: WebSocket, statusCode: Int, reason: String): CompletionStage<*> {
+                Utils.discordMessage("Connection closed")
                 println("BotSocket: onClose fired: $statusCode $reason")
                 DiscordChat.webSocket = null
                 return CompletableFuture.completedFuture(null)
@@ -81,7 +84,7 @@ object DiscordChat {
     }
 
     fun close() {
-        Utils.discordMessage("Connection closed")
+        //Utils.discordMessage("Connection closed")
         webSocket?.sendClose(WebSocket.NORMAL_CLOSURE, "bye")
         webSocket = null
     }

@@ -55,7 +55,7 @@ object DiscordChat {
 
             override fun onClose(webSocket: WebSocket, statusCode: Int, reason: String): CompletionStage<*> {
                 println("BotSocket: onClose fired: $statusCode $reason")
-                DiscordChat.webSocket = null;
+                DiscordChat.webSocket = null
                 return CompletableFuture.completedFuture(null)
             }
         }

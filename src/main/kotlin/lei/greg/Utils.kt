@@ -6,6 +6,75 @@ import net.minecraft.util.Formatting
 
 object Utils {
 
+    object characters {
+        object spacing {
+            val CHAR_JOINER = Text.literal("\u2064")
+            val CHAR_OVERLAPPER = Text.literal("\uE012")
+            val CHAR_OVERLAPPER_SHORT = Text.literal("\uE071")
+            val SPACE = Text.literal("\uE013")
+        }
+
+        object banner {
+            val START = Text.literal("\uE010")
+            val BODY = Text.literal("\uE00F")
+            val BODY_SHORT = Text.literal("\uE070")
+            val END = Text.literal("\uE011")
+        }
+
+        object five {
+            val A = Text.literal("\uE040")
+            val B = Text.literal("\uE041")
+            val C = Text.literal("\uE042")
+            val D = Text.literal("\uE043")
+            val E = Text.literal("\uE044")
+            val F = Text.literal("\uE045")
+            val G = Text.literal("\uE046")
+            val H = Text.literal("\uE047")
+            val I = Text.literal("\uE048")
+            val J = Text.literal("\uE049")
+            val K = Text.literal("\uE04A")
+            val L = Text.literal("\uE04B")
+            val M = Text.literal("\uE04C")
+            val N = Text.literal("\uE04D")
+            val O = Text.literal("\uE04E")
+            val P = Text.literal("\uE04F")
+            val Q = Text.literal("\uE050")
+            val R = Text.literal("\uE051")
+            val S = Text.literal("\uE052")
+            val T = Text.literal("\uE053")
+            val U = Text.literal("\uE054")
+            val V = Text.literal("\uE055")
+            val W = Text.literal("\uE056")
+            val X = Text.literal("\uE057")
+            val Y = Text.literal("\uE058")
+            val Z = Text.literal("\uE059")
+
+            val QUESTION_MARK = Text.literal("\uE05A")
+            val SQUARE_BRACKET_OPEN = Text.literal("\uE05B")
+            val SQUARE_BRACKET_CLOSE = Text.literal("\uE05C")
+            val BACKSLASH = Text.literal("\uE05D")
+            val PERCENT = Text.literal("\uE05E")
+            val AND = Text.literal("\uE05F")
+            val EXCLAMATION = Text.literal("\uE06A")
+            val BRACKET_OPEN = Text.literal("\uE06B")
+            val BRACKET_CLOSE = Text.literal("\uE06C")
+            val LESS_THAN = Text.literal("\uE06D")
+            val EQUALS = Text.literal("\uE06E")
+            val GREATER_THAN = Text.literal("\uE06F")
+
+            val ZERO = Text.literal("\uE060")
+            val ONE = Text.literal("\uE061")
+            val TWO = Text.literal("\uE062")
+            val THREE = Text.literal("\uE063")
+            val FOUR = Text.literal("\uE064")
+            val FIVE = Text.literal("\uE065")
+            val SIX = Text.literal("\uE066")
+            val SEVEN = Text.literal("\uE067")
+            val EIGHT = Text.literal("\uE068")
+            val NINE = Text.literal("\uE069")
+        }
+    }
+
     fun notifyChat(msg: String) {
         val client = MinecraftClient.getInstance()
         client.execute {
@@ -22,7 +91,50 @@ object Utils {
     fun discordMessage(msg: String) {
         val client = MinecraftClient.getInstance()
         client.execute {
-            client.inGameHud.chatHud.addMessage(Text.literal("§9FKL > §r$msg"))
+            //client.inGameHud.chatHud.addMessage(Text.literal(" §9\uE010\u2064\uE00F\uE012§0\uE040§9\uE011> §r$msg "))
+            client.inGameHud.chatHud.addMessage(Text.empty()
+
+                .append(characters.banner.START.withColor(0x5555FF))
+                .append(characters.spacing.CHAR_JOINER)
+
+                .append(characters.banner.BODY.withColor(0x5555FF))
+                .append(characters.spacing.CHAR_OVERLAPPER)
+                .append(characters.five.D.withoutShadow().withColor(0x000000))
+
+                .append(characters.banner.BODY.withColor(0x5555FF))
+                .append(characters.spacing.CHAR_OVERLAPPER)
+                .append(characters.five.I.withoutShadow().withColor(0x000000))
+
+                .append(characters.banner.BODY.withColor(0x5555FF))
+                .append(characters.spacing.CHAR_OVERLAPPER)
+                .append(characters.five.S.withoutShadow().withColor(0x000000))
+
+                .append(characters.banner.BODY.withColor(0x5555FF))
+                .append(characters.spacing.CHAR_OVERLAPPER)
+                .append(characters.five.C.withoutShadow().withColor(0x000000))
+
+                .append(characters.banner.BODY.withColor(0x5555FF))
+                .append(characters.spacing.CHAR_OVERLAPPER)
+                .append(characters.five.O.withoutShadow().withColor(0x000000))
+
+                .append(characters.banner.BODY.withColor(0x5555FF))
+                .append(characters.spacing.CHAR_OVERLAPPER)
+                .append(characters.five.R.withoutShadow().withColor(0x000000))
+
+                .append(characters.banner.BODY_SHORT.withColor(0x5555FF))
+                .append(characters.spacing.CHAR_OVERLAPPER_SHORT)
+                .append(characters.five.D.withoutShadow().withColor(0x000000))
+                .append(characters.spacing.CHAR_JOINER)
+
+                .append(characters.banner.END.withColor(0x5555FF))
+
+                //.append(Text.literal(" #guild-chat ").withColor(0xAAAAAA).styled { it.withItalic(true) }) // todo link this to citron json thing
+
+                //.append(Text.literal("catboylei: ").withColor(0x00AAAA)) // this too
+                //.append(Text.literal("hi this is a test example message :3").withColor(0x55FFFF)) // yep heres the msg
+
+                .append(Text.literal(" $msg").withColor(0x55FFFF))
+            )
         }
     }
 }

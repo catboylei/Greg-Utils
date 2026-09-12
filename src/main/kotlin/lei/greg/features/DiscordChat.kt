@@ -1,5 +1,8 @@
 package lei.greg.features
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 import lei.greg.GregUtils.PLAYER_UUID
 import lei.greg.Utils
 import lei.greg.config.ConfigManager
@@ -11,6 +14,9 @@ import java.util.concurrent.CompletionStage
 
 // todo use secure socket (i cba rn)
 
+@Serializable
+data class DiscordMessage(val name: String = "", val message: String, val channel_name: String = "", val guild: String = "", val type: String)
+
 object DiscordChat {
 
     private val client: HttpClient = HttpClient.newHttpClient()
@@ -19,10 +25,10 @@ object DiscordChat {
 
     fun register() {
         if (!ConfigManager.getBool("fkl discord bridge")) return
-        Utils.discordMessage("Attempting to connect...")
-        connect(PLAYER_UUID) { message ->
+        Utils.discordMessage("info", "Connecting...")
+        connect(PLAYER_UUID) { payload ->
             if (ConfigManager.getBool("fkl discord bridge")) {
-                Utils.discordMessage(message)
+                handlePayload(payload)
             }
         }
     }
@@ -56,7 +62,7 @@ object DiscordChat {
             }
 
             override fun onClose(webSocket: WebSocket, statusCode: Int, reason: String): CompletionStage<*> {
-                Utils.discordMessage("Connection closed")
+                Utils.discordMessage("info", "Disconnected")
                 println("BotSocket: onClose fired: $statusCode $reason")
                 DiscordChat.webSocket = null
                 return CompletableFuture.completedFuture(null)
@@ -74,18 +80,27 @@ object DiscordChat {
     }
 
     fun send(msg: String) {
-        if (ConfigManager.getBool("fkl discord bridge")) {
-            Utils.discordMessage("enable the bridge feature you goober")
+        if (!ConfigManager.getBool("fkl discord bridge")) {
+            Utils.discordMessage("info", "enable the bridge feature you goober")
         } else if (webSocket == null) {
-            Utils.discordMessage("Not connected, is your account linked ?")
+            Utils.discordMessage("info", "Not connected, is your account linked ?")
         } else if (ConfigManager.getBool("fkl discord bridge")) {
             webSocket?.sendText(msg, true)
         }
     }
 
     fun close() {
-        //Utils.discordMessage("Connection closed")
         webSocket?.sendClose(WebSocket.NORMAL_CLOSURE, "bye")
         webSocket = null
+    }
+
+    fun handlePayload(payload: String) {
+        try {
+            val msg = Json.decodeFromString<DiscordMessage>(payload)
+
+            Utils.discordMessage(msg.type, msg.message, msg.name, msg.channel_name)
+        } catch (e: Exception) {
+            Utils.discordMessage("info", payload) // if not serializable just print it in chat as info
+        }
     }
 }

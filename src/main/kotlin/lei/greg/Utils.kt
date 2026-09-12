@@ -1,6 +1,7 @@
 package lei.greg
 
 import net.minecraft.client.MinecraftClient
+import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 
@@ -88,53 +89,68 @@ object Utils {
         }
     }
 
-    fun discordMessage(msg: String) {
+    fun discordMessage(type: String, message: String, player: String = "", channel: String = "") {
         val client = MinecraftClient.getInstance()
         client.execute {
-            //client.inGameHud.chatHud.addMessage(Text.literal(" §9\uE010\u2064\uE00F\uE012§0\uE040§9\uE011> §r$msg "))
+            var msg = Text.empty()
+
+            if (type == "info") {
+                msg = Text.literal(message).withColor(0xAAAAAA).styled { it.withItalic(true) }
+            } else if (type == "chat") {
+                msg = Text.empty()
+                    .append(Text.literal("#$channel ").withColor(0xAAAAAA).styled { it.withItalic(true) })
+                    .append(Text.literal("$player: ").withColor(0x00AAAA))
+                    .append(Text.literal(message).withColor(0x55FFFF))
+            } else if (type == "raid") {
+                client.player?.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f)
+                client.inGameHud.chatHud.addMessage(Text.empty())
+                msg = Text.empty()
+                    .append(Text.literal("RAID ").withColor(0xFF5555).styled { it.withBold(true) })
+                    .append(Text.literal("$player: ").withColor(0xAA00AA))
+                    .append(Text.literal("$message \n").withColor(0xFF55FF))
+            } else return@execute
+
             client.inGameHud.chatHud.addMessage(Text.empty()
-
-                .append(characters.banner.START.withColor(0x5555FF))
-                .append(characters.spacing.CHAR_JOINER)
-
-                .append(characters.banner.BODY.withColor(0x5555FF))
-                .append(characters.spacing.CHAR_OVERLAPPER)
-                .append(characters.five.D.withoutShadow().withColor(0x000000))
-
-                .append(characters.banner.BODY.withColor(0x5555FF))
-                .append(characters.spacing.CHAR_OVERLAPPER)
-                .append(characters.five.I.withoutShadow().withColor(0x000000))
-
-                .append(characters.banner.BODY.withColor(0x5555FF))
-                .append(characters.spacing.CHAR_OVERLAPPER)
-                .append(characters.five.S.withoutShadow().withColor(0x000000))
-
-                .append(characters.banner.BODY.withColor(0x5555FF))
-                .append(characters.spacing.CHAR_OVERLAPPER)
-                .append(characters.five.C.withoutShadow().withColor(0x000000))
-
-                .append(characters.banner.BODY.withColor(0x5555FF))
-                .append(characters.spacing.CHAR_OVERLAPPER)
-                .append(characters.five.O.withoutShadow().withColor(0x000000))
-
-                .append(characters.banner.BODY.withColor(0x5555FF))
-                .append(characters.spacing.CHAR_OVERLAPPER)
-                .append(characters.five.R.withoutShadow().withColor(0x000000))
-
-                .append(characters.banner.BODY_SHORT.withColor(0x5555FF))
-                .append(characters.spacing.CHAR_OVERLAPPER_SHORT)
-                .append(characters.five.D.withoutShadow().withColor(0x000000))
-                .append(characters.spacing.CHAR_JOINER)
-
-                .append(characters.banner.END.withColor(0x5555FF))
-
-                //.append(Text.literal(" #guild-chat ").withColor(0xAAAAAA).styled { it.withItalic(true) }) // todo link this to citron json thing
-
-                //.append(Text.literal("catboylei: ").withColor(0x00AAAA)) // this too
-                //.append(Text.literal("hi this is a test example message :3").withColor(0x55FFFF)) // yep heres the msg
-
-                .append(Text.literal(" $msg").withColor(0x55FFFF))
+                .append(discordPill)
+                .append(msg)
             )
         }
     }
+
+    val discordPill = Text.empty()
+
+        .append(characters.banner.START.withColor(0x5555FF))
+        .append(characters.spacing.CHAR_JOINER)
+
+        .append(characters.banner.BODY.withColor(0x5555FF))
+        .append(characters.spacing.CHAR_OVERLAPPER)
+        .append(characters.five.D.withoutShadow().withColor(0x000000))
+
+        .append(characters.banner.BODY.withColor(0x5555FF))
+        .append(characters.spacing.CHAR_OVERLAPPER)
+        .append(characters.five.I.withoutShadow().withColor(0x000000))
+
+        .append(characters.banner.BODY.withColor(0x5555FF))
+        .append(characters.spacing.CHAR_OVERLAPPER)
+        .append(characters.five.S.withoutShadow().withColor(0x000000))
+
+        .append(characters.banner.BODY.withColor(0x5555FF))
+        .append(characters.spacing.CHAR_OVERLAPPER)
+        .append(characters.five.C.withoutShadow().withColor(0x000000))
+
+        .append(characters.banner.BODY.withColor(0x5555FF))
+        .append(characters.spacing.CHAR_OVERLAPPER)
+        .append(characters.five.O.withoutShadow().withColor(0x000000))
+
+        .append(characters.banner.BODY.withColor(0x5555FF))
+        .append(characters.spacing.CHAR_OVERLAPPER)
+        .append(characters.five.R.withoutShadow().withColor(0x000000))
+
+        .append(characters.banner.BODY_SHORT.withColor(0x5555FF))
+        .append(characters.spacing.CHAR_OVERLAPPER_SHORT)
+        .append(characters.five.D.withoutShadow().withColor(0x000000))
+        .append(characters.spacing.CHAR_JOINER)
+
+        .append(characters.banner.END.withColor(0x5555FF))
+        .append(characters.spacing.SPACE)
 }

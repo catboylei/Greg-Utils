@@ -1,11 +1,17 @@
 package lei.greg.features
 
+import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.context.CommandContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import lei.greg.GregUtils.PLAYER_UUID
 import lei.greg.Utils
 import lei.greg.config.ConfigManager
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.minecraft.command.CommandSource
+import net.minecraft.server.command.CommandManager
+import net.minecraft.server.command.ServerCommandSource
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
@@ -15,13 +21,15 @@ import java.util.concurrent.CompletionStage
 // todo use secure socket (i cba rn)
 
 @Serializable
-data class DiscordMessage(val name: String = "", val message: String, val channel_name: String = "", val guild: String = "", val type: String)
+data class DiscordMessage(val name: String = "", val message: String, val channel_name: String = "", val guild: String = "", val type: String, val available_channels: List<String> = emptyList())
 
 object DiscordChat {
 
     private val client: HttpClient = HttpClient.newHttpClient()
     private var webSocket: WebSocket? = null
     private val url = "ws://fi15.bot-hosting.net:26529"
+    private var availableChannels = emptyList<String>()
+    private var isCommandRegistered = false
 
     fun register() {
         if (!ConfigManager.getBool("fkl discord bridge")) return
@@ -33,8 +41,8 @@ object DiscordChat {
         }
     }
 
-    // connects to the hardcoded url, sends uuid for auth then listens forever calling onMessage on each
-    fun connect(uuid: String, onMessage: (String) -> Unit): CompletableFuture<WebSocket> {
+    // connects to the hardcoded url, sends auth then listens forever calling onMessage on each
+    private fun connect(uuid: String, onMessage: (String) -> Unit): CompletableFuture<WebSocket> {
         val messageBuilder = StringBuilder()
 
         val listener = object : WebSocket.Listener {
@@ -79,7 +87,7 @@ object DiscordChat {
             }
     }
 
-    fun send(msg: String) {
+    private fun send(msg: String) {
         if (!ConfigManager.getBool("fkl discord bridge")) {
             Utils.discordMessage("info", "enable the bridge feature you goober")
         } else if (webSocket == null) {
@@ -94,13 +102,46 @@ object DiscordChat {
         webSocket = null
     }
 
-    fun handlePayload(payload: String) {
+    private fun handlePayload(payload: String) {
         try {
             val msg = Json.decodeFromString<DiscordMessage>(payload)
+
+            if (msg.available_channels.isNotEmpty()) {
+                availableChannels = msg.available_channels
+
+                if (!isCommandRegistered) {
+                    registerMessageCommand()
+                }
+            }
 
             Utils.discordMessage(msg.type, msg.message, msg.name, msg.channel_name)
         } catch (e: Exception) {
             Utils.discordMessage("info", payload) // if not serializable just print it in chat as info
         }
+    }
+
+    private fun registerMessageCommand() {
+        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+            dispatcher.register(
+                CommandManager.literal("d")
+                    .then(CommandManager.argument("channel", StringArgumentType.string())
+                        .suggests { _, builder ->
+                            CommandSource.suggestMatching(availableChannels, builder)
+                        }
+                        .then(CommandManager.argument("message", StringArgumentType.greedyString())
+                            .executes { context -> sendMessageCommand(context) }
+                        )
+                    )
+            )
+        }
+    }
+
+    @Suppress("SameReturnValue")
+    private fun sendMessageCommand(context: CommandContext<ServerCommandSource>): Int {
+        val msg = StringArgumentType.getString(context, "message")
+        val channel = StringArgumentType.getString(context, "channel")
+
+        send(" {\"message\": \"$msg\", \"channel\": \"$channel\"}")
+        return 1
     }
 }

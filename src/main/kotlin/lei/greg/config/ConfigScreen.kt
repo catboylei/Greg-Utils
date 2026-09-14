@@ -1,7 +1,5 @@
 package lei.greg.config
 
-// todo switches
-
 import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.ButtonComponent
 import io.wispforest.owo.ui.component.LabelComponent

@@ -3,19 +3,15 @@ package lei.greg.features
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import lei.greg.GregUtils.PLAYER_UUID
 import lei.greg.Utils
 import lei.greg.config.ConfigManager
+import lei.greg.utils.Scheduler
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
-import net.minecraft.client.network.ClientCommandSource
 import net.minecraft.command.CommandSource
-import net.minecraft.server.command.CommandManager
-import net.minecraft.server.command.ServerCommandSource
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
@@ -32,12 +28,13 @@ object DiscordChat {
     private val url = "wss://awawa.fluffy-paws.dev"
     private var availableChannels = emptyList<String>()
     private var isCommandRegistered = false
+    private var isLoggedIn = false
 
     fun register() {
         if (!ConfigManager.getBool("fkl discord bridge") || !ConfigManager.getBool("master toggle")) return
         Utils.discordMessage("info", "Connecting...")
         connect(PLAYER_UUID) { payload ->
-            if (ConfigManager.getBool("fkl discord bridge") || ConfigManager.getBool("master toggle")) {
+            if (ConfigManager.getBool("fkl discord bridge") && ConfigManager.getBool("master toggle")) {
                 handlePayload(payload)
             }
         }
@@ -72,8 +69,17 @@ object DiscordChat {
             }
 
             override fun onClose(webSocket: WebSocket, statusCode: Int, reason: String): CompletionStage<*> {
-                Utils.discordMessage("info", "Disconnected")
-                println("BotSocket: onClose fired: $statusCode $reason")
+                if (ConfigManager.getBool("fkl discord bridge") && ConfigManager.getBool("master toggle") && isLoggedIn) {
+                    Utils.discordMessage("info", "Disconnected unexpectedly, reconnecting soon...")
+                    println("BotSocket: onClose fired: $statusCode $reason")
+                    Scheduler.schedule(40) {
+                        register()
+                    }
+                } else {
+                    Utils.discordMessage("info", "Disconnected")
+                    println("BotSocket: onClose fired: $statusCode $reason")
+                }
+
                 DiscordChat.webSocket = null
                 return CompletableFuture.completedFuture(null)
             }
@@ -82,10 +88,18 @@ object DiscordChat {
         return client.newWebSocketBuilder()
             .buildAsync(URI.create(url), listener)
             .thenApply { ws -> webSocket = ws; ws }
-            .exceptionally { ex ->
-                println("BotSocket: connect FAILED")
-                ex.printStackTrace()
-                null
+            .whenComplete { _, throwable ->
+                if (throwable != null) {
+                    println("BotSocket: connect FAILED")
+                    throwable.printStackTrace()
+
+                    Utils.discordMessage(
+                        "info",
+                        "Connection failed, is server offline?"
+                    )
+
+                    webSocket = null
+                }
             }
     }
 
@@ -110,11 +124,16 @@ object DiscordChat {
 
             if (msg.available_channels.isNotEmpty()) {
                 availableChannels = msg.available_channels
+                isLoggedIn = true
 
                 if (!isCommandRegistered) {
                     registerMessageCommand()
                     isCommandRegistered = true
                 }
+            }
+
+            if (msg.message == "Invalid login credentials.") {
+                isLoggedIn = false
             }
 
             Utils.discordMessage(msg.type, msg.message, msg.name, msg.channel_name)

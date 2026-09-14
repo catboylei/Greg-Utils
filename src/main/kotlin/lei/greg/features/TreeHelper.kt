@@ -30,7 +30,7 @@ object TreeHelper {
                 highlightedDoor = pathToTake.first()
                 if (highlightedDoor!!.grotto != currentRoom) {
                     cleanup()
-                    //notifyChat("wrong door, ur on ur own gng") // todo chat notification util
+                    //notifyChat("wrong door, ur on ur own gng")
                     return@register // shit yourself if take the wrong door
                 }
                 highlightDoor(highlightedDoor!!, ConfigManager.getString("highlight color")!!.removePrefix("#").hexToInt())

@@ -8,6 +8,8 @@ import net.minecraft.util.Formatting
 
 object Utils {
 
+    // stores the unicode values for various things in the wynncraft texture pack
+    // many warnings but none of them matter !
     object characters {
         object spacing {
             val CHAR_JOINER = Text.literal("\u2064")
@@ -77,6 +79,7 @@ object Utils {
         }
     }
 
+    // TODO: improve notifyChat
     fun notifyChat(msg: String) {
         val client = MinecraftClient.getInstance()
         client.execute {
@@ -114,12 +117,14 @@ object Utils {
             } else return@execute
 
             client.inGameHud.chatHud.addMessage(Text.empty()
+                .append(Text.literal("  "))
                 .append(discordPill)
                 .append(msg)
             )
         }
     }
 
+    // wynncraft-styled banner/pill for discord
     val discordPill = Text.empty()
 
         .append(characters.banner.START.withColor(0x5555FF))

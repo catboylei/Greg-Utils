@@ -14,6 +14,8 @@ enum class TreeGrotto {
 // im scared and terrified and scared and scared and scared
 // did i mention that this scares me yet
 
+// stores blockpos of blocks composing tree doors, for the treehelper feature
+// no there was not a better way :(
 @Suppress("Unused")
 enum class TreeGrottoDoor(val blocks: List<BlockPos>, val grotto: TreeGrotto) {
     Exit_1(listOf(

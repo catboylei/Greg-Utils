@@ -2,13 +2,13 @@ package lei.greg.utils
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 
+// schedules tasks x amount of ingame ticks in the future
+// usage: Scheduler.schedule(20) { println("meow") }
 object Scheduler {
     private val tasks = mutableListOf<Pair<Int, () -> Unit>>()
 
     fun register() {
-        ServerTickEvents.END_SERVER_TICK.register {
-            Scheduler.tick()
-        }
+        ServerTickEvents.END_SERVER_TICK.register { tick() }
     }
 
     fun schedule(delayTicks: Int, task: () -> Unit) {

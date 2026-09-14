@@ -12,12 +12,17 @@ import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
 import net.minecraft.text.Text
 
+// ties together the screen and all the components from ressources/assets/greg-utils/owo-ui/ui-model.xml
+// also ties them to the config manager, and applies the custom textures
+// this file probably contains a lot of spaghetti code, you may PR and try to fix it lol
 class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("ui-model"))) {
 
     override fun build(rootComponent: StackLayout) {
         updateTopBar(rootComponent)
         updateEntries(rootComponent)
         applyCustomTextures(rootComponent)
+
+        GregUtils.LOGGER.info("finished building ui screen")
     }
 
     private fun applyCustomTextures(rootComponent: StackLayout) {

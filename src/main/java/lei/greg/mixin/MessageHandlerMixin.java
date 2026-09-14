@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// listens to chat and fires events associated to some messages
 @Mixin(ClientPlayNetworkHandler.class)
 public class MessageHandlerMixin {
 
@@ -54,6 +55,7 @@ public class MessageHandlerMixin {
         }
     }
 
+    // cooldown goober because wynncraft is weird and sends everything like 4 times
     @Unique
     private static final class Debouncer {
         private long last = 0;

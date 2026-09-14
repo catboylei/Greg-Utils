@@ -36,6 +36,7 @@ private fun highlightBlock(pos: BlockPos, context: WorldRenderContext) {
     val state = world.getBlockState(pos)
     if (state.isAir) return
 
+    // lots of evil minecraft rendering things
     val camPos = client.gameRenderer.camera.cameraPos
     val matrices = context.matrices()
     var color = 0xFFCEFF
@@ -56,13 +57,14 @@ private fun highlightBlock(pos: BlockPos, context: WorldRenderContext) {
     matrices.pop()
 }
 
-// todo add blindness/darkness check here
+// TODO: add blindness/darkness check here
 private fun isBlockVisible(pos: BlockPos): Boolean {
     val client = MinecraftClient.getInstance()
     val world = client.world ?: return false
     val camera = client.gameRenderer.camera
     val camPos = camera.cameraPos
 
+    // raycasts to all of these positions to determine if blocks are in the way
     listOf(
         Vec3d(pos.x + 0.5, pos.y + 1.0, pos.z + 0.5),
         Vec3d(pos.x + 0.0, pos.y + 0.5, pos.z + 0.5),

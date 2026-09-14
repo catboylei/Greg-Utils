@@ -13,6 +13,8 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 
+// various debug features
+// ignore this for actual releases
 
 object Debug {
     fun register() {

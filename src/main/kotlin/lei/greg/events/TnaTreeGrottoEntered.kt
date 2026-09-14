@@ -1,5 +1,6 @@
 package lei.greg.events
 
+import lei.greg.GregUtils
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 
@@ -9,7 +10,10 @@ fun interface TnaTreeGrottoEntered {
 
     companion object {
         val EVENT: Event<TnaTreeGrottoEntered> = EventFactory.createArrayBacked(TnaTreeGrottoEntered::class.java) { listeners ->
-            TnaTreeGrottoEntered { message, player, grotto -> listeners.forEach { it.onChatMessage(message, player, grotto) } }
+            TnaTreeGrottoEntered { message, player, grotto -> listeners.forEach {
+                it.onChatMessage(message, player, grotto)
+                GregUtils.LOGGER.info("fired event \"TnaTreeGrottoEntered\"")
+            } }
         }
     }
 }

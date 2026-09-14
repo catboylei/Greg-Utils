@@ -8,10 +8,10 @@ import java.io.FileOutputStream
 import java.nio.file.Files
 import java.util.*
 
-// todo add the ability to hide contents of text fields (for passwords)
+// TODO: add the ability to hide contents of text fields (for passwords)
 
-// owoconfig hates me and so does every other option
-// so this is what we are doing now <3
+// custom persistent storage config manager using .properties
+// i did this because owoconfig hates me personally
 
 // these are defaults, value will only be applied if no file or missing option
 // only keys listed here are kept in the config file (non-matching keys get deleted on init)
@@ -19,6 +19,7 @@ private val defaults: Map<String, *> = mapOf(
     // internal
     "open category" to "General Settings",
 
+    // linked to gui entries
     "master toggle" to true,
     "debug mode" to false,
     "highlight color" to "#FFCEFF",
@@ -32,20 +33,27 @@ private val defaults: Map<String, *> = mapOf(
     "bridge chat" to true,
 )
 
+
+data class SettingEntry(val type: String, val title: String, val desc: String, val configId: String, val category: String)
+
 // define entries for the config here
 object ScreenEntries {
     val entries = listOf(
+        // general/general
         SettingEntry("separator", "General", "", "", "General Settings"),
         SettingEntry("bool", "Enable Greg Utils", "Toggles whether the mod should be \nactive or not", "master toggle", "General Settings"),
         SettingEntry("bool", "Debug Mode", "", "debug mode", "General Settings"),
 
+        // general/highlights
         SettingEntry("separator", "Highlights", "", "", "General Settings"),
         SettingEntry("field", "Highlight Color", "Color of highlights in hex and \ndefaults to \"#FFCEFF\"", "highlight color", "General Settings"),
 
+        // tree/tree path
         SettingEntry("separator", "Tree Path", "", "", "Weeping Soulroot (Tree) Room"),
         SettingEntry("bool", "Highlight Next Door", "", "tree route highlight", "Weeping Soulroot (Tree) Room"),
         SettingEntry("bool", "Avoid High Exit", "Avoid high door from tree entrance \ndefaults to true", "avoid high exit", "Weeping Soulroot (Tree) Room"),
 
+        // random/fkl bridge
         SettingEntry("separator", "FKL Bridge", "", "", "Random"),
         SettingEntry("bool", "FKL Bridge", "bridge to fkl discord \nneed to be in the guild and linked", "fkl discord bridge", "Random"),
         SettingEntry("field", "FKL Bridge Password", "Your personal FKL password \nrequest with \"f!resetPassword\"", "fkl password", "Random"),
@@ -55,7 +63,7 @@ object ScreenEntries {
 }
 
 object ConfigManager {
-    private val path = FabricLoader.getInstance().configDir.resolve("greg.properties")
+    private val path = FabricLoader.getInstance().configDir.resolve("greg.properties") // file to use
     private val properties = Properties()
 
     fun initConfig() {
@@ -87,6 +95,9 @@ object ConfigManager {
         properties.setProperty(key, value)
         save()
 
+        GregUtils.LOGGER.info("saved key $key to value $value")
+
+        // TODO: maybe generalise this as a helper
         if (key == "fkl discord bridge") {
             if (value.toBoolean()) {
                 DiscordChat.register()
@@ -104,5 +115,3 @@ object ConfigManager {
         properties.store(FileOutputStream(path.toFile()), "meaow nrrp mrroww :3")
     }
 }
-
-data class SettingEntry(val type: String, val title: String, val desc: String, val configId: String, val category: String)

@@ -17,17 +17,19 @@ object GregUtils : ModInitializer {
 	fun id(path: String): Identifier { return Identifier.of(MOD_ID, path) }
 
 	val PLAYER_UUID: String by lazy {
-		//MinecraftClient.getInstance().session.uuidOrNull.toString()
-		"4a451026-c279-40fa-80de-6fcd02169bc5"
+		MinecraftClient.getInstance().session.uuidOrNull.toString()
+		// "4a451026-c279-40fa-80de-6fcd02169bc5"
 	}
 
 	override fun onInitialize() {
 
+		// utils
 		ConfigManager.initConfig()
 		Debug.register()
 		Highlights.register()
 		Scheduler.register()
 
+		// features
 		TreeHelper.register()
 		DiscordChat.register()
 	}

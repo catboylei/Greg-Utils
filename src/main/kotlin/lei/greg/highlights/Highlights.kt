@@ -2,6 +2,7 @@ package lei.greg.highlights
 
 import net.minecraft.util.math.BlockPos
 
+// stores blocks to be highlighted every render tick
 object Highlights {
     fun register() {
         registerBlockHighlights()

@@ -8,7 +8,11 @@ import kotlinx.serialization.json.Json
 import lei.greg.GregUtils.PLAYER_UUID
 import lei.greg.Utils
 import lei.greg.config.ConfigManager
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.minecraft.client.network.ClientCommandSource
 import net.minecraft.command.CommandSource
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
@@ -18,8 +22,6 @@ import java.net.http.WebSocket
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-// todo use secure socket (i cba rn)
-
 @Serializable
 data class DiscordMessage(val name: String = "", val message: String, val channel_name: String = "", val guild: String = "", val type: String, val available_channels: List<String> = emptyList())
 
@@ -27,15 +29,15 @@ object DiscordChat {
 
     private val client: HttpClient = HttpClient.newHttpClient()
     private var webSocket: WebSocket? = null
-    private val url = "ws://fi15.bot-hosting.net:26529"
+    private val url = "wss://awawa.fluffy-paws.dev"
     private var availableChannels = emptyList<String>()
     private var isCommandRegistered = false
 
     fun register() {
-        if (!ConfigManager.getBool("fkl discord bridge")) return
+        if (!ConfigManager.getBool("fkl discord bridge") || !ConfigManager.getBool("master toggle")) return
         Utils.discordMessage("info", "Connecting...")
         connect(PLAYER_UUID) { payload ->
-            if (ConfigManager.getBool("fkl discord bridge")) {
+            if (ConfigManager.getBool("fkl discord bridge") || ConfigManager.getBool("master toggle")) {
                 handlePayload(payload)
             }
         }
@@ -111,6 +113,7 @@ object DiscordChat {
 
                 if (!isCommandRegistered) {
                     registerMessageCommand()
+                    isCommandRegistered = true
                 }
             }
 
@@ -121,14 +124,12 @@ object DiscordChat {
     }
 
     private fun registerMessageCommand() {
-        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+        ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
             dispatcher.register(
-                CommandManager.literal("d")
-                    .then(CommandManager.argument("channel", StringArgumentType.string())
-                        .suggests { _, builder ->
-                            CommandSource.suggestMatching(availableChannels, builder)
-                        }
-                        .then(CommandManager.argument("message", StringArgumentType.greedyString())
+                ClientCommandManager.literal("d")
+                    .then(ClientCommandManager.argument("channel", StringArgumentType.string())
+                        .suggests { _, builder -> CommandSource.suggestMatching(availableChannels, builder) }
+                        .then(ClientCommandManager.argument("message", StringArgumentType.greedyString())
                             .executes { context -> sendMessageCommand(context) }
                         )
                     )
@@ -137,7 +138,7 @@ object DiscordChat {
     }
 
     @Suppress("SameReturnValue")
-    private fun sendMessageCommand(context: CommandContext<ServerCommandSource>): Int {
+    private fun sendMessageCommand(context: CommandContext<FabricClientCommandSource>): Int {
         val msg = StringArgumentType.getString(context, "message")
         val channel = StringArgumentType.getString(context, "channel")
 

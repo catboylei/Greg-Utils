@@ -8,6 +8,8 @@ import java.io.FileOutputStream
 import java.nio.file.Files
 import java.util.*
 
+// todo add the ability to hide contents of text fields (for passwords)
+
 // owoconfig hates me and so does every other option
 // so this is what we are doing now <3
 

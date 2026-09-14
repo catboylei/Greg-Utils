@@ -18,6 +18,8 @@ import java.net.http.WebSocket
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
+// TODO: clean up this slop and use kotlinx serialization more (stop string interpolating json)
+
 @Serializable
 data class DiscordMessage(val name: String = "", val message: String, val channel_name: String = "", val guild: String = "", val type: String, val available_channels: List<String> = emptyList())
 

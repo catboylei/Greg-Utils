@@ -17,6 +17,10 @@ import net.minecraft.text.Text
 // this file probably contains a lot of spaghetti code, you may PR and try to fix it lol
 class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("ui-model"))) {
 
+    private val hiddenFields = setOf(
+        "fkl password"
+    )
+
     override fun build(rootComponent: StackLayout) {
         updateTopBar(rootComponent)
         updateEntries(rootComponent)
@@ -139,6 +143,13 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
                 }
                 component.text(ConfigManager.getString(configId))
                 component.setPlaceholder(Text.literal("Input..."))
+
+                // hide inputs in configIds listed
+                if (configId in hiddenFields) {
+                    component.addFormatter { text, _ ->
+                        Text.literal("#".repeat(text.length)).asOrderedText()
+                    }
+                }
             } else if (component is FlowLayout) {
                 component.surface {ctx, component ->
                     fieldRendering(ctx, component as FlowLayout)

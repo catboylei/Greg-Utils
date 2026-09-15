@@ -1,16 +1,15 @@
 package lei.greg.features
 
 import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.context.CommandContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import lei.greg.GregUtils
 import lei.greg.GregUtils.PLAYER_UUID
 import lei.greg.Utils
 import lei.greg.config.ConfigManager
 import lei.greg.utils.Scheduler
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.command.CommandSource
 import java.net.URI
 import java.net.http.HttpClient
@@ -18,42 +17,51 @@ import java.net.http.WebSocket
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-// TODO: clean up this slop and use kotlinx serialization more (stop string interpolating json)
+// serializable json objects
+@Serializable data class OutgoingAuthPayload(val uuid: String, val password: String)
+@Serializable data class OutgoingMessagePayload(val message: String, val channel: String)
 
-@Serializable
-data class DiscordMessage(val name: String = "", val message: String, val channel_name: String = "", val guild: String = "", val type: String, val available_channels: List<String> = emptyList())
+@Serializable data class IncomingChatMessage(val name: String, val message: String, val channelName: String, val guild: String, val type: String)
+@Serializable data class IncomingInfoPayload(val message: String, val type: String)
+@Serializable data class IncomingConnectSuccessPayload(val message: String, val type: String, val availableChannels: List<String>)
+
+@Serializable data class PayloadEnvelope(val type: String) // used to determine which data class to serialize into
 
 object DiscordChat {
 
+    private const val URL = "wss://awawa.fluffy-paws.dev"
+    private const val RECONNECT_DELAY_TICKS = 40
     private val client: HttpClient = HttpClient.newHttpClient()
+
     private var webSocket: WebSocket? = null
-    private val url = "wss://awawa.fluffy-paws.dev"
     private var availableChannels = emptyList<String>()
     private var isCommandRegistered = false
     private var isLoggedIn = false
 
     fun register() {
-        if (!ConfigManager.getBool("fkl discord bridge") || !ConfigManager.getBool("master toggle")) return
+        if (!isEnabled()) return
+
         Utils.discordMessage("info", "Connecting...")
-        connect(PLAYER_UUID) { payload ->
-            if (ConfigManager.getBool("fkl discord bridge") && ConfigManager.getBool("master toggle")) {
-                handlePayload(payload)
-            }
-        }
+        connect(PLAYER_UUID) { payload -> if (isEnabled()) { handlePayload(payload) } }
     }
 
-    // connects to the hardcoded url, sends auth then listens forever calling onMessage on each
+    // connects to url, sends auth then listens calling onMessage on each
     private fun connect(uuid: String, onMessage: (String) -> Unit): CompletableFuture<WebSocket> {
         val messageBuilder = StringBuilder()
 
         val listener = object : WebSocket.Listener {
 
+            // on connection opened send auth
             override fun onOpen(webSocket: WebSocket) {
-                println("BotSocket: onOpen fired, sending auth")
-                webSocket.sendText("{\"uuid\": \"$uuid\", \"password\": \"${ConfigManager.getString("fkl password")}\"}", true)
-                webSocket.request(1)
+                GregUtils.LOGGER.info("GregBridge: onOpen fired, sending auth")
+
+                val auth = OutgoingAuthPayload(uuid, ConfigManager.getString("fkl password")!!) // NOTE: should be non-null but to be monitored
+                webSocket.sendText(Json.encodeToString(OutgoingAuthPayload.serializer(), auth), true) // bypasses send wrapper (intentional)
+
+                webSocket.request(1) // listens for sent data
             }
 
+            // on receive text from websocket, call onMessage on it
             override fun onText(webSocket: WebSocket, data: CharSequence, last: Boolean): CompletionStage<*> {
                 messageBuilder.append(data)
                 if (last) {
@@ -66,52 +74,51 @@ object DiscordChat {
             }
 
             override fun onError(webSocket: WebSocket, error: Throwable) {
-                println("BotSocket: onError fired")
+                GregUtils.LOGGER.warn("GregBridge: onError fired")
                 error.printStackTrace()
             }
 
             override fun onClose(webSocket: WebSocket, statusCode: Int, reason: String): CompletionStage<*> {
-                if (ConfigManager.getBool("fkl discord bridge") && ConfigManager.getBool("master toggle") && isLoggedIn) {
+                GregUtils.LOGGER.info("GregBridge: onClose fired: $statusCode $reason")
+
+                // auto reconnect on unexpected disconnect
+                if (isEnabled() && isLoggedIn) {
                     Utils.discordMessage("info", "Disconnected unexpectedly, reconnecting soon...")
-                    println("BotSocket: onClose fired: $statusCode $reason")
-                    Scheduler.schedule(40) {
-                        register()
-                    }
+                    Scheduler.schedule(RECONNECT_DELAY_TICKS) { register() }
                 } else {
                     Utils.discordMessage("info", "Disconnected")
-                    println("BotSocket: onClose fired: $statusCode $reason")
                 }
 
+                // clean up but keep isLoggedIn to true (because auth is still correct)
                 DiscordChat.webSocket = null
                 return CompletableFuture.completedFuture(null)
             }
         }
 
         return client.newWebSocketBuilder()
-            .buildAsync(URI.create(url), listener)
+            .buildAsync(URI.create(URL), listener)
             .thenApply { ws -> webSocket = ws; ws }
             .whenComplete { _, throwable ->
+                // if unexpected https response (usually server offline or rebooting)
                 if (throwable != null) {
-                    println("BotSocket: connect FAILED")
                     throwable.printStackTrace()
+                    GregUtils.LOGGER.error("GregBridge: connect FAILED")
 
-                    Utils.discordMessage(
-                        "info",
-                        "Connection failed, is server offline?"
-                    )
+                    Utils.discordMessage("info", "Connection failed, is server offline?")
 
                     webSocket = null
+                    isLoggedIn = false
                 }
             }
     }
 
+    // wrapper on send used for outbound discord messages
     private fun send(msg: String) {
-        if (!ConfigManager.getBool("fkl discord bridge")) {
-            Utils.discordMessage("info", "enable the bridge feature you goober")
-        } else if (webSocket == null) {
-            Utils.discordMessage("info", "Not connected, is your account linked ?")
-        } else if (ConfigManager.getBool("fkl discord bridge")) {
-            webSocket?.sendText(msg, true)
+        val socket = webSocket
+        when {
+            !isEnabled() -> Utils.discordMessage("info", "enable the bridge feature you goober")
+            !isLoggedIn || socket == null -> Utils.discordMessage("info", "Not connected, is your account linked ?")
+            else -> socket.sendText(msg, true)
         }
     }
 
@@ -120,50 +127,77 @@ object DiscordChat {
         webSocket = null
     }
 
+    private fun isEnabled(): Boolean {
+        return ConfigManager.getBool("fkl discord bridge") && ConfigManager.getBool("master toggle")
+    }
+
+    private val json = Json { ignoreUnknownKeys = true } // not-strict json instance (for the envelope)
+
+    // tries serializing payload as every serializable defined
     private fun handlePayload(payload: String) {
+
         try {
-            val msg = Json.decodeFromString<DiscordMessage>(payload)
+            // match type with its associated format (strict)
+            // this could be simplified but its very verbose so that we can easily add stuff <3
+            when (val type = json.decodeFromString<PayloadEnvelope>(payload).type) {
+                "info" -> {
+                    val msg = Json.decodeFromString<IncomingInfoPayload>(payload)
 
-            if (msg.available_channels.isNotEmpty()) {
-                availableChannels = msg.available_channels
-                isLoggedIn = true
-
-                if (!isCommandRegistered) {
-                    registerMessageCommand()
-                    isCommandRegistered = true
+                    Utils.discordMessage("info", msg.message)
                 }
-            }
+                "chat" -> {
+                    val msg = Json.decodeFromString<IncomingChatMessage>(payload)
 
-            if (msg.message == "Invalid login credentials.") {
-                isLoggedIn = false
-            }
+                    Utils.discordMessage("chat", msg.message, msg.name, msg.channelName)
+                }
+                "raid" -> {
+                    val msg = Json.decodeFromString<IncomingChatMessage>(payload) // same fields as chat msg
 
-            Utils.discordMessage(msg.type, msg.message, msg.name, msg.channel_name)
-        } catch (e: Exception) {
-            Utils.discordMessage("info", payload) // if not serializable just print it in chat as info
-        }
+                    Utils.discordMessage("raid", msg.message, msg.name)
+                }
+                "connectionSuccess" -> {
+                    val msg = Json.decodeFromString<IncomingConnectSuccessPayload>(payload)
+
+                    availableChannels = msg.availableChannels
+                    isLoggedIn = true
+
+                    if (!isCommandRegistered) { registerMessageCommand() }
+
+                    Utils.discordMessage("info", msg.message)
+                }
+                "connectionFail" -> {
+                    val msg = Json.decodeFromString<IncomingInfoPayload>(payload) // same fields as info msg
+
+                    isLoggedIn = false
+
+                    Utils.discordMessage("info", msg.message)
+                }
+                else -> { GregUtils.LOGGER.warn("GregBridge: unknown type \"$type\" on payload \"$payload\"") }
+            }
+        } catch (e: Exception) { GregUtils.LOGGER.warn("Failed to serialize payload \"$payload\": $e") }
     }
 
     private fun registerMessageCommand() {
+        isCommandRegistered = true
+
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
             dispatcher.register(
                 ClientCommandManager.literal("d")
                     .then(ClientCommandManager.argument("channel", StringArgumentType.string())
                         .suggests { _, builder -> CommandSource.suggestMatching(availableChannels, builder) }
                         .then(ClientCommandManager.argument("message", StringArgumentType.greedyString())
-                            .executes { context -> sendMessageCommand(context) }
+                            .executes { context ->
+                                val msg = StringArgumentType.getString(context, "message")
+                                val channel = StringArgumentType.getString(context, "channel")
+
+                                val payload = OutgoingMessagePayload(msg, channel)
+                                send(Json.encodeToString(OutgoingMessagePayload.serializer(), payload))
+
+                                return@executes 1
+                            }
                         )
                     )
             )
         }
-    }
-
-    @Suppress("SameReturnValue")
-    private fun sendMessageCommand(context: CommandContext<FabricClientCommandSource>): Int {
-        val msg = StringArgumentType.getString(context, "message")
-        val channel = StringArgumentType.getString(context, "channel")
-
-        send(" {\"message\": \"$msg\", \"channel\": \"$channel\"}")
-        return 1
     }
 }

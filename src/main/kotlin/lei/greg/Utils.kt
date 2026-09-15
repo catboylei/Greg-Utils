@@ -117,7 +117,7 @@ object Utils {
             } else return@execute
 
             client.inGameHud.chatHud.addMessage(Text.empty()
-                .append(Text.literal("  "))
+                .append(Text.literal("   "))
                 .append(discordPill)
                 .append(msg)
             )

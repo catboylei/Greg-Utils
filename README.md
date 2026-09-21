@@ -29,7 +29,40 @@ obviously many more planned eventually
 - client-side FKL discord bridge
 - Tree Path highlight
 - very cool gui
-- much more planned
+
+## How to enable the bridge 
+
+<details>
+<summary>Tutorial</summary>
+
+> [!TIP]
+> Make sure to run discord commands in #bot-channel !
+
+1. Link your account on awawa
+
+    Run `f!linkMe <ign>`, then join the specified wynncraft world.*
+
+    <img src="assets/linkMe.png" width="30%">
+
+    <sub><i>*Do note that you may have to wait on the API.</i></sub>
+
+2. Request your password
+
+    Now run `f!resetPassword` for the bot to generate you a new personal key.
+
+    <img src="assets/resetpassword.png" width="30%">
+
+3. Input your password into the mod
+
+    Now just enter that password into the mod, and you are done! \
+    (go into the Random category and paste the password into the password field)
+
+    <img src="assets/modgui.png" width="50%">
+
+> [!IMPORTANT]
+> This will NEVER ask for any email address or external passwords/codes. We only use the internal awawa password as to manage who has access to the bridge.
+
+</details>
 
 ## Back-end
 

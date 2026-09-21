@@ -32,12 +32,13 @@ obviously many more planned eventually
 
 ## How to enable the bridge 
 
+> [!IMPORTANT]
+> This will NEVER ask for any email address or external passwords/codes. We only use the internal awawa password as to manage who has access to the bridge.
+
 <details>
 <summary>Tutorial</summary>
 
-> [!TIP]
-> 
-> Make sure to run discord commands in #bot-channel !
+<sub><i>Make sure to run discord commands in #bot-channel !</i></sub>
 
 1. Link your account on awawa
 
@@ -59,10 +60,6 @@ obviously many more planned eventually
     (go into the Random category and paste the password into the password field)
 
     <img src="assets/modgui.png" width="50%">
-
-> [!IMPORTANT]
->
-> This will NEVER ask for any email address or external passwords/codes. We only use the internal awawa password as to manage who has access to the bridge.
 
 </details>
 

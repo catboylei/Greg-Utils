@@ -36,6 +36,7 @@ obviously many more planned eventually
 <summary>Tutorial</summary>
 
 > [!TIP]
+> 
 > Make sure to run discord commands in #bot-channel !
 
 1. Link your account on awawa
@@ -60,6 +61,7 @@ obviously many more planned eventually
     <img src="assets/modgui.png" width="50%">
 
 > [!IMPORTANT]
+>
 > This will NEVER ask for any email address or external passwords/codes. We only use the internal awawa password as to manage who has access to the bridge.
 
 </details>

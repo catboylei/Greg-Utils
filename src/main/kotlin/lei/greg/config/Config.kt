@@ -8,8 +8,6 @@ import java.io.FileOutputStream
 import java.nio.file.Files
 import java.util.*
 
-// TODO: add the ability to hide contents of text fields (for passwords)
-
 // custom persistent storage config manager using .properties
 // i did this because owoconfig hates me personally
 
@@ -66,12 +64,12 @@ object ScreenEntries {
         SettingEntry("bool", "Show Chat", "whether to display messages \nfrom discord chats", "bridge chat", "Random"),
         SettingEntry("bool", "Use unsecured socket", "\"less secure\" \ndoesnt disconnect you", "use unsecured socket", "Random"),
 
-        // boss
+        // boss/watched
+        SettingEntry("separator", "Watched", "", "", "Gregory Bossfight"),
         // i wanted to make this a dropdown with "none, chat, title, both" but im scawed
-        SettingEntry("bool", "Watched visualiser", "Should watched sounds be \ndisplayed as visual cue?", "watched visualiser", "Gregory Bossfight"),
-        SettingEntry("bool", "Watched in chat", "Shows watched cue \nas chat message", "watched chat", "Gregory Bossfight"),
-        SettingEntry("bool", "Watched title", "Shows watched cue \nas biiig title", "watched title", "Gregory Bossfight"),
-
+        SettingEntry("bool", "Watched visualiser", "Should watched sounds be displayed \nas visual cue?", "watched visualiser", "Gregory Bossfight"),
+        SettingEntry("bool", "Watched in chat", "Shows watched cue as chat message", "watched chat", "Gregory Bossfight"),
+        SettingEntry("bool", "Watched title", "Shows watched cue as biiig title", "watched title", "Gregory Bossfight"),
     )
 }
 

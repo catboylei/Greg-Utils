@@ -28,6 +28,7 @@ obviously many more planned eventually
 
 - client-side FKL discord bridge
 - Tree Path highlight
+- Watched beam progress
 - very cool gui
 
 ## How to enable the bridge 
@@ -73,7 +74,7 @@ eventually these will be made into public helpers so you can reference them from
 
 ## Credits
 
-- @citr_n for discord back-end
+- [@citr_n](https://github.com/Citrnn)
 - [more-outlines](https://github.com/burneikis/more-outlines) for inspiring the block highlight
 - [FKL discord](https://discord.gg/CN4GfgXZMm)
 

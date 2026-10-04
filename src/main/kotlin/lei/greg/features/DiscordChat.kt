@@ -30,7 +30,7 @@ import java.util.concurrent.CompletionStage
 object DiscordChat {
 
     private const val URL = "wss://awawa.fluffy-paws.dev"
-    private const val unsecuredURL = "ws://fi15.bot-hosting.net:26529"
+    private const val UNSECURED_URL = "ws://fi15.bot-hosting.net:26529"
     private const val RECONNECT_DELAY_TICKS = 40
     private val client: HttpClient = HttpClient.newHttpClient()
 
@@ -42,7 +42,8 @@ object DiscordChat {
     fun register() {
         if (!isEnabled()) return
 
-        Utils.discordMessage("info", "Connecting...")
+        GregUtils.LOGGER.info("Connecting...")
+        //Utils.discordMessage("info", "Connecting...")
         connect(PLAYER_UUID) { payload -> if (isEnabled()) { handlePayload(payload) } }
     }
 
@@ -84,10 +85,12 @@ object DiscordChat {
 
                 // auto reconnect on unexpected disconnect
                 if (isEnabled() && isLoggedIn) {
-                    Utils.discordMessage("info", "Disconnected unexpectedly, reconnecting soon...")
+                    GregUtils.LOGGER.warn("Disconnected unexpectedly, reconnecting soon...")
+                    //Utils.discordMessage("info", "Disconnected unexpectedly, reconnecting soon...")
                     Scheduler.schedule(RECONNECT_DELAY_TICKS) { register() }
                 } else {
-                    Utils.discordMessage("info", "Disconnected")
+                    GregUtils.LOGGER.warn("Disconnected")
+                    //Utils.discordMessage("info", "Disconnected")
                 }
 
                 // clean up but keep isLoggedIn to true (because auth is still correct)
@@ -95,7 +98,7 @@ object DiscordChat {
                 return CompletableFuture.completedFuture(null)
             }
         }
-        val urlToUse = if (!ConfigManager.getBool("use unsecured socket")) URL else unsecuredURL
+        val urlToUse = if (!ConfigManager.getBool("use unsecured socket")) URL else UNSECURED_URL
         return client.newWebSocketBuilder()
             .buildAsync(URI.create(urlToUse), listener)
             .thenApply { ws -> webSocket = ws; ws }

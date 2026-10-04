@@ -30,6 +30,7 @@ import java.util.concurrent.CompletionStage
 object DiscordChat {
 
     private const val URL = "wss://awawa.fluffy-paws.dev"
+    private const val unsecuredURL = "ws://fi15.bot-hosting.net:26529"
     private const val RECONNECT_DELAY_TICKS = 40
     private val client: HttpClient = HttpClient.newHttpClient()
 
@@ -94,9 +95,9 @@ object DiscordChat {
                 return CompletableFuture.completedFuture(null)
             }
         }
-
+        val urlToUse = if (!ConfigManager.getBool("use unsecured socket")) URL else unsecuredURL
         return client.newWebSocketBuilder()
-            .buildAsync(URI.create(URL), listener)
+            .buildAsync(URI.create(urlToUse), listener)
             .thenApply { ws -> webSocket = ws; ws }
             .whenComplete { _, throwable ->
                 // if unexpected https response (usually server offline or rebooting)

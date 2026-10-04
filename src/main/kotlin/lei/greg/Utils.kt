@@ -93,6 +93,17 @@ object Utils {
         }
     }
 
+    // w name?
+    fun notifyTitle(title: String = "", subtitle: String = "", fadeInTicks: Int = 0, stayTicks :Int=10, fadeOutTicks :Int = 0) {
+        val client = MinecraftClient.getInstance()
+        client.execute {
+            val hud = client.inGameHud
+            hud.setTitleTicks(fadeInTicks, stayTicks, fadeOutTicks)
+            hud.setTitle(Text.literal(title))
+            hud.setSubtitle(Text.literal(subtitle))
+        }
+    }
+
     fun discordMessage(type: String, message: String, player: String = "", channel: String = "") {
         val client = MinecraftClient.getInstance()
         client.execute {

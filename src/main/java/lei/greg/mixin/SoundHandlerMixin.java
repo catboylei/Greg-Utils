@@ -1,6 +1,6 @@
 package lei.greg.mixin;
 
-import RandomUtils.Debouncer;
+import lei.greg.utils.Debouncer;
 import lei.greg.events.*;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class SoundHandlerMixin {
-    @Unique private final Debouncer watchedBeamDebounce = new Debouncer();
-
+    @Unique
+    private final Debouncer watchedBeamDebounce = new Debouncer();
 
     @Inject(method = "onPlaySound", at = @At("HEAD"))
     private void onPlaySound(PlaySoundS2CPacket packet, CallbackInfo ci) {
@@ -23,15 +23,14 @@ public class SoundHandlerMixin {
         Identifier soundId = sound.id();
         float pitch = packet.getPitch();
 
-        if (soundId.toString().equals("minecraft:entity.evoker.prepare_summon") && watchedBeamDebounce.canFire()){
-            if (checkPitch(pitch, 1.0f)){
+        if (soundId.toString().equals("minecraft:entity.evoker.prepare_summon") && watchedBeamDebounce.canFire()) {
+            if (checkPitch(pitch, 1.0f)) {
                 TnaWatchedBeam.Companion.getEVENT().invoker().onBeam(1);
-            }
-            else if (checkPitch(pitch, 1.5f)){
+            } else if (checkPitch(pitch, 1.5f)) {
                 TnaWatchedBeam.Companion.getEVENT().invoker().onBeam(2);
             }
         }
-        if(soundId.toString().equals("minecraft:item.trident.thunder") && watchedBeamDebounce.canFire()){
+        if (soundId.toString().equals("minecraft:item.trident.thunder") && watchedBeamDebounce.canFire()) {
             if (checkPitch(pitch, 0.8f)) {
                 TnaWatchedBeam.Companion.getEVENT().invoker().onBeam(3);
             }
@@ -39,7 +38,8 @@ public class SoundHandlerMixin {
     }
 
     // maybe this wouldnt be needed if i used doubles everywhere i think but i like the word float so ill keep using it
-    private boolean checkPitch(float pitch, float value){
+    // lei note: i wanna kill citron with hammers for this ^
+    private boolean checkPitch(float pitch, float value) {
         return Math.abs(pitch - value) < 0.01f;
     }
 }

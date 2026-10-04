@@ -21,7 +21,7 @@ object WatchedVisualiser {
             if (!ConfigManager.getBool("master toggle") || !ConfigManager.getBool("watched visualiser")) return@register
 
             if(ConfigManager.getBool("watched chat")) {
-                notifyChat("§fBeam " + beamNr)
+                notifyChat("§fBeam $beamNr")
             }
 
             if(ConfigManager.getBool("watched title")) {

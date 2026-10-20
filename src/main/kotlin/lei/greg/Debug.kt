@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import lei.greg.config.ConfigManager
 import lei.greg.features.DiscordChat
+import lei.greg.backend.Backend
 import lei.greg.highlights.Highlights
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.argument.Vec3ArgumentType
@@ -19,6 +20,7 @@ import net.minecraft.util.math.BlockPos
 object Debug {
     fun register() {
         registerHighlightCommand()
+		registerBackendRelogCommand()
         registerConfigCommand()
     }
 
@@ -66,6 +68,15 @@ object Debug {
             )
         }
     }
+
+	private fun registerBackendRelogCommand() {
+        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+            dispatcher.register(
+                CommandManager.literal("awawa_reconnect")
+                    .executes { Backend.reconnect(); 1 }
+            )
+        }
+	}
 
     @Suppress("SameReturnValue")
     private fun configCommand(context: CommandContext<ServerCommandSource>): Int {

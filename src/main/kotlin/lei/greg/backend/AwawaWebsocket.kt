@@ -69,6 +69,7 @@ object Backend {
 	fun reconnect() {
 		if (!shouldReconnect) return // close() may have been called during the delay
 		GregUtils.LOGGER.info("Reconnecting...")
+		if (webSocket != null) close()
 		connect(PLAYER_UUID)
 	}
 

@@ -102,6 +102,8 @@ object Utils {
         }
     }
 
+
+	// TODO: remove info thingy here and add its style to notifyChat
     fun discordMessage(type: String, message: String, player: String = "", channel: String = "") {
         val client = MinecraftClient.getInstance()
         client.execute {

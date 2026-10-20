@@ -107,15 +107,6 @@ object ConfigManager {
         save()
 
         GregUtils.LOGGER.info("saved key $key to value $value")
-
-        // TODO: maybe generalise this as a helper
-        if (key == "fkl discord bridge") {
-            if (value.toBoolean()) {
-                DiscordChat.register()
-            } else {
-                DiscordChat.close()
-            }
-        }
     }
 
     fun getString(key: String): String? = properties.getProperty(key)

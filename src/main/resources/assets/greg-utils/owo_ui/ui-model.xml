@@ -313,6 +313,57 @@
                 </margins>
             </flow-layout>
         </template>
+
+        <template name="entry-button">
+            <flow-layout direction="horizontal">
+                <children>
+                    <flow-layout direction="vertical">
+                        <children>
+                            <label>
+                                <text>{{title}}</text>
+                                <color>#e66aff</color>
+                                <margins>
+                                    <top>1</top>
+                                    <left>4</left>
+                                </margins>
+                            </label>
+                            <label name="desc-{{configId}}">
+                                <text>{{desc}}</text>
+                                <color>#bfbfbf</color>
+                                <margins>
+                                    <left>8</left>
+                                </margins>
+                            </label>
+                        </children>
+                        <sizing>
+                            <horizontal method="fixed">216</horizontal>
+                            <vertical method="fixed">38</vertical>
+                        </sizing>
+                        <vertical-alignment>center</vertical-alignment>
+                        <padding>
+                            <left>8</left>
+                        </padding>
+                        <gap>2</gap>
+                    </flow-layout>
+
+                    <button id="{{configId}}">
+                        <text>Run</text>
+                        <sizing>
+                            <horizontal method="fixed">16</horizontal>
+                            <vertical method="fixed">17</vertical>
+                        </sizing>
+                        <margins>
+                            <top>2</top>
+                        </margins>
+                    </button>
+                </children>
+                <sizing>
+                    <horizontal method="fixed">248</horizontal>
+                    <vertical method="fixed">45</vertical>
+                </sizing>
+                <vertical-alignment>center</vertical-alignment>
+            </flow-layout>
+        </template>
     </templates>
 
 </owo-ui>

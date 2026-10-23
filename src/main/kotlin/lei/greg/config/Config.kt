@@ -1,6 +1,7 @@
 package lei.greg.config
 
 import lei.greg.GregUtils
+import lei.greg.backend.Backend
 import lei.greg.features.DiscordChat
 import net.fabricmc.loader.api.FabricLoader
 import java.io.FileInputStream
@@ -46,6 +47,9 @@ object ScreenEntries {
         SettingEntry("separator", "General", "", "", "General Settings"),
         SettingEntry("bool", "Enable Greg Utils", "Toggles whether the mod should be \nactive or not", "master toggle", "General Settings"),
         SettingEntry("bool", "Debug Mode", "", "debug mode", "General Settings"),
+        // TODO: implement live status here !
+        // also make fkl category here and move the password too
+        SettingEntry("button", "Backend Connection", "Awawa status: UNKNOWN \nnot implemented lol", "reconnect backend", "General Settings"),
 
         // general/highlights
         SettingEntry("separator", "Highlights", "", "", "General Settings"),
@@ -70,6 +74,13 @@ object ScreenEntries {
         SettingEntry("bool", "Watched visualiser", "Should watched sounds be displayed \nas visual cue?", "watched visualiser", "Gregory Bossfight"),
         SettingEntry("bool", "Watched in chat", "Shows watched cue as chat message", "watched chat", "Gregory Bossfight"),
         SettingEntry("bool", "Watched title", "Shows watched cue as biiig title", "watched title", "Gregory Bossfight"),
+    )
+}
+
+// ties button configIds to the function they should execute
+object ConfigActions {
+    val actions: Map<String, () -> Unit> = mapOf(
+        "reconnect backend" to  { Backend.reconnect() },
     )
 }
 

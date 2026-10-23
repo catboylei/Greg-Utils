@@ -17,7 +17,6 @@ import java.net.http.WebSocket
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-// TODO: hey so i wrote this without wifi so i couldnt run gradle to test it surely it works (todo check)
 // TODO: add a button to the settings that shows connection status and lets you reconnect
 // like just an entry that goes Backend status: CONNECTED | OFFLINE with colors and shows a button to connect if its offline
 
@@ -65,13 +64,19 @@ object Backend {
         connect(PLAYER_UUID)
     }
 
-	// no hooks, no flag changes
-	fun reconnect() {
-		if (!shouldReconnect) return // close() may have been called during the delay
-		GregUtils.LOGGER.info("Reconnecting...")
-		if (webSocket != null) close()
-		connect(PLAYER_UUID)
-	}
+    // manual
+    fun reconnect() {
+        close()
+        shouldReconnect = true
+        connect(PLAYER_UUID)
+    }
+
+    // automatic
+    private fun autoReconnect() {
+        if (!shouldReconnect || webSocket != null) return
+        GregUtils.LOGGER.info("Reconnecting...")
+        connect(PLAYER_UUID)
+    }
 
     private fun connect(uuid: String): CompletableFuture<WebSocket> {
         val messageBuilder = StringBuilder()
@@ -103,14 +108,18 @@ object Backend {
             override fun onClose(webSocket: WebSocket, statusCode: Int, reason: String): CompletionStage<*> {
                 GregUtils.LOGGER.info("GregBridge: onClose fired: $statusCode $reason")
 
-                if (shouldReconnect && isLoggedIn) {
+                if (Backend.webSocket !== webSocket) return CompletableFuture.completedFuture(null)
+
+                val wasLoggedIn = isLoggedIn
+                Backend.webSocket = null
+                isLoggedIn = false
+
+                if (shouldReconnect && wasLoggedIn) {
                     GregUtils.LOGGER.warn("Disconnected unexpectedly, reconnecting soon...")
-                    Scheduler.schedule(RECONNECT_DELAY_TICKS) { reconnect() }
+                    Scheduler.schedule(RECONNECT_DELAY_TICKS) { autoReconnect() }
                 } else {
                     GregUtils.LOGGER.warn("Disconnected")
                 }
-
-                Backend.webSocket = null
                 return CompletableFuture.completedFuture(null)
             }
         }
@@ -141,9 +150,14 @@ object Backend {
 
     fun close() {
         shouldReconnect = false
+        isLoggedIn = false
         webSocket?.sendClose(WebSocket.NORMAL_CLOSURE, "bye")
         webSocket = null
     }
+
+	fun isOnline(): Boolean {
+		return webSocket != null
+	}
 
     // websocket callbacks are not on the client thread
     private fun dispatch(block: () -> Unit) = MinecraftClient.getInstance().execute(block)

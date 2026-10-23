@@ -120,6 +120,13 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
         NinePatchTexture.draw(texture, ctx, component)
     }
 
+    // TODO: make window opening texture for the other button
+    private fun actionButtonRendering(ctx: OwoUIGraphics, component: ButtonComponent) {
+        val texture = if (component.isHovered) GregUtils.id("refresh-button-hovered")
+        else GregUtils.id("refresh-button")
+        NinePatchTexture.draw(texture, ctx, component.x, component.y, component.width, component.height)
+    }
+
     private fun getEntry(title: String, desc: String, configId: String, type: String): FlowLayout {
         val entry = model.expandTemplate(
             FlowLayout::class.java,
@@ -130,7 +137,15 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
         }
         entry.forEachDescendant { component ->
             if (component.id() != configId) return@forEachDescendant
-            if (component is ButtonComponent) {
+            if (component is ButtonComponent && type == "button") {
+                val action = ConfigActions.actions[configId]
+                component.setMessage(Text.empty())
+                component.renderer { ctx, btn, _ -> actionButtonRendering(ctx, btn) }
+                component.onPress {
+                    if (action == null) GregUtils.LOGGER.warn("No action registered for \"$configId\"")
+                    else action()
+                }
+            } else if (component is ButtonComponent) {
                 component.renderer { ctx, component, _ ->
                     switchRendering(ctx, component)
                 }

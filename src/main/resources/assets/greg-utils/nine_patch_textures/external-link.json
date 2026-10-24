@@ -1,0 +1,15 @@
+{
+  "texture": "greg-utils:textures/external-link.png",
+  "texture_width": 18,
+  "texture_height": 36,
+  "repeat": false,
+  "v": 0,
+  "corner_patch_size": {
+    "width": 4,
+    "height": 4
+  },
+  "center_patch_size": {
+    "width": 10,
+    "height": 10
+  }
+}

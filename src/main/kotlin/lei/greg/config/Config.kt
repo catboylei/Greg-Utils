@@ -53,6 +53,7 @@ object ScreenEntries {
         SettingEntry("separator", "FKL", "", "", "General Settings"),
         SettingEntry("field", "FKL Bridge Password", "Your personal FKL password \nrequest with \"f!resetPassword\"", "fkl password", "General Settings"),
         SettingEntry("button", "Backend Connection", "Status: N/A", "reconnect backend", "General Settings"),
+        SettingEntry("bool", "Use unsecured socket", "\"less secure\" \ndoesnt disconnect you", "use unsecured socket", "General Settings"),
 
         // general/other
         SettingEntry("separator", "Other", "", "", "General Settings"),
@@ -69,7 +70,10 @@ object ScreenEntries {
         SettingEntry("bool", "FKL Bridge", "bridge to fkl discord \nneed to be in the guild and linked", "fkl discord bridge", "Random"),
         SettingEntry("bool", "Raid Pings", "whether to show raid pings \nfrom discord", "raid pings", "Random"),
         SettingEntry("bool", "Show Chat", "whether to display messages \nfrom discord chats", "bridge chat", "Random"),
-        SettingEntry("bool", "Use unsecured socket", "\"less secure\" \ndoesnt disconnect you", "use unsecured socket", "Random"),
+
+        // random/fkl annie
+        SettingEntry("separator", "FKL Annie", "", "", "Random"),
+        SettingEntry("button", "Annie Parties", "View parties and sign up --->", "open annie", "Random"),
 
         // boss/watched
         SettingEntry("separator", "Watched", "", "", "Gregory Bossfight"),

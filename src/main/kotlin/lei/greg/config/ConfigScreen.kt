@@ -142,10 +142,12 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
         NinePatchTexture.draw(texture, ctx, component)
     }
 
-    // TODO: make window opening texture for the other button
     private fun actionButtonRendering(ctx: OwoUIGraphics, component: ButtonComponent) {
-        val texture = if (component.isHovered) GregUtils.id("refresh-button-hovered")
-        else GregUtils.id("refresh-button")
+        // TODO: what is that please get rid of it
+        val type = if (component.width == 16) "refresh-button" else "external-link" // i lwk dont even know anymore
+
+        val texture = if (component.isHovered) GregUtils.id("$type-hovered")
+        else GregUtils.id(type)
         NinePatchTexture.draw(texture, ctx, component.x, component.y, component.width, component.height)
     }
 
@@ -166,6 +168,10 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
         entry.forEachDescendant { component ->
             if (component.id() != configId) return@forEachDescendant
             if (component is ButtonComponent && type == "button") {
+                if (configId == "reconnect backend") {
+                    component.width = 16
+                    component.height = 17
+                }
                 val action = ConfigActions.actions[configId]
                 component.setMessage(Text.empty())
                 component.renderer { ctx, btn, _ -> actionButtonRendering(ctx, btn) }

@@ -349,8 +349,8 @@
                     <button id="{{configId}}">
                         <text>Run</text>
                         <sizing>
-                            <horizontal method="fixed">16</horizontal>
-                            <vertical method="fixed">17</vertical>
+                            <horizontal method="fixed">18</horizontal>
+                            <vertical method="fixed">18</vertical>
                         </sizing>
                         <margins>
                             <top>2</top>

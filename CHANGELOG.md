@@ -3,6 +3,7 @@
 ### Added 
 - Button entry type
 - Backend status display and reconnect button
+- Button to open annie gui
 
 ### Changed
 - Generalized backend (not just discord)

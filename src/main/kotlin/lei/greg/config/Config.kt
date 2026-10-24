@@ -2,8 +2,9 @@ package lei.greg.config
 
 import lei.greg.GregUtils
 import lei.greg.backend.Backend
-import lei.greg.features.DiscordChat
+import lei.greg.subScreens.AnnieSubScreen
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.MinecraftClient
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import java.io.FileInputStream
@@ -88,6 +89,7 @@ object ScreenEntries {
 object ConfigActions {
     val actions: Map<String, () -> Unit> = mapOf(
         "reconnect backend" to  { if (Backend.status != Text.literal("CONNECTING...").formatted(Formatting.YELLOW)) Backend.reconnect() },
+        "open annie" to { val client = MinecraftClient.getInstance(); client.setScreen(AnnieSubScreen(client.currentScreen))}
     )
 }
 

@@ -28,6 +28,7 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
     )
 
     override fun build(rootComponent: StackLayout) {
+        active = true
 
         updateTopBar(rootComponent)
         updateEntries(rootComponent)
@@ -35,6 +36,11 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
         hookBackendStatusLabel()
 
         GregUtils.LOGGER.info("finished building ui screen")
+    }
+
+    override fun init() {
+        active = true
+        super.init()
     }
 
     private fun hookBackendStatusLabel() {

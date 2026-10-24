@@ -9,16 +9,16 @@ import lei.greg.GregUtils.PLAYER_UUID
 import lei.greg.Utils
 import lei.greg.config.ConfigManager
 import lei.greg.events.AwawaPayloadEvents
+import lei.greg.events.AwawaStatusUpdated
 import lei.greg.utils.Scheduler
 import net.minecraft.client.MinecraftClient
+import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
-
-// TODO: add a button to the settings that shows connection status and lets you reconnect
-// like just an entry that goes Backend status: CONNECTED | OFFLINE with colors and shows a button to connect if its offline
 
 @Serializable data class OutgoingAuthPayload(val uuid: String, val password: String)
 @Serializable data class OutgoingMessagePayload(val message: String, val channel: String)
@@ -51,6 +51,10 @@ object Backend {
 
     private var webSocket: WebSocket? = null
     @Volatile private var shouldReconnect = true
+    @Volatile var status: Text = Text.literal("OFFLINE").formatted(Formatting.RED)
+        private set
+    @Volatile var isConnecting = false
+        private set
 
     @Volatile
     var isLoggedIn = false
@@ -64,8 +68,14 @@ object Backend {
         connect(PLAYER_UUID)
     }
 
+    private fun setStatus(text: Text) {
+        status = text
+        dispatch { AwawaStatusUpdated.EVENT.invoker().onUpdate(text) }
+    }
+
     // manual
     fun reconnect() {
+        if (isConnecting) return
         close()
         shouldReconnect = true
         connect(PLAYER_UUID)
@@ -73,19 +83,22 @@ object Backend {
 
     // automatic
     private fun autoReconnect() {
-        if (!shouldReconnect || webSocket != null) return
+        if (isConnecting || !shouldReconnect || webSocket != null) return
         GregUtils.LOGGER.info("Reconnecting...")
         connect(PLAYER_UUID)
     }
 
     private fun connect(uuid: String): CompletableFuture<WebSocket> {
         val messageBuilder = StringBuilder()
+        isConnecting = true
 
         val listener = object : WebSocket.Listener {
             override fun onOpen(webSocket: WebSocket) {
+                GregUtils.LOGGER.info("GregBridge: onOpen fired")
                 val auth = OutgoingAuthPayload(uuid, ConfigManager.getString("fkl password")!!)
                 GregUtils.LOGGER.info(json.encodeToString(OutgoingAuthPayload.serializer(), auth))
                 webSocket.sendText(json.encodeToString(OutgoingAuthPayload.serializer(), auth), true)
+                setStatus(Text.literal("CONNECTING...").formatted(Formatting.YELLOW))
                 webSocket.request(1)
             }
 
@@ -103,13 +116,16 @@ object Backend {
             override fun onError(webSocket: WebSocket, error: Throwable) {
                 GregUtils.LOGGER.warn("GregBridge: onError fired")
                 error.printStackTrace()
+                isConnecting = false
             }
 
             override fun onClose(webSocket: WebSocket, statusCode: Int, reason: String): CompletionStage<*> {
                 GregUtils.LOGGER.info("GregBridge: onClose fired: $statusCode $reason")
+                setStatus(Text.literal("DISCONNECTED").formatted(Formatting.RED))
 
                 if (Backend.webSocket !== webSocket) return CompletableFuture.completedFuture(null)
 
+                isConnecting = false
                 val wasLoggedIn = isLoggedIn
                 Backend.webSocket = null
                 isLoggedIn = false
@@ -136,6 +152,7 @@ object Backend {
                     dispatch {
                         AwawaPayloadEvents.CONNECTION_FAIL.invoker().on(AwawaPayload.ConnectionFail("Connection failed, is server offline?"))
                     }
+                    isConnecting = false
                 }
             }
     }
@@ -149,15 +166,12 @@ object Backend {
     }
 
     fun close() {
+        isConnecting = false
         shouldReconnect = false
         isLoggedIn = false
         webSocket?.sendClose(WebSocket.NORMAL_CLOSURE, "bye")
         webSocket = null
     }
-
-	fun isOnline(): Boolean {
-		return webSocket != null
-	}
 
     // websocket callbacks are not on the client thread
     private fun dispatch(block: () -> Unit) = MinecraftClient.getInstance().execute(block)
@@ -193,11 +207,14 @@ object Backend {
             isLoggedIn = true
 			availableChannels = it.availableChannels
             Utils.notifyChat(it.message)
+            setStatus(Text.literal("CONNECTED").formatted(Formatting.GREEN))
+            isConnecting = false
         }
 
         AwawaPayloadEvents.CONNECTION_FAIL.register {
             isLoggedIn = false
             Utils.notifyChat(it.message)
+            isConnecting = false
         }
 
 		AwawaPayloadEvents.INFO.register {

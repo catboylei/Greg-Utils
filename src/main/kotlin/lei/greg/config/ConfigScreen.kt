@@ -10,6 +10,9 @@ import io.wispforest.owo.ui.core.OwoUIGraphics
 import io.wispforest.owo.ui.core.ParentUIComponent
 import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
+import lei.greg.backend.Backend
+import lei.greg.backend.Backend.status
+import lei.greg.events.AwawaStatusUpdated
 import net.minecraft.text.Text
 
 // ties together the screen and all the components from ressources/assets/greg-utils/owo-ui/ui-model.xml
@@ -17,16 +20,35 @@ import net.minecraft.text.Text
 // this file probably contains a lot of spaghetti code, you may PR and try to fix it lol
 class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("ui-model"))) {
 
+    private var active = true
+    private var backendDescLabel: LabelComponent? = null
+
     private val hiddenFields = setOf(
         "fkl password"
     )
 
     override fun build(rootComponent: StackLayout) {
+
         updateTopBar(rootComponent)
         updateEntries(rootComponent)
         applyCustomTextures(rootComponent)
+        hookBackendStatusLabel()
 
         GregUtils.LOGGER.info("finished building ui screen")
+    }
+
+    private fun hookBackendStatusLabel() {
+        AwawaStatusUpdated.EVENT.register { status ->
+            if (active) {
+                GregUtils.LOGGER.info("backend status label found: ${backendDescLabel}, status=${status.string}")
+                backendDescLabel?.text(Text.literal("Status: ").append(status))
+            }
+        }
+    }
+
+    override fun removed() {
+        active = false
+        super.removed()
     }
 
     private fun applyCustomTextures(rootComponent: StackLayout) {
@@ -135,6 +157,12 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
         entry.surface{ctx, component ->
             NinePatchTexture.draw(GregUtils.id("entry"), ctx, component)
         }
+        if (configId == "reconnect backend") {
+            val labels = mutableListOf<LabelComponent>()
+            entry.forEachDescendant { if (it is LabelComponent) labels.add(it) }
+            backendDescLabel = labels.getOrNull(1) // [0] = title, [1] = description
+            backendDescLabel?.text(Text.literal("Status: ").append(status))
+        }
         entry.forEachDescendant { component ->
             if (component.id() != configId) return@forEachDescendant
             if (component is ButtonComponent && type == "button") {
@@ -176,11 +204,15 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
 
     private fun updateEntries(rootComponent: StackLayout) {
         val holder = rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "entry-holder")!!
+        backendDescLabel = null
 
         holder.clearChildren()
         for ((type, title, desc, configId, category) in ScreenEntries.entries) {
             if (category != ConfigManager.getString("open category")) { continue }
             holder.child(getEntry(title, desc, configId, type))
         }
+
+        val label = rootComponent.childById(LabelComponent::class.java, "desc-reconnect backend") ?: return
+        label.text(Text.literal("Status: ").append(status))
     }
 }

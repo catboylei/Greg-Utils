@@ -4,6 +4,8 @@ import lei.greg.GregUtils
 import lei.greg.backend.Backend
 import lei.greg.features.DiscordChat
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.file.Files
@@ -80,7 +82,7 @@ object ScreenEntries {
 // ties button configIds to the function they should execute
 object ConfigActions {
     val actions: Map<String, () -> Unit> = mapOf(
-        "reconnect backend" to  { Backend.reconnect() },
+        "reconnect backend" to  { if (Backend.status != Text.literal("CONNECTING...").formatted(Formatting.YELLOW)) Backend.reconnect() },
     )
 }
 

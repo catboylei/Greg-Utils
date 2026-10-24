@@ -1,3 +1,13 @@
+## [UNRELEASED]
+
+### Added 
+- Button entry type
+- Backend status display and reconnect button
+
+### Changed
+- Generalized backend (not just discord)
+- Reorganize config slightly (FKL to general)
+
 ## [v1.1.0] - 2026/10/04 
 
 ### Added

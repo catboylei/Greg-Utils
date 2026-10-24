@@ -48,14 +48,16 @@ object ScreenEntries {
         // general/general
         SettingEntry("separator", "General", "", "", "General Settings"),
         SettingEntry("bool", "Enable Greg Utils", "Toggles whether the mod should be \nactive or not", "master toggle", "General Settings"),
-        SettingEntry("bool", "Debug Mode", "", "debug mode", "General Settings"),
-        // TODO: implement live status here !
-        // also make fkl category here and move the password too
-        SettingEntry("button", "Backend Connection", "Awawa status: UNKNOWN \nnot implemented lol", "reconnect backend", "General Settings"),
 
-        // general/highlights
-        SettingEntry("separator", "Highlights", "", "", "General Settings"),
+        // general/fkl
+        SettingEntry("separator", "FKL", "", "", "General Settings"),
+        SettingEntry("field", "FKL Bridge Password", "Your personal FKL password \nrequest with \"f!resetPassword\"", "fkl password", "General Settings"),
+        SettingEntry("button", "Backend Connection", "Status: N/A", "reconnect backend", "General Settings"),
+
+        // general/other
+        SettingEntry("separator", "Other", "", "", "General Settings"),
         SettingEntry("field", "Highlight Color", "Color of highlights in hex and \ndefaults to \"#FFCEFF\"", "highlight color", "General Settings"),
+        SettingEntry("bool", "Debug Mode", "", "debug mode", "General Settings"),
 
         // tree/tree path
         SettingEntry("separator", "Tree Path", "", "", "Weeping Soulroot (Tree) Room"),
@@ -65,7 +67,6 @@ object ScreenEntries {
         // random/fkl bridge
         SettingEntry("separator", "FKL Bridge", "", "", "Random"),
         SettingEntry("bool", "FKL Bridge", "bridge to fkl discord \nneed to be in the guild and linked", "fkl discord bridge", "Random"),
-        SettingEntry("field", "FKL Bridge Password", "Your personal FKL password \nrequest with \"f!resetPassword\"", "fkl password", "Random"),
         SettingEntry("bool", "Raid Pings", "whether to show raid pings \nfrom discord", "raid pings", "Random"),
         SettingEntry("bool", "Show Chat", "whether to display messages \nfrom discord chats", "bridge chat", "Random"),
         SettingEntry("bool", "Use unsecured socket", "\"less secure\" \ndoesnt disconnect you", "use unsecured socket", "Random"),

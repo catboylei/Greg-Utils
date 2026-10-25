@@ -1,0 +1,15 @@
+{
+  "texture": "greg-utils:textures/back-icon.png",
+  "texture_width": 10,
+  "texture_height": 20,
+  "repeat": false,
+  "v": 10,
+  "corner_patch_size": {
+    "width": 1,
+    "height": 1
+  },
+  "center_patch_size": {
+    "width": 8,
+    "height": 8
+  }
+}

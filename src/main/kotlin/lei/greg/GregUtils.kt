@@ -17,6 +17,7 @@ object GregUtils : ModInitializer {
 	const val MOD_ID: String = "greg-utils"
 	@JvmField
     val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
+	const val DISCORD_LINK = "https://discord.gg/CN4GfgXZMm"
 	fun id(path: String): Identifier { return Identifier.of(MOD_ID, path) }
 
 	// uses dummy uuid in debug mode for testing in gradle dev env

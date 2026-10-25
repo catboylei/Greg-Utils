@@ -6,7 +6,63 @@
             <children>
                 <flow-layout direction="vertical" id="window">
 
-                    <children></children>
+                    <children>
+                        <flow-layout direction="vertical" id="bg">
+                            <children>
+                                <flow-layout direction="horizontal" id="top-bar">
+                                    <children>
+                                        <label id="top-bar-label">
+                                            <sizing>
+                                                <vertical method="fixed">15</vertical>
+                                                <horizontal method="content">0</horizontal>
+                                            </sizing>
+                                            <!--horizontal-text-alignment>center</horizontal-text-alignment-->
+                                            <vertical-text-alignment>center</vertical-text-alignment>
+                                            <text>FKL Annies :3</text>
+                                            <color>#ffceff</color>
+                                        </label>
+
+                                        <button id="back">
+                                            <sizing>
+                                                <vertical method="fixed">10</vertical>
+                                                <horizontal method="fixed">10</horizontal>
+                                            </sizing>
+
+                                            <positioning type="relative">99,50</positioning>
+                                        </button>
+
+                                        <button id="discord">
+                                            <sizing>
+                                                <vertical method="fixed">10</vertical>
+                                                <horizontal method="fixed">13</horizontal>
+                                            </sizing>
+
+                                            <positioning type="relative">1,50</positioning>
+                                        </button>
+                                    </children>
+
+                                    <margins><top>4</top></margins>
+                                    <sizing>
+                                        <vertical method="fixed">15</vertical>
+                                        <horizontal method="fixed">318</horizontal>
+                                    </sizing>
+                                    <horizontal-alignment>center</horizontal-alignment>
+                                    <vertical-alignment>center</vertical-alignment>
+                                </flow-layout>
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fill">100</horizontal> <!-- 334 x 195 -->
+                                <vertical method="fill">100</vertical>
+                            </sizing>
+
+                            <horizontal-alignment>center</horizontal-alignment>
+                            <margins>
+                                <all>4</all>
+                            </margins>
+
+                        </flow-layout>
+                    </children>
 
                     <sizing>
                         <!-- roughly 2x and 1.1x the sizes of the survival inventory -->
@@ -15,7 +71,7 @@
                     </sizing>
                     <allow-overflow>true</allow-overflow>
                     <surface>
-                        <panel dark="true"></panel>
+                        <panel></panel>
                     </surface>
                 </flow-layout>
             </children>

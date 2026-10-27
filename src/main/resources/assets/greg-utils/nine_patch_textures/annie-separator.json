@@ -1,0 +1,14 @@
+{
+  "texture": "greg-utils:textures/annie-separator.png",
+  "texture_width": 20,
+  "texture_height": 3,
+  "repeat": false,
+  "center_patch_size": {
+    "width": 2,
+    "height": 1
+  },
+  "corner_patch_size": {
+    "width": 9,
+    "height": 1
+  }
+}

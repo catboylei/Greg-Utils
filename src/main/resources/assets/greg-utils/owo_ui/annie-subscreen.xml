@@ -20,6 +20,7 @@
                                             <vertical-text-alignment>center</vertical-text-alignment>
                                             <text>FKL Annies :3</text>
                                             <color>#ffceff</color>
+                                            <margins><top>1</top></margins>
                                         </label>
 
                                         <button id="back">
@@ -49,6 +50,28 @@
                                     <horizontal-alignment>center</horizontal-alignment>
                                     <vertical-alignment>center</vertical-alignment>
                                 </flow-layout>
+
+                                <scroll direction="horizontal">
+                                    <flow-layout direction="horizontal" id="party-holder">
+                                        <children>
+                                        </children>
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                            <vertical method="fixed">168</vertical>
+                                        </sizing>
+                                        <gap>4</gap>
+                                        <padding>
+                                            <all>4</all>
+                                        </padding>
+                                        <horizontal-alignment>center</horizontal-alignment>
+                                    </flow-layout>
+                                    <sizing>
+                                        <horizontal method="fixed">326</horizontal>
+                                        <vertical method="fixed">168</vertical>
+                                    </sizing>
+                                    <scrollbar-thiccness>0</scrollbar-thiccness>
+                                    <horizontal-alignment>center</horizontal-alignment>
+                                </scroll>
                             </children>
 
                             <sizing>
@@ -80,4 +103,44 @@
             <vertical-alignment>center</vertical-alignment>
         </stack-layout>
     </components>
+
+    <templates>
+        <template name="party-panel">
+            <flow-layout direction="vertical" id="panel">
+                <children>
+                    <label>
+                        <text>Party 1</text>
+                        <margins>
+                            <bottom>4</bottom>
+                            <top>8</top>
+                        </margins>
+                        <color>#e66aff</color>
+                    </label>
+
+                    <flow-layout direction="vertical" id="annie-separator">
+                        <children></children>
+                        <sizing>
+                            <horizontal method="fill">100</horizontal>
+                            <vertical method="fixed">3</vertical>
+                        </sizing>
+                        <margins>
+                            <bottom>4</bottom>
+                            <horizontal>1</horizontal>
+                        </margins>
+                    </flow-layout>
+                </children>
+
+                <sizing>
+                    <horizontal method="fixed">100</horizontal>
+                    <vertical method="fixed">160</vertical>
+                </sizing>
+
+                <surface>
+                    <panel dark="true"/>
+                </surface>
+                <horizontal-alignment>center</horizontal-alignment>
+                <vertical-alignment>top</vertical-alignment>
+            </flow-layout>
+        </template>
+    </templates>
 </owo-ui>

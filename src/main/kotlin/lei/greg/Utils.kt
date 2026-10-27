@@ -1,10 +1,18 @@
 package lei.greg
 
+import io.wispforest.owo.ui.core.OwoUIGraphics
+import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.config.ConfigManager
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.font.TextRenderer
+import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.toast.SystemToast
+import net.minecraft.client.toast.Toast
+import net.minecraft.client.toast.ToastManager
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import net.minecraft.util.Identifier
 
 object Utils {
 
@@ -209,4 +217,41 @@ object Utils {
 
         .append(characters.banner.END.withColor(0x622db9))
         .append(characters.spacing.SPACE)
+
+    class AnnieToast(private val title: Text, private val desc: Text) : Toast {
+        private var visibility = Toast.Visibility.HIDE
+        private val textX = 5
+        private val rightPad = 5
+        private val tr = MinecraftClient.getInstance().textRenderer
+
+        private val textWidth get() = width - textX - rightPad
+        private val titleLines get() = tr.wrapLines(title, textWidth)
+        private val descLines get() = tr.wrapLines(desc, textWidth)
+
+        override fun getVisibility() = visibility
+
+        // make toast bigger to accommodate wrapping
+        override fun getHeight(): Int = maxOf(32, 7 + (titleLines.size + descLines.size) * 9 + 7)
+        override fun getWidth(): Int = 200
+
+        override fun update(manager: ToastManager, time: Long) {
+            visibility = if (time >= 5000L * manager.notificationDisplayTimeMultiplier) Toast.Visibility.HIDE
+            else Toast.Visibility.SHOW
+        }
+
+        override fun draw(context: DrawContext, textRenderer: TextRenderer, startTime: Long) {
+            NinePatchTexture.draw(GregUtils.id("entry"), OwoUIGraphics.of(context), 0, 0, width, height)
+
+            var y = 7
+            for (line in titleLines) { context.drawText(textRenderer, line, textX, y, 0xFFE66AFF.toInt(), false); y += 9 }
+            y += 2
+            for (line in descLines) { context.drawText(textRenderer, line, textX, y, 0xFFBFBFBF.toInt(), false); y += 9 }
+        }
+    }
+
+    fun notifyToast(title: String, desc: String) {
+        MinecraftClient.getInstance().toastManager.add(
+            AnnieToast(Text.literal(title).withColor(0xe66aff), Text.literal(desc).withColor(0xbfbfbf))
+        )
+    }
 }

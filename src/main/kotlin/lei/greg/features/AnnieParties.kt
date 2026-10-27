@@ -1,5 +1,6 @@
 package lei.greg.features
 
+import lei.greg.Utils
 import lei.greg.subScreens.AnnieRoles
 import lei.greg.subScreens.AnnieSubScreen
 import net.minecraft.client.MinecraftClient
@@ -22,15 +23,13 @@ class Party(players: List<Player> = emptyList(), val number: Int, val active: Bo
 
 object AnnieParties {
 
-    private val ANNIE_TOAST = SystemToast.Type()
-
     var parties: List<Party> = padded(emptyList())
         private set
 
     fun clear() { parties = padded(emptyList()) }
     fun populate(newParties: List<Party>) { parties = padded(newParties) }
     fun joinAnnie(partyNumber: Int) {
-        annieToast("Sent a request to join party $partyNumber")
+        Utils.notifyToast("FKL Annie", "Sent a request to join party $partyNumber")
         TODO()
     }
 
@@ -77,12 +76,5 @@ object AnnieParties {
 
             // TODO: here in the event of all parties being full, awawa should preferably send the next party without players
         ))
-    }
-
-    private fun annieToast(desc: String) {
-        val client = MinecraftClient.getInstance()
-        client.execute {
-            SystemToast.add(client.toastManager, ANNIE_TOAST, Text.literal("FKL Annie").withColor(0xe66aff), Text.literal(desc).withColor(0xbfbfbf))
-        }
     }
 }

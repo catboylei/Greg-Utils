@@ -19,6 +19,7 @@ import io.wispforest.owo.ui.core.UIComponent
 import io.wispforest.owo.ui.core.VerticalAlignment
 import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
+import lei.greg.Utils.notifyToast
 import lei.greg.features.AnnieParties
 import lei.greg.features.Party
 import lei.greg.features.Player
@@ -162,13 +163,23 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
             .verticalAlignment(VerticalAlignment.CENTER)
             .padding(Insets.left(2)) as FlowLayout
 
-        if (player.name != "-") bindHover(
-            hoverLabel = hoverLabel,
-            source = fullLabel,
-            info = { makeInfoText(player.role, player.canLead, player.hasScrolls) },
-            extraEnter = { label.text(hovered) },
-            extraLeave = { label.text(normal) }
-        )
+        if (player.name != "-") {
+            fullLabel.mouseDown().subscribe { click, _ ->
+                if (click.buttonInfo.button == 0) {
+                    MinecraftClient.getInstance().keyboard.clipboard = player.name
+                    notifyToast("Player name copied", player.name)
+                    true
+                } else false
+            }
+
+            bindHover(
+                hoverLabel = hoverLabel,
+                source = fullLabel,
+                info = { makeInfoText(player.role, player.canLead, player.hasScrolls) },
+                extraEnter = { label.text(hovered) },
+                extraLeave = { label.text(normal) }
+            )
+        }
 
         return fullLabel.apply {
                 child(bar)

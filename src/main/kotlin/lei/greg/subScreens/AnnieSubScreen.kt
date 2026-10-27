@@ -1,6 +1,5 @@
 package lei.greg.subScreens
 
-import io.wispforest.owo.braid.core.Alignment
 import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.ButtonComponent
 import io.wispforest.owo.ui.component.LabelComponent
@@ -9,13 +8,10 @@ import io.wispforest.owo.ui.component.UIComponents
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.owo.ui.container.StackLayout
 import io.wispforest.owo.ui.container.UIContainers
-import io.wispforest.owo.ui.core.Animation
 import io.wispforest.owo.ui.core.Color
-import io.wispforest.owo.ui.core.Easing
 import io.wispforest.owo.ui.core.HorizontalAlignment
 import io.wispforest.owo.ui.core.Insets
 import io.wispforest.owo.ui.core.OwoUIGraphics
-import io.wispforest.owo.ui.core.Positioning
 import io.wispforest.owo.ui.core.Sizing
 import io.wispforest.owo.ui.core.Surface
 import io.wispforest.owo.ui.core.UIComponent
@@ -30,13 +26,14 @@ import java.net.URI
 
 // TODO: awawa sends list of people with admin perms and i show management if player is in there
 // ofc check the packet on awawa side too
+// TODO: clicking on username copies it to clipboard
 
 // TODO: better colors maybe
 enum class AnnieRoles(val color: Int, val iconName: String) {
-    DPS(0xFF6B8A, "a"),
-    HEALER(0x6BFFB0, "heart-icon"),
-    TANK(0x6B8AFF, "a"),
-    NONE(0xbfbfbf, "a");
+    DPS(0xFFFF6B8A.toInt(), "a"),
+    HEAL(0xFF0fff73.toInt(), "heart-icon"),
+    TANK(0xFF0fbbff.toInt(), "a"),
+    NONE(0xFFbfbfbf.toInt(), "a");
 }
 
 val customIcons = mapOf(
@@ -46,15 +43,11 @@ val customIcons = mapOf(
 class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("annie-subscreen"))) {
 
     private var hoverOwner: UIComponent? = null
-    /*
-    val hoverLabel: ScaledLabel = ScaledLabel(Text.empty(), 0.55f)
-        .margins(Insets.bottom(4))
-        .sizing(Sizing.content(), Sizing.fixed(5)) as ScaledLabel
-*/
+
     override fun build(rootComponent: StackLayout) {
         hookButtons(rootComponent)
         applyCustomTextures(rootComponent)
-        addTestPanels(2, rootComponent)
+        addTestPanels(1, rootComponent)
 
         GregUtils.LOGGER.info("finished building annie screen")
     }
@@ -104,9 +97,8 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
             "party-panel",
             emptyMap())
 
-        val hoverLabel = ScaledLabel(Text.empty(), 0.55f).apply {
+        val hoverLabel = UIContainers.horizontalFlow(Sizing.content(), Sizing.fixed(5)).apply {
             margins(Insets.bottom(4))
-            sizing(Sizing.content(), Sizing.fixed(5))
         }
 
         panel.surface{ctx, component ->
@@ -117,8 +109,8 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
         }
         panel.child(hoverLabel)
 
-        panel.child(playerLabel(hoverLabel, "AlfieCrafts", true, true, AnnieRoles.HEALER))
-        panel.child(playerLabel(hoverLabel, "OneZero09", false, false, AnnieRoles.HEALER))
+        panel.child(playerLabel(hoverLabel, "AlfieCrafts", true, true, AnnieRoles.HEAL))
+        panel.child(playerLabel(hoverLabel, "OneZero09", false, false, AnnieRoles.HEAL))
         panel.child(playerLabel(hoverLabel, "Crixx007", true, false, AnnieRoles.TANK))
         panel.child(playerLabel(hoverLabel, "catboylei", true, false, AnnieRoles.DPS))
         panel.child(playerLabel(hoverLabel, "Citr_n", false, false, AnnieRoles.DPS))
@@ -131,20 +123,23 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
         return panel
     }
 
-    private fun playerLabel(hoverLabel: ScaledLabel, name: String, cl: Boolean, hs: Boolean, role: AnnieRoles = AnnieRoles.NONE): FlowLayout {
+    private fun playerLabel(hoverLabel: FlowLayout, name: String, cl: Boolean, hs: Boolean, role: AnnieRoles = AnnieRoles.NONE): FlowLayout {
         val normal = (Text.literal(name))
         val hovered = (Text.literal(name).formatted(Formatting.BOLD))
 
-        val label = ScaledLabel(Text.literal(name), 0.70f)
-            .color(Color.ofRgb(role.color))
+        val label = ScaledLabel(Text.literal(name), 0.70f).color(Color.ofRgb(0xbfbfbf))
 
         val icons = UIContainers.horizontalFlow(Sizing.content(), Sizing.fixed(8))
         if (name in customIcons.keys) { icons.child(icon(customIcons.getValue(name))) }
 
+        val bar = UIContainers.verticalFlow(Sizing.fixed(1), Sizing.fixed(12))
+            .surface(if (role == AnnieRoles.NONE) Surface.BLANK else Surface.flat(role.color))
+
         val fullLabel = UIContainers.horizontalFlow(Sizing.fill(100), Sizing.fixed(12))
             .gap(2)
-            .horizontalAlignment(HorizontalAlignment.CENTER)
-            .verticalAlignment(VerticalAlignment.CENTER) as FlowLayout
+            .horizontalAlignment(HorizontalAlignment.LEFT)
+            .verticalAlignment(VerticalAlignment.CENTER)
+            .padding(Insets.left(2)) as FlowLayout
 
         if (name != "-") bindHover(
             hoverLabel = hoverLabel,
@@ -154,10 +149,12 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
             extraLeave = { label.text(normal) }
         )
 
-        return fullLabel
-            .child(label)
-            .child(icons)
-            .margins(Insets.horizontal(2)) as FlowLayout
+        return fullLabel.apply {
+                child(bar)
+                child(label)
+                child(icons)
+                margins(Insets.horizontal(2))
+            }
     }
 
     class ScaledLabel(text: Text, private val scale: Float) : LabelComponent(text) {
@@ -181,30 +178,51 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
     private fun icon(id: String, size: Int = 8): TextureComponent = UIComponents.texture(GregUtils.id("textures/$id.png"), 0, 0, 16, 16, 16, 16)
         .apply { sizing(Sizing.fixed(size))}
 
-    private fun bindHover(hoverLabel: ScaledLabel, source: UIComponent, info: (() -> Text)?, extraEnter: () -> Unit = {}, extraLeave: () -> Unit = {}) {
+    private fun bindHover(hoverLabel: FlowLayout, source: UIComponent, info: (() -> FlowLayout)?, extraEnter: () -> Unit = {}, extraLeave: () -> Unit = {}) {
         source.mouseEnter().subscribe {
             if (info != null) {
                 hoverOwner = source
-                hoverLabel.text(info())
+                hoverLabel.clearChildren()
+                hoverLabel.child(info())
             }
             extraEnter()
         }
         source.mouseLeave().subscribe {
             if (hoverOwner === source && info != null) {   // ignore leaves from labels that were already replaced
                 hoverOwner = null
-                hoverLabel.text(Text.empty())
+                hoverLabel.clearChildren()
             }
             extraLeave()
         }
     }
 
-    private fun makeInfoText(role: AnnieRoles, cl: Boolean, hs: Boolean): Text {
+    private fun makeInfoText(role: AnnieRoles, cl: Boolean, hs: Boolean): FlowLayout {
+        /*
         return Text.empty().apply {
             append(Text.literal(role.toString()).withColor(role.color))
             append(Text.literal(" | ").withColor(0xbfbfbf))
-            append( if (cl) Text.literal("Can Lead").withColor(0x6BFFB0) else Text.literal("No Lead").withColor(0xFF6B8A))
+            append( if (cl) Text.literal("Can Lead").withColor(0xe66aff) else Text.literal("No Lead").withColor(0xbfbfbf))
             append(Text.literal(" | ").withColor(0xbfbfbf))
-            append( if (hs) Text.literal("Has Scrolls").withColor(0x6BFFB0) else Text.literal("No Scrolls").withColor(0xFF6B8A))
+            append( if (hs) Text.literal("Has Scrolls").withColor(0xe66aff) else Text.literal("No Scrolls").withColor(0xbfbfbf))
+        }
+         */
+
+        return UIContainers.horizontalFlow(Sizing.content(), Sizing.fixed(5)).apply {
+            child(ScaledLabel(Text.literal(role.toString()).withColor(role.color), 0.55f).apply {
+                horizontalSizing(Sizing.fixed(25))
+                horizontalTextAlignment(HorizontalAlignment.RIGHT)
+                margins(Insets.right(-12))
+            })
+
+            child(ScaledLabel(Text.literal(" | ").withColor(0xbfbfbf), 0.55f))
+
+            child(icon(if (cl) "checkmark-icon" else "cross-icon", 5))
+            child(ScaledLabel(Text.literal(" Leader").withColor(if (cl) 0x0fff73 else 0xFF6B8A), 0.55f))
+
+            child(ScaledLabel(Text.literal(" | ").withColor(0xbfbfbf), 0.55f))
+
+            child(icon(if (hs) "checkmark-icon" else "cross-icon", 5))
+            child(ScaledLabel(Text.literal(" Scrolls").withColor(if (hs) 0x0fff73 else 0xFF6B8A), 0.55f))
         }
     }
 }

@@ -19,8 +19,8 @@
                                             <!--horizontal-text-alignment>center</horizontal-text-alignment-->
                                             <vertical-text-alignment>center</vertical-text-alignment>
                                             <text>FKL Annies :3</text>
-                                            <color>#ffceff</color>
-                                            <margins><top>1</top></margins>
+                                            <color>#ffffff</color>
+                                            <margins><top>2</top></margins>
                                         </label>
 
                                         <button id="back">
@@ -70,7 +70,7 @@
                                         <vertical method="fixed">168</vertical>
                                     </sizing>
                                     <scrollbar-thiccness>0</scrollbar-thiccness>
-                                    <horizontal-alignment>center</horizontal-alignment>
+                                    <horizontal-alignment>left</horizontal-alignment>
                                 </scroll>
                             </children>
 

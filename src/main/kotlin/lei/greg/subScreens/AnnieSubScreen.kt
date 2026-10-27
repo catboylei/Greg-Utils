@@ -19,6 +19,9 @@ import io.wispforest.owo.ui.core.UIComponent
 import io.wispforest.owo.ui.core.VerticalAlignment
 import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
+import lei.greg.features.AnnieParties
+import lei.greg.features.Party
+import lei.greg.features.Player
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
@@ -28,13 +31,13 @@ import java.net.URI
 // TODO: awawa sends list of people with admin perms and i show management if player is in there
 // ofc check the packet on awawa side too
 // TODO: clicking on username copies it to clipboard
-// TODO: show minimum 3 parties, and grey out the join icon on inactive parties
+// TODO: grey out join icon on full parties + dont grey out if all previous parties are full and its empty
 
 // TODO: better colors maybe
 enum class AnnieRoles(val color: Int, val iconName: String) {
-    DPS(0xFFFF6B8A.toInt(), "a"),
     HEAL(0xFF0fff73.toInt(), "heart-icon"),
     TANK(0xFF0fbbff.toInt(), "a"),
+    DPS(0xFFFF6B8A.toInt(), "a"),
     NONE(0xFFbfbfbf.toInt(), "a");
 }
 
@@ -49,14 +52,14 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
     override fun build(rootComponent: StackLayout) {
         hookButtons(rootComponent)
         applyCustomTextures(rootComponent)
-        //addTestPanels(3, rootComponent)
 
         rootComponent.childById(FlowLayout::class.java, "party-holder").apply {
-            child(partyPanel(true, 1))
-            child(partyPanel(false, 2))
-            child(partyPanel(false, 3))
-            child(partyPanel(false, 4))
+            AnnieParties.populateWithTest()
+            AnnieParties.parties.forEach {
+                child(partyPanel(it))
+            }
         }
+
         GregUtils.LOGGER.info("finished building annie screen")
     }
 
@@ -91,7 +94,7 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
             .onPress { Util.getOperatingSystem().open(URI(GregUtils.DISCORD_LINK)) }
     }
 
-    private fun partyPanel(hasStuff: Boolean, number: Int): FlowLayout {
+    private fun partyPanel(party: Party): FlowLayout {
         val panel = model.expandTemplate(
             FlowLayout::class.java,
             "party-panel",
@@ -102,15 +105,14 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
         }
 
         panel.childById(FlowLayout::class.java, "panel-top").apply {
-            child(icon(if (!hasStuff) "scroll-icon-disabled" else "scroll-icon", 12).positioning(Positioning.relative(10, 40)))
-            child(icon(if (!hasStuff) "cross-icon" else "checkmark-icon", 8).positioning(Positioning.relative(15, 90))) // TODO: dont forget to hook this up
-            child(UIComponents.label(Text.literal("Party $number").withColor(if (!hasStuff) 0xbfbfbf else 0xe66aff)))
-            //child(icon("join-icon.json", 12).positioning(Positioning.relative(90, 40)))
+            child(icon(if (!party.active) "scroll-icon-disabled" else "scroll-icon", 12).positioning(Positioning.relative(10, 40)))
+            child(icon(if (!party.hasScrolls) "cross-icon" else "checkmark-icon", 8).positioning(Positioning.relative(15, 90)))
+            child(UIComponents.label(Text.literal("Party ${party.number}").withColor(if (!party.active) 0xbfbfbf else 0xe66aff)))
             child(UIComponents.button(Text.empty(), {}).apply { // TODO: hook join button here
                 positioning(Positioning.relative(90, 40))
                 sizing(Sizing.fixed(12))
                 renderer { ctx, component, _ ->
-                    val texture = GregUtils.id( if (!hasStuff) "join-icon-inactive" else (if (component.isHovered) "join-icon-hovered" else "join-icon"))
+                    val texture = GregUtils.id( if (!party.active) "join-icon-inactive" else (if (component.isHovered) "join-icon-hovered" else "join-icon"))
                     NinePatchTexture.draw(texture, ctx, component.x, component.y, component.width, component.height - 1)
                 }
             })
@@ -124,6 +126,13 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
         }
         panel.child(hoverLabel)
 
+        panel.apply {
+            party.players.forEach {
+                child(playerLabel(hoverLabel, it))
+            }
+        }
+
+        /*
         if (hasStuff) {
             panel.child(playerLabel(hoverLabel, "AlfieCrafts", true, true, AnnieRoles.HEAL))
             panel.child(playerLabel(hoverLabel, "OneZero09", false, false, AnnieRoles.HEAL))
@@ -148,20 +157,22 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
             panel.child(playerLabel(hoverLabel, "-", false, false))
         }
 
+         */
+
         return panel
     }
 
-    private fun playerLabel(hoverLabel: FlowLayout, name: String, cl: Boolean, hs: Boolean, role: AnnieRoles = AnnieRoles.NONE): FlowLayout {
-        val normal = (Text.literal(name))
-        val hovered = (Text.literal(name).formatted(Formatting.BOLD))
+    private fun playerLabel(hoverLabel: FlowLayout, player: Player): FlowLayout {
+        val normal = (Text.literal(player.name))
+        val hovered = (Text.literal(player.name).formatted(Formatting.BOLD))
 
-        val label = ScaledLabel(Text.literal(name), 0.70f).color(Color.ofRgb(0xbfbfbf))
+        val label = ScaledLabel(Text.literal(player.name), 0.70f).color(Color.ofRgb(0xbfbfbf))
 
         val icons = UIContainers.horizontalFlow(Sizing.content(), Sizing.fixed(8))
-        if (name in customIcons.keys) { icons.child(icon(customIcons.getValue(name))) }
+        if (player.name in customIcons.keys) { icons.child(icon(customIcons.getValue(player.name))) }
 
         val bar = UIContainers.verticalFlow(Sizing.fixed(1), Sizing.fixed(12))
-            .surface(if (role == AnnieRoles.NONE) Surface.BLANK else Surface.flat(role.color))
+            .surface(if (player.role == AnnieRoles.NONE) Surface.BLANK else Surface.flat(player.role.color))
 
         val fullLabel = UIContainers.horizontalFlow(Sizing.fill(100), Sizing.fixed(12))
             .gap(2)
@@ -169,10 +180,10 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
             .verticalAlignment(VerticalAlignment.CENTER)
             .padding(Insets.left(2)) as FlowLayout
 
-        if (name != "-") bindHover(
+        if (player.name != "-") bindHover(
             hoverLabel = hoverLabel,
             source = fullLabel,
-            info = { makeInfoText(role, cl, hs) },
+            info = { makeInfoText(player.role, player.canLead, player.hasScrolls) },
             extraEnter = { label.text(hovered) },
             extraLeave = { label.text(normal) }
         )

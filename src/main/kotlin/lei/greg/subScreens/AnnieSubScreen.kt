@@ -22,7 +22,9 @@ import lei.greg.GregUtils
 import lei.greg.features.AnnieParties
 import lei.greg.features.Party
 import lei.greg.features.Player
+import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.toast.SystemToast
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Util
@@ -32,8 +34,8 @@ import java.net.URI
 // ofc check the packet on awawa side too
 // TODO: clicking on username copies it to clipboard
 // TODO: grey out join icon on full parties + dont grey out if all previous parties are full and its empty
+// TODO: subscribe to parties changed event and call updateParties then
 
-// TODO: better colors maybe
 enum class AnnieRoles(val color: Int, val iconName: String) {
     HEAL(0xFF0fff73.toInt(), "heart-icon"),
     TANK(0xFF0fbbff.toInt(), "a"),
@@ -52,19 +54,24 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
     override fun build(rootComponent: StackLayout) {
         hookButtons(rootComponent)
         applyCustomTextures(rootComponent)
-
-        rootComponent.childById(FlowLayout::class.java, "party-holder").apply {
-            AnnieParties.populateWithTest()
-            AnnieParties.parties.forEach {
-                child(partyPanel(it))
-            }
-        }
+        AnnieParties.populateWithTest() // TODO: ykyk explode the test population
+        updateParties(rootComponent)
 
         GregUtils.LOGGER.info("finished building annie screen")
     }
 
     override fun close() {
         client?.setScreen(parent)
+    }
+
+    private fun updateParties(rootComponent: StackLayout) {
+        rootComponent.childById(FlowLayout::class.java, "party-holder").apply {
+            clearChildren()
+            AnnieParties.populateWithTest()
+            AnnieParties.parties.forEach {
+                child(partyPanel(it))
+            }
+        }
     }
 
     private fun applyCustomTextures(rootComponent: StackLayout) {
@@ -108,11 +115,13 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
             child(icon(if (!party.active) "scroll-icon-disabled" else "scroll-icon", 12).positioning(Positioning.relative(10, 40)))
             child(icon(if (!party.hasScrolls) "cross-icon" else "checkmark-icon", 8).positioning(Positioning.relative(15, 90)))
             child(UIComponents.label(Text.literal("Party ${party.number}").withColor(if (!party.active) 0xbfbfbf else 0xe66aff)))
-            child(UIComponents.button(Text.empty(), {}).apply { // TODO: hook join button here
+            child(UIComponents.button(Text.empty(), {
+                if (party.active && !party.isFull) AnnieParties.joinAnnie(party.number)
+            }).apply {
                 positioning(Positioning.relative(90, 40))
                 sizing(Sizing.fixed(12))
                 renderer { ctx, component, _ ->
-                    val texture = GregUtils.id( if (!party.active) "join-icon-inactive" else (if (component.isHovered) "join-icon-hovered" else "join-icon"))
+                    val texture = GregUtils.id( if (!party.active || party.isFull) "join-icon-inactive" else (if (component.isHovered) "join-icon-hovered" else "join-icon"))
                     NinePatchTexture.draw(texture, ctx, component.x, component.y, component.width, component.height - 1)
                 }
             })
@@ -131,33 +140,6 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
                 child(playerLabel(hoverLabel, it))
             }
         }
-
-        /*
-        if (hasStuff) {
-            panel.child(playerLabel(hoverLabel, "AlfieCrafts", true, true, AnnieRoles.HEAL))
-            panel.child(playerLabel(hoverLabel, "OneZero09", false, false, AnnieRoles.HEAL))
-            panel.child(playerLabel(hoverLabel, "Crixx007", true, false, AnnieRoles.TANK))
-            panel.child(playerLabel(hoverLabel, "catboylei", true, false, AnnieRoles.DPS))
-            panel.child(playerLabel(hoverLabel, "Citr_n", false, false, AnnieRoles.DPS))
-            panel.child(playerLabel(hoverLabel, "TheWalrusMaster", true, true, AnnieRoles.DPS))
-            panel.child(playerLabel(hoverLabel, "MMMMMMMMMMMMMMMM", false, false, AnnieRoles.DPS))
-            panel.child(playerLabel(hoverLabel, "lei", false, true, AnnieRoles.NONE))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-        } else {
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-            panel.child(playerLabel(hoverLabel, "-", false, false))
-        }
-
-         */
 
         return panel
     }

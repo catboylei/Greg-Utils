@@ -1,6 +1,10 @@
 package lei.greg.features
 
 import lei.greg.subScreens.AnnieRoles
+import lei.greg.subScreens.AnnieSubScreen
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.toast.SystemToast
+import net.minecraft.text.Text
 
 data class Player(val name: String = "-", val hasScrolls: Boolean = false, val canLead: Boolean = false, val role: AnnieRoles = AnnieRoles.NONE)
 
@@ -13,14 +17,22 @@ class Party(players: List<Player> = emptyList(), val number: Int, val active: Bo
 
     // true if any player has scrolls
     val hasScrolls: Boolean = this.players.any { it.hasScrolls }
+    val isFull: Boolean = players.lastIndex >= 9
 }
 
 object AnnieParties {
+
+    private val ANNIE_TOAST = SystemToast.Type()
+
     var parties: List<Party> = padded(emptyList())
         private set
 
     fun clear() { parties = padded(emptyList()) }
     fun populate(newParties: List<Party>) { parties = padded(newParties) }
+    fun joinAnnie(partyNumber: Int) {
+        annieToast("Sent a request to join party $partyNumber")
+        TODO()
+    }
 
     // fills missing slots with default parties numbered by their position
     private fun padded(list: List<Party>): List<Party> {
@@ -54,8 +66,6 @@ object AnnieParties {
                     Player(name = "bigmoneyfiber", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                     Player(name = "hrrw", hasScrolls = false, canLead = false, role = AnnieRoles.HEAL),
                     Player(name = "CreampaiPham", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                    Player(name = "Hayni", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                    Player(name = "KavehK1", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                     Player(name = "Ams_017", hasScrolls = false, canLead = false, role = AnnieRoles.TANK),
                     Player(name = "HadesFeve", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                     Player(name = "Siel_oschen", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
@@ -63,7 +73,16 @@ object AnnieParties {
                 ),
                 2,
                 true
-            )
+            ),
+
+            // TODO: here in the event of all parties being full, awawa should preferably send the next party without players
         ))
+    }
+
+    private fun annieToast(desc: String) {
+        val client = MinecraftClient.getInstance()
+        client.execute {
+            SystemToast.add(client.toastManager, ANNIE_TOAST, Text.literal("FKL Annie").withColor(0xe66aff), Text.literal(desc).withColor(0xbfbfbf))
+        }
     }
 }

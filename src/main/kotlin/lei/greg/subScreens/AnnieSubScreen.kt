@@ -46,14 +46,15 @@ val customIcons = mapOf(
 class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("annie-subscreen"))) {
 
     private var hoverOwner: UIComponent? = null
+    /*
     val hoverLabel: ScaledLabel = ScaledLabel(Text.empty(), 0.55f)
         .margins(Insets.bottom(4))
         .sizing(Sizing.content(), Sizing.fixed(5)) as ScaledLabel
-
+*/
     override fun build(rootComponent: StackLayout) {
         hookButtons(rootComponent)
         applyCustomTextures(rootComponent)
-        addTestPanels(1, rootComponent)
+        addTestPanels(2, rootComponent)
 
         GregUtils.LOGGER.info("finished building annie screen")
     }
@@ -103,6 +104,11 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
             "party-panel",
             emptyMap())
 
+        val hoverLabel = ScaledLabel(Text.empty(), 0.55f).apply {
+            margins(Insets.bottom(4))
+            sizing(Sizing.content(), Sizing.fixed(5))
+        }
+
         panel.surface{ctx, component ->
             NinePatchTexture.draw(GregUtils.id("entry"), ctx, component)
         }
@@ -111,21 +117,21 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
         }
         panel.child(hoverLabel)
 
-        panel.child(playerLabel("AlfieCrafts", true, true, AnnieRoles.HEALER))
-        panel.child(playerLabel("OneZero09", false, false, AnnieRoles.HEALER))
-        panel.child(playerLabel("Crixx007", true, false, AnnieRoles.TANK))
-        panel.child(playerLabel("catboylei", true, false, AnnieRoles.DPS))
-        panel.child(playerLabel("Citr_n", false, false, AnnieRoles.DPS))
-        panel.child(playerLabel("TheWalrusMaster", true, true, AnnieRoles.DPS))
-        panel.child(playerLabel("MMMMMMMMMMMMMMMM", false, false, AnnieRoles.DPS))
-        panel.child(playerLabel("lei", false, true, AnnieRoles.NONE))
-        panel.child(playerLabel("-", false, false))
-        panel.child(playerLabel("-", false, false))
+        panel.child(playerLabel(hoverLabel, "AlfieCrafts", true, true, AnnieRoles.HEALER))
+        panel.child(playerLabel(hoverLabel, "OneZero09", false, false, AnnieRoles.HEALER))
+        panel.child(playerLabel(hoverLabel, "Crixx007", true, false, AnnieRoles.TANK))
+        panel.child(playerLabel(hoverLabel, "catboylei", true, false, AnnieRoles.DPS))
+        panel.child(playerLabel(hoverLabel, "Citr_n", false, false, AnnieRoles.DPS))
+        panel.child(playerLabel(hoverLabel, "TheWalrusMaster", true, true, AnnieRoles.DPS))
+        panel.child(playerLabel(hoverLabel, "MMMMMMMMMMMMMMMM", false, false, AnnieRoles.DPS))
+        panel.child(playerLabel(hoverLabel, "lei", false, true, AnnieRoles.NONE))
+        panel.child(playerLabel(hoverLabel, "-", false, false))
+        panel.child(playerLabel(hoverLabel, "-", false, false))
 
         return panel
     }
 
-    private fun playerLabel(name: String, cl: Boolean, hs: Boolean, role: AnnieRoles = AnnieRoles.NONE): FlowLayout {
+    private fun playerLabel(hoverLabel: ScaledLabel, name: String, cl: Boolean, hs: Boolean, role: AnnieRoles = AnnieRoles.NONE): FlowLayout {
         val normal = (Text.literal(name))
         val hovered = (Text.literal(name).formatted(Formatting.BOLD))
 
@@ -141,6 +147,7 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
             .verticalAlignment(VerticalAlignment.CENTER) as FlowLayout
 
         if (name != "-") bindHover(
+            hoverLabel = hoverLabel,
             source = fullLabel,
             info = { makeInfoText(role, cl, hs) },
             extraEnter = { label.text(hovered) },
@@ -174,7 +181,7 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
     private fun icon(id: String, size: Int = 8): TextureComponent = UIComponents.texture(GregUtils.id("textures/$id.png"), 0, 0, 16, 16, 16, 16)
         .apply { sizing(Sizing.fixed(size))}
 
-    private fun bindHover(source: UIComponent, info: (() -> Text)?, extraEnter: () -> Unit = {}, extraLeave: () -> Unit = {}) {
+    private fun bindHover(hoverLabel: ScaledLabel, source: UIComponent, info: (() -> Text)?, extraEnter: () -> Unit = {}, extraLeave: () -> Unit = {}) {
         source.mouseEnter().subscribe {
             if (info != null) {
                 hoverOwner = source

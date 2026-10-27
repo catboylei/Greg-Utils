@@ -13,6 +13,10 @@ import lei.greg.GregUtils
 import lei.greg.backend.Backend
 import lei.greg.backend.Backend.status
 import lei.greg.events.AwawaStatusUpdated
+import lei.greg.subScreens.AnnieSubScreen
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.minecraft.client.MinecraftClient
+import net.minecraft.server.command.CommandManager
 import net.minecraft.text.Text
 
 // ties together the screen and all the components from ressources/assets/greg-utils/owo-ui/ui-model.xml
@@ -226,5 +230,19 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
 
         val label = rootComponent.childById(LabelComponent::class.java, "desc-reconnect backend") ?: return
         label.text(Text.literal("Status: ").append(status))
+    }
+
+    companion object {
+        fun registerCommand() {
+            CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+                dispatcher.register(
+                    CommandManager.literal("greg").executes {
+                        val client = MinecraftClient.getInstance();
+                        client.execute { client.setScreen(ConfigScreen()) }
+                        1
+                    }
+                )
+            }
+        }
     }
 }

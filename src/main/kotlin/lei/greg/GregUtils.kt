@@ -7,6 +7,8 @@ import lei.greg.features.WatchedVisualiser
 import lei.greg.highlights.Highlights
 import lei.greg.utils.Scheduler
 import lei.greg.backend.Backend
+import lei.greg.config.ConfigScreen
+import lei.greg.subScreens.AnnieSubScreen
 import net.fabricmc.api.ModInitializer
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Identifier
@@ -43,5 +45,9 @@ object GregUtils : ModInitializer {
 		TreeHelper.register()
 		DiscordChat.register()
 		WatchedVisualiser.register()
+
+		// screens
+		AnnieSubScreen.registerCommand()
+		ConfigScreen.registerCommand()
 	}
 }

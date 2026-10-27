@@ -1,5 +1,6 @@
 package lei.greg.subScreens
 
+import com.mojang.brigadier.arguments.BoolArgumentType
 import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.ButtonComponent
 import io.wispforest.owo.ui.component.LabelComponent
@@ -23,9 +24,13 @@ import lei.greg.Utils.notifyToast
 import lei.greg.features.AnnieParties
 import lei.greg.features.Party
 import lei.greg.features.Player
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.toast.SystemToast
+import net.minecraft.command.argument.Vec3ArgumentType
+import net.minecraft.server.command.CommandManager
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Util
@@ -33,9 +38,8 @@ import java.net.URI
 
 // TODO: awawa sends list of people with admin perms and i show management if player is in there
 // ofc check the packet on awawa side too
-// TODO: clicking on username copies it to clipboard
-// TODO: grey out join icon on full parties + dont grey out if all previous parties are full and its empty
 // TODO: subscribe to parties changed event and call updateParties then
+// TODO: register command to open this
 
 enum class AnnieRoles(val color: Int, val iconName: String) {
     HEAL(0xFF0fff73.toInt(), "heart-icon"),
@@ -48,7 +52,7 @@ val customIcons = mapOf(
     "AlfieCrafts" to "alfie-icon"
 )
 
-class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("annie-subscreen"))) {
+class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("annie-subscreen"))) {
 
     private var hoverOwner: UIComponent? = null
 
@@ -246,6 +250,20 @@ class AnnieSubScreen(private val parent: Screen?) : BaseUIModelScreen<StackLayou
 
             child(icon(if (hs) "checkmark-icon" else "cross-icon", 5))
             child(ScaledLabel(Text.literal(" Scrolls").withColor(if (hs) 0x0fff73 else 0xFF6B8A), 0.55f))
+        }
+    }
+
+    companion object {
+        fun registerCommand() {
+            CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+                dispatcher.register(
+                    CommandManager.literal("annie").executes {
+                        val client = MinecraftClient.getInstance();
+                        client.execute { client.setScreen(AnnieSubScreen()) }
+                        1
+                    }
+                )
+            }
         }
     }
 }

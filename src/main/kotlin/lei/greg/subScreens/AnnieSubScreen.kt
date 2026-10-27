@@ -49,7 +49,7 @@ enum class AnnieRoles(val color: Int, val iconName: String) {
 }
 
 val customIcons = mapOf(
-    "AlfieCrafts" to "alfie-icon"
+    "AlfieCrafts" to "alfie-icon" // annie manager since 1932 gets her icon
 )
 
 class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("annie-subscreen"))) {
@@ -103,7 +103,10 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
                 val texture = if (component.isHovered) GregUtils.id("discord-logo-hovered") else GregUtils.id("discord-logo")
                 NinePatchTexture.draw(texture, ctx, component.x, component.y, component.width, component.height - 1)
             }
-            .onPress { Util.getOperatingSystem().open(URI(GregUtils.DISCORD_LINK)) }
+            .onPress {
+                Util.getOperatingSystem().open(URI(GregUtils.DISCORD_LINK));
+                notifyToast("FKL Discord", "Check your browser :3")
+            }
     }
 
     private fun partyPanel(party: Party): FlowLayout {
@@ -172,6 +175,10 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
                 if (click.buttonInfo.button == 0) {
                     MinecraftClient.getInstance().keyboard.clipboard = player.name
                     notifyToast("Player name copied", player.name)
+                    true
+                } else if (click.buttonInfo.button == 1) {
+                    MinecraftClient.getInstance().keyboard.clipboard = "/party invite ${player.name}"
+                    notifyToast("Command copied", "/party invite ${player.name}")
                     true
                 } else false
             }

@@ -26,7 +26,6 @@ object AnnieParties {
     var parties: List<Party> = padded(emptyList())
         private set
 
-    fun clear() { parties = padded(emptyList()) }
     fun populate(newParties: List<Party>) { parties = padded(newParties) }
     fun joinAnnie(partyNumber: Int) {
         Utils.notifyToast("FKL Annie", "Sent a request to join party $partyNumber")

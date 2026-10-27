@@ -1,9 +1,9 @@
 ## [UNRELEASED]
 
-### Added 
-- Button entry type
+### Added
 - Backend status display and reconnect button
-- Button to open annie gui
+- Annie Parties screen (`/annie`)
+- Command to open main config (`/greg`)
 
 ### Changed
 - Generalized backend (not just discord)

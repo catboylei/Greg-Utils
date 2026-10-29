@@ -3,6 +3,7 @@ package lei.greg.features
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import lei.greg.GregUtils
 import lei.greg.Utils
 import lei.greg.backend.Backend
 import lei.greg.config.ConfigManager
@@ -72,9 +73,8 @@ object AnnieParties {
 
     // fills missing slots with default parties numbered by their position
     private fun padded(list: List<Party>): List<Party> {
-        val player = MinecraftClient.getInstance().session.username
         playerParty = list.firstOrNull { party ->
-            party.players.any { it.name.equals(player, ignoreCase = true) }
+            party.players.any { it.name.equals(GregUtils.PLAYER_NAME, ignoreCase = true) }
         }?.number
 
         val byNumber = list.associateBy { it.number }

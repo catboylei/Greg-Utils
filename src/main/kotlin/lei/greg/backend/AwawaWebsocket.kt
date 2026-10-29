@@ -34,7 +34,7 @@ sealed class AwawaPayload {
     data class Raid(val message: String, val name: String) : AwawaPayload()
 
     @Serializable @SerialName("connectionSuccess")
-    data class ConnectionSuccess(val message: String, val availableChannels: List<String>) : AwawaPayload()
+    data class ConnectionSuccess(val message: String, val availableChannels: List<String>, val permissions: Int) : AwawaPayload()
 
     @Serializable @SerialName("connectionFail")
     data class ConnectionFail(val message: String) : AwawaPayload()
@@ -65,6 +65,7 @@ object Backend {
     var isLoggedIn = false
         private set
 	var availableChannels = emptyList<String>()
+    var hasPerms = false
 
     fun register() {
         connectionHooks()
@@ -218,6 +219,7 @@ object Backend {
             Utils.notifyChat(it.message)
             setStatus(Text.literal("CONNECTED").formatted(Formatting.GREEN))
             isConnecting = false
+            if (it.permissions != 0) hasPerms = true
         }
 
         AwawaPayloadEvents.CONNECTION_FAIL.register {

@@ -40,11 +40,12 @@ import net.minecraft.util.Util
 import java.net.URI
 import javax.swing.GroupLayout
 
-// TODO: awawa sends list of people with admin perms and i show management if player is in there
+// TODO: awawa sends perm level and this shows management stuff based on it
 // ofc check the packet on awawa side too
 // TODO: subscribe to parties changed event and call updateParties then
 // TODO: the entire management system !
 // TODO: add a timer from AnnieParties.timestamp
+// TODO: last non-null player of any active party may become a "add player" management button
 
 enum class AnnieRoles(val color: Int) {
     HEAL(0xFF0fff73.toInt()),

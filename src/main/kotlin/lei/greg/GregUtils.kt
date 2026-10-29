@@ -30,6 +30,11 @@ object GregUtils : ModInitializer {
 		// and comment this one !
 		"4a451026-c279-40fa-80de-6fcd02169bc5"
 	}
+	val PLAYER_NAME: String by lazy {
+		// same thing here
+		//MinecraftClient.getInstance().session.username
+		"catboylei"
+	}
 
 	override fun onInitialize() {
 

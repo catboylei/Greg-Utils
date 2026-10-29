@@ -77,6 +77,8 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
     private fun updateParties(rootComponent: StackLayout) {
         rootComponent.childById(FlowLayout::class.java, "party-holder").apply {
             clearChildren()
+            AnnieParties.isActive = true; // TODO: explode this
+
             when {
                 !Backend.isLoggedIn -> {
                     sizing(Sizing.fill())

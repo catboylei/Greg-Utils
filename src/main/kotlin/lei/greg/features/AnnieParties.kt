@@ -5,14 +5,12 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import lei.greg.Utils
 import lei.greg.backend.Backend
+import lei.greg.config.ConfigManager
 import lei.greg.events.AwawaPayloadEvents
 import lei.greg.subScreens.AnnieRoles
-import lei.greg.subScreens.AnnieSubScreen
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.toast.SystemToast
-import net.minecraft.text.Text
 
-@Serializable data class requestPartiesOutgoingPayload(@EncodeDefault val type: String = "getAnnieParties")
+@Serializable data class SignUpOutgoingPayload(val role: String, val hasScrolls: Boolean, val canLead: Boolean, @EncodeDefault val type: String = "signUpForAnnie")
+@Serializable data class RequestPartiesOutgoingPayload(@EncodeDefault val type: String = "getAnnieParties")
 data class Player(val name: String = "-", val hasScrolls: Boolean = false, val canLead: Boolean = false, val role: AnnieRoles = AnnieRoles.NONE)
 
 class Party(players: List<Player> = emptyList(), val number: Int, val active: Boolean = false) {
@@ -42,10 +40,20 @@ object AnnieParties {
     fun populate(newParties: List<Party>) { parties = padded(newParties) }
     fun joinAnnie(partyNumber: Int) {
         Utils.notifyToast("FKL Annie", "Sent a request to join party $partyNumber")
-        TODO()
+
+        if (ConfigManager.getString("annie role") == "NONE") {
+            Utils.notifyToast("FKL Annie", "You are joining without a role, make sure to select one in mod settings !")
+        }
+        val payload = SignUpOutgoingPayload(
+            ConfigManager.getString("annie role")!!,
+            ConfigManager.getBool("have scrolls"),
+            ConfigManager.getBool("can lead")
+        )
+
+        Backend.send(Json.encodeToString(SignUpOutgoingPayload.serializer(), payload))
     }
     fun requestUpdate() {
-        Backend.send(Json.encodeToString(requestPartiesOutgoingPayload.serializer(), requestPartiesOutgoingPayload()))
+        Backend.send(Json.encodeToString(RequestPartiesOutgoingPayload.serializer(), RequestPartiesOutgoingPayload()))
     }
 
     // fills missing slots with default parties numbered by their position
@@ -89,8 +97,6 @@ object AnnieParties {
                 2,
                 true
             ),
-
-            // TODO: here in the event of all parties being full, awawa should preferably send the next party without players
         ))
     }
 }

@@ -38,6 +38,10 @@ private val defaults: Map<String, *> = mapOf(
     "watched visualiser" to false,
     "watched chat" to false,
     "watched title" to true,
+
+    "annie role" to "NONE",
+    "have scrolls" to false,
+    "can lead" to false
 )
 
 
@@ -75,6 +79,9 @@ object ScreenEntries {
         // random/fkl annie
         SettingEntry("separator", "FKL Annie", "", "", "Random"),
         SettingEntry("button", "Annie Parties", "View parties and sign up --->", "open annie", "Random"),
+        SettingEntry("field", "Annie Role", "Your role for annie \neither healer, tank, or dps", "annie role", "Random"),
+        SettingEntry("bool", "Have scrolls", "Are you bringing scrolls ?", "have scrolls", "Random"),
+        SettingEntry("bool", "Can Lead", "Can you lead a party ?", "can lead", "Random"),
 
         // boss/watched
         SettingEntry("separator", "Watched", "", "", "Gregory Bossfight"),

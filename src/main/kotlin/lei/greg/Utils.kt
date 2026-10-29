@@ -249,6 +249,7 @@ object Utils {
         }
     }
 
+    // TODO: fix sizing on wrapped toasts cus it reserves more space than its size which is weird
     fun notifyToast(title: String, desc: String) {
         MinecraftClient.getInstance().toastManager.add(
             AnnieToast(Text.literal(title).withColor(0xe66aff), Text.literal(desc).withColor(0xbfbfbf))

@@ -35,6 +35,7 @@ import net.minecraft.command.argument.Vec3ArgumentType
 import net.minecraft.server.command.CommandManager
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 import java.net.URI
 import javax.swing.GroupLayout
@@ -156,12 +157,20 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
             child(icon(if (!party.hasScrolls) "cross-icon" else "checkmark-icon", 8).positioning(Positioning.relative(15, 90)))
             child(UIComponents.label(Text.literal("Party ${party.number}").withColor(if (!party.active) 0xbfbfbf else 0xe66aff)))
             child(UIComponents.button(Text.empty(), {
-                if (party.active && !party.isFull) AnnieParties.joinAnnie(party.number)
+                when (AnnieParties.playerParty) {
+                    null -> if (party.active && !party.isFull) AnnieParties.joinAnnie(party.number)
+                    else -> if (party.number == AnnieParties.playerParty) AnnieParties.leaveAnnie()
+                }
             }).apply {
                 positioning(Positioning.relative(90, 40))
                 sizing(Sizing.fixed(12))
+                // TODO: optimise renderer, only recompute on updating gui
+                // TODO: implement a general cooldown for this button
                 renderer { ctx, component, _ ->
-                    val texture = GregUtils.id( if (!party.active || party.isFull) "join-icon-inactive" else (if (component.isHovered) "join-icon-hovered" else "join-icon"))
+                    val texture: Identifier = when (AnnieParties.playerParty) {
+                        null -> GregUtils.id( if (!party.active || party.isFull) "join-icon-inactive" else (if (component.isHovered) "join-icon-hovered" else "join-icon"))
+                        else -> GregUtils.id( if (party.number != AnnieParties.playerParty) "leave-icon-inactive" else (if (component.isHovered) "leave-icon-hovered" else "leave-icon"))
+                    }
                     NinePatchTexture.draw(texture, ctx, component.x, component.y, component.width, component.height - 1)
                 }
             })

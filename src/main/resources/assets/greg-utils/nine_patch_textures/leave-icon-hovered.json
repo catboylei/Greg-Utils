@@ -1,0 +1,15 @@
+{
+  "texture": "greg-utils:textures/leave-icon.png",
+  "texture_width": 16,
+  "texture_height": 48,
+  "repeat": false,
+  "v": 16,
+  "corner_patch_size": {
+    "width": 1,
+    "height": 1
+  },
+  "center_patch_size": {
+    "width": 14,
+    "height": 14
+  }
+}

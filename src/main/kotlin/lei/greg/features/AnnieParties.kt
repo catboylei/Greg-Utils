@@ -3,12 +3,15 @@ package lei.greg.features
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import lei.greg.GregUtils
 import lei.greg.Utils
 import lei.greg.backend.Backend
 import lei.greg.config.ConfigManager
 import lei.greg.events.AwawaPayloadEvents
 import lei.greg.subScreens.AnnieRoles
+import net.minecraft.client.MinecraftClient
 
+@Serializable data class LeaveAnnieOutgoingPayload(@EncodeDefault val type: String = "leaveAnnie")
 @Serializable data class SignUpOutgoingPayload(val role: String, val hasScrolls: Boolean, val canLead: Boolean, @EncodeDefault val type: String = "signUpForAnnie")
 @Serializable data class RequestPartiesOutgoingPayload(@EncodeDefault val type: String = "getAnnieParties")
 data class Player(val name: String = "-", val hasScrolls: Boolean = false, val canLead: Boolean = false, val role: AnnieRoles = AnnieRoles.NONE)
@@ -42,6 +45,7 @@ object AnnieParties {
         private set
     var isActive = false
     var timestamp: Int? = null
+    var playerParty: Int? = null
 
     fun populate(newParties: List<Party>) { parties = padded(newParties) }
     fun joinAnnie(partyNumber: Int) {
@@ -58,12 +62,22 @@ object AnnieParties {
 
         Backend.send(Json.encodeToString(SignUpOutgoingPayload.serializer(), payload))
     }
+    fun leaveAnnie() {
+        Utils.notifyToast("FKL Annie", "Sent a request to leave annie")
+
+        Backend.send(Json.encodeToString(LeaveAnnieOutgoingPayload.serializer(), LeaveAnnieOutgoingPayload()))
+    }
     fun requestUpdate() {
         Backend.send(Json.encodeToString(RequestPartiesOutgoingPayload.serializer(), RequestPartiesOutgoingPayload()))
     }
 
     // fills missing slots with default parties numbered by their position
     private fun padded(list: List<Party>): List<Party> {
+        val player = "catboylei" // MinecraftClient.getInstance().session.username // TODO: revert this back
+        playerParty = list.firstOrNull { party ->
+            party.players.any { it.name.equals(player, ignoreCase = true) }
+        }?.number
+
         val byNumber = list.associateBy { it.number }
         val count = maxOf(4, list.maxOfOrNull { it.number } ?: 0)
         return (1..count).map { n -> byNumber[n] ?: Party(number = n) }
@@ -82,7 +96,7 @@ object AnnieParties {
                     Player(name = "Pyrotheum", hasScrolls = false, canLead = true, role = AnnieRoles.TANK),
                     Player(name = "TheseusTheBoss", hasScrolls = false, canLead = true, role = AnnieRoles.DPS),
                     Player(name = "Yqdy", hasScrolls = false, canLead = false, role = AnnieRoles.HEAL),
-                    Player(name = "Magafaof", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
+                    Player(name = "catboylei", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                     Player(name = "GamblingManiac", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                 ),
                 1,

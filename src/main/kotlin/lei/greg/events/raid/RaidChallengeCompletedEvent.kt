@@ -1,4 +1,4 @@
-package lei.greg.events
+package lei.greg.events.raid
 
 import lei.greg.GregUtils
 import net.fabricmc.fabric.api.event.Event;

@@ -8,8 +8,8 @@ import lei.greg.GregUtils
 import lei.greg.GregUtils.PLAYER_UUID
 import lei.greg.Utils
 import lei.greg.config.ConfigManager
-import lei.greg.events.AwawaPayloadEvents
-import lei.greg.events.AwawaStatusUpdated
+import lei.greg.events.backend.AwawaPayloadEvents
+import lei.greg.events.backend.AwawaStatusUpdated
 import lei.greg.utils.Scheduler
 import net.minecraft.client.MinecraftClient
 import net.minecraft.text.Text

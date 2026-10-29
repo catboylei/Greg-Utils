@@ -1,6 +1,4 @@
-package lei.greg.events
-
-// TODO: group events by room, maybe organise them in directories
+package lei.greg.events.raid
 
 import lei.greg.GregUtils
 import net.fabricmc.fabric.api.event.Event

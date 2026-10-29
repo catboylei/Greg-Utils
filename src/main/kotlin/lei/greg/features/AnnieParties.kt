@@ -3,13 +3,11 @@ package lei.greg.features
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import lei.greg.GregUtils
 import lei.greg.Utils
 import lei.greg.backend.Backend
 import lei.greg.config.ConfigManager
-import lei.greg.events.AwawaPayloadEvents
+import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.subScreens.AnnieRoles
-import net.minecraft.client.MinecraftClient
 
 @Serializable data class LeaveAnnieOutgoingPayload(@EncodeDefault val type: String = "leaveAnnie")
 @Serializable data class SignUpOutgoingPayload(val role: String, val hasScrolls: Boolean, val canLead: Boolean, @EncodeDefault val type: String = "signUpForAnnie")

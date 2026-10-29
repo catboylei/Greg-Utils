@@ -1,6 +1,5 @@
-package lei.greg.events
+package lei.greg.events.greg
 
-import lei.greg.GregUtils
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 

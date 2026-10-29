@@ -4,21 +4,13 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import lei.greg.GregUtils
-import lei.greg.GregUtils.PLAYER_UUID
 import lei.greg.backend.Backend
-import lei.greg.events.AwawaPayloadEvents
+import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.Utils
 import lei.greg.config.ConfigManager
-import lei.greg.utils.Scheduler
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.minecraft.command.CommandSource
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.WebSocket
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
 
 @Serializable data class OutgoingMessagePayload(val message: String, val channelName: String, @EncodeDefault val type: String = "chat")
 

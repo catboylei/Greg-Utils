@@ -4,9 +4,8 @@ import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import lei.greg.config.ConfigManager
-import lei.greg.features.DiscordChat
 import lei.greg.backend.Backend
-import lei.greg.events.AwawaPayloadEvents
+import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.highlights.Highlights
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.argument.Vec3ArgumentType

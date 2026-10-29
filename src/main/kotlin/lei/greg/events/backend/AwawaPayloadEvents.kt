@@ -1,4 +1,4 @@
-package lei.greg.events
+package lei.greg.events.backend
 
 import lei.greg.backend.AwawaPayload
 import net.fabricmc.fabric.api.event.Event

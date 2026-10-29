@@ -3,9 +3,9 @@ package lei.greg.features
 import lei.greg.Utils.notifyChat
 import lei.greg.Utils.notifyTitle
 import lei.greg.config.ConfigManager
-import lei.greg.events.RaidFinishedEvent
-import lei.greg.events.TnaBossEntered
-import lei.greg.events.TnaWatchedBeam
+import lei.greg.events.raid.RaidFinishedEvent
+import lei.greg.events.greg.TnaBossEntered
+import lei.greg.events.greg.TnaWatchedBeam
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents
 
 object WatchedVisualiser {

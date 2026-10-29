@@ -10,10 +10,8 @@ import io.wispforest.owo.ui.core.OwoUIGraphics
 import io.wispforest.owo.ui.core.ParentUIComponent
 import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
-import lei.greg.backend.Backend
 import lei.greg.backend.Backend.status
-import lei.greg.events.AwawaStatusUpdated
-import lei.greg.subScreens.AnnieSubScreen
+import lei.greg.events.backend.AwawaStatusUpdated
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.server.command.CommandManager

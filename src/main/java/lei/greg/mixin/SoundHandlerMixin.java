@@ -1,7 +1,7 @@
 package lei.greg.mixin;
 
+import lei.greg.events.greg.TnaWatchedBeam;
 import lei.greg.utils.Debouncer;
-import lei.greg.events.*;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.sound.SoundEvent;

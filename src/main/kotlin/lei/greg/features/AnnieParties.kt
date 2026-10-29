@@ -25,6 +25,7 @@ object AnnieParties {
 
     var parties: List<Party> = padded(emptyList())
         private set
+    var isActive = false
 
     fun populate(newParties: List<Party>) { parties = padded(newParties) }
     fun joinAnnie(partyNumber: Int) {
@@ -65,9 +66,10 @@ object AnnieParties {
                     Player(name = "hrrw", hasScrolls = false, canLead = false, role = AnnieRoles.HEAL),
                     Player(name = "CreampaiPham", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                     Player(name = "Ams_017", hasScrolls = false, canLead = false, role = AnnieRoles.TANK),
-                    Player(name = "HadesFeve", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
+                    Player(name = "itsyunaya", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                     Player(name = "Siel_oschen", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                     Player(name = "Citr_n", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
+                    Player(name = "elolunis", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                 ),
                 2,
                 true

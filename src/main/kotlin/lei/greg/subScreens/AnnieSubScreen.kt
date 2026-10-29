@@ -1,6 +1,7 @@
 package lei.greg.subScreens
 
 import com.mojang.brigadier.arguments.BoolArgumentType
+import io.wispforest.owo.braid.core.Alignment
 import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.ButtonComponent
 import io.wispforest.owo.ui.component.LabelComponent
@@ -21,6 +22,7 @@ import io.wispforest.owo.ui.core.VerticalAlignment
 import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
 import lei.greg.Utils.notifyToast
+import lei.greg.backend.Backend
 import lei.greg.features.AnnieParties
 import lei.greg.features.Party
 import lei.greg.features.Player
@@ -35,6 +37,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Util
 import java.net.URI
+import javax.swing.GroupLayout
 
 // TODO: awawa sends list of people with admin perms and i show management if player is in there
 // ofc check the packet on awawa side too
@@ -49,7 +52,9 @@ enum class AnnieRoles(val color: Int, val iconName: String) {
 }
 
 val customIcons = mapOf(
-    "AlfieCrafts" to "alfie-icon" // annie manager since 1932 gets her icon
+    "AlfieCrafts" to "alfie-icon", // annie manager since 1932 gets her icon
+    "itsyunaya" to "ashley-icon", // wife
+    "TheWalrusMaster" to "walrus-icon" // goober gets goober icon
 )
 
 class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("annie-subscreen"))) {
@@ -72,10 +77,34 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
     private fun updateParties(rootComponent: StackLayout) {
         rootComponent.childById(FlowLayout::class.java, "party-holder").apply {
             clearChildren()
-            AnnieParties.populateWithTest()
-            AnnieParties.parties.forEach {
-                child(partyPanel(it))
+            when {
+                !Backend.isLoggedIn -> {
+                    sizing(Sizing.fill())
+                    alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
+                    child(warningMessage("Not Connected to Awawa :("))
+                }
+                !AnnieParties.isActive -> {
+                    sizing(Sizing.fill())
+                    alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
+                    child(warningMessage("No Annie detected (yet ?)"))
+                }
+                else -> {
+                    AnnieParties.parties.forEach {
+                        child(partyPanel(it))
+                    }
+                }
             }
+        }
+    }
+
+    private fun warningMessage(msg: String): FlowLayout = UIContainers.verticalFlow(Sizing.content(), Sizing.content()).apply {
+        child(icon("disconnected-icon", 16))
+        child(ScaledLabel(Text.literal(msg).withColor(0xe66aff), 1f))
+        gap(4)
+        horizontalAlignment(HorizontalAlignment.CENTER)
+        padding(Insets.of(8))
+        surface { ctx, component ->
+            NinePatchTexture.draw(GregUtils.id("entry"), ctx, component)
         }
     }
 

@@ -21,7 +21,6 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
 @Serializable data class OutgoingAuthPayload(val uuid: String, val password: String)
-@Serializable data class OutgoingMessagePayload(val message: String, val channel: String)
 
 @Serializable
 sealed class AwawaPayload {
@@ -39,6 +38,9 @@ sealed class AwawaPayload {
 
     @Serializable @SerialName("connectionFail")
     data class ConnectionFail(val message: String) : AwawaPayload()
+
+    @Serializable @SerialName("error")
+    data class Error(val message: String) : AwawaPayload()
 }
 
 object Backend {
@@ -196,6 +198,7 @@ object Backend {
                     is AwawaPayload.Raid -> AwawaPayloadEvents.RAID.invoker().on(parsed)
                     is AwawaPayload.ConnectionSuccess -> AwawaPayloadEvents.CONNECTION_SUCCESS.invoker().on(parsed)
                     is AwawaPayload.ConnectionFail -> AwawaPayloadEvents.CONNECTION_FAIL.invoker().on(parsed)
+                    is AwawaPayload.Error -> AwawaPayloadEvents.ERROR.invoker().on(parsed)
                 }
             } catch (e: Exception) {
                 GregUtils.LOGGER.warn("GregBridge: listener failed on \"$payload\": $e")

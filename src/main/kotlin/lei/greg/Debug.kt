@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext
 import lei.greg.config.ConfigManager
 import lei.greg.features.DiscordChat
 import lei.greg.backend.Backend
+import lei.greg.events.AwawaPayloadEvents
 import lei.greg.highlights.Highlights
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.argument.Vec3ArgumentType
@@ -22,6 +23,7 @@ object Debug {
         registerHighlightCommand()
 		registerBackendRelogCommand()
         registerConfigCommand()
+        registerBackendErrorPrints()
     }
 
     private fun registerHighlightCommand() {
@@ -87,5 +89,11 @@ object Debug {
         context.source.sendFeedback({ Text.literal("Set $key to $value")}, false)
 
         return 1
+    }
+
+    private fun registerBackendErrorPrints() {
+        AwawaPayloadEvents.ERROR.register {
+            Utils.notifyChat("Awawa Error: \"${it.message}\"")
+        }
     }
 }

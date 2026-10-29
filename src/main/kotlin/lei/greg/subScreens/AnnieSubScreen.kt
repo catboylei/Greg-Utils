@@ -44,11 +44,11 @@ import javax.swing.GroupLayout
 // TODO: subscribe to parties changed event and call updateParties then
 // TODO: register command to open this
 
-enum class AnnieRoles(val color: Int, val iconName: String) {
-    HEAL(0xFF0fff73.toInt(), "heart-icon"),
-    TANK(0xFF0fbbff.toInt(), "a"),
-    DPS(0xFFFF6B8A.toInt(), "a"),
-    NONE(0xFFbfbfbf.toInt(), "a");
+enum class AnnieRoles(val color: Int) {
+    HEAL(0xFF0fff73.toInt()),
+    TANK(0xFF0fbbff.toInt()),
+    DPS(0xFFFF6B8A.toInt()),
+    NONE(0xFFbfbfbf.toInt());
 }
 
 val customIcons = mapOf(

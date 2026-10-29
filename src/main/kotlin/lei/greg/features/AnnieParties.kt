@@ -1,12 +1,18 @@
 package lei.greg.features
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import lei.greg.Utils
+import lei.greg.backend.Backend
+import lei.greg.events.AwawaPayloadEvents
 import lei.greg.subScreens.AnnieRoles
 import lei.greg.subScreens.AnnieSubScreen
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.toast.SystemToast
 import net.minecraft.text.Text
 
+@Serializable data class requestPartiesOutgoingPayload(@EncodeDefault val type: String = "getAnnieParties")
 data class Player(val name: String = "-", val hasScrolls: Boolean = false, val canLead: Boolean = false, val role: AnnieRoles = AnnieRoles.NONE)
 
 class Party(players: List<Player> = emptyList(), val number: Int, val active: Boolean = false) {
@@ -23,6 +29,12 @@ class Party(players: List<Player> = emptyList(), val number: Int, val active: Bo
 
 object AnnieParties {
 
+    fun register() {
+        AwawaPayloadEvents.CONNECTION_SUCCESS.register {
+            requestUpdate()
+        }
+    }
+
     var parties: List<Party> = padded(emptyList())
         private set
     var isActive = false
@@ -31,6 +43,9 @@ object AnnieParties {
     fun joinAnnie(partyNumber: Int) {
         Utils.notifyToast("FKL Annie", "Sent a request to join party $partyNumber")
         TODO()
+    }
+    fun requestUpdate() {
+        Backend.send(Json.encodeToString(requestPartiesOutgoingPayload.serializer(), requestPartiesOutgoingPayload()))
     }
 
     // fills missing slots with default parties numbered by their position

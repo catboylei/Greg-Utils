@@ -105,8 +105,6 @@ object AnnieParties {
                 listOf(
                     Player(name = "Icyglowleaf", hasScrolls = true, canLead = false, role = AnnieRoles.HEAL),
                     Player(name = "bigmoneyfiber", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                    Player(name = "hrrw", hasScrolls = false, canLead = false, role = AnnieRoles.HEAL),
-                    Player(name = "CreampaiPham", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                     Player(name = "Ams_017", hasScrolls = false, canLead = false, role = AnnieRoles.TANK),
                     Player(name = "itsyunaya", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
                     Player(name = "Siel_oschen", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),

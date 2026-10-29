@@ -42,7 +42,8 @@ import javax.swing.GroupLayout
 // TODO: awawa sends list of people with admin perms and i show management if player is in there
 // ofc check the packet on awawa side too
 // TODO: subscribe to parties changed event and call updateParties then
-// TODO: register command to open this
+// TODO: the entire management system !
+// TODO: add a timer from AnnieParties.timestamp
 
 enum class AnnieRoles(val color: Int) {
     HEAL(0xFF0fff73.toInt()),

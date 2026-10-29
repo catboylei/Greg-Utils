@@ -41,6 +41,9 @@ sealed class AwawaPayload {
 
     @Serializable @SerialName("error")
     data class Error(val message: String) : AwawaPayload()
+
+    @Serializable @SerialName("annieStatus")
+    data class AnnieStatus(val isActive: Boolean, val timestamp: Int?) : AwawaPayload()
 }
 
 object Backend {
@@ -199,6 +202,7 @@ object Backend {
                     is AwawaPayload.ConnectionSuccess -> AwawaPayloadEvents.CONNECTION_SUCCESS.invoker().on(parsed)
                     is AwawaPayload.ConnectionFail -> AwawaPayloadEvents.CONNECTION_FAIL.invoker().on(parsed)
                     is AwawaPayload.Error -> AwawaPayloadEvents.ERROR.invoker().on(parsed)
+                    is AwawaPayload.AnnieStatus -> AwawaPayloadEvents.ANNIE_STATUS.invoker().on(parsed)
                 }
             } catch (e: Exception) {
                 GregUtils.LOGGER.warn("GregBridge: listener failed on \"$payload\": $e")

@@ -19,4 +19,5 @@ object AwawaPayloadEvents {
 	@JvmField val CONNECTION_SUCCESS = event<AwawaPayload.ConnectionSuccess>()
     @JvmField val CONNECTION_FAIL = event<AwawaPayload.ConnectionFail>()
     @JvmField val ERROR = event<AwawaPayload.Error>()
+    @JvmField val ANNIE_STATUS = event<AwawaPayload.AnnieStatus>()
 }

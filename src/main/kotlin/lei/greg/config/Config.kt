@@ -63,7 +63,7 @@ object ScreenEntries {
         // general/other
         SettingEntry("separator", "Other", "", "", "General Settings"),
         SettingEntry("field", "Highlight Color", "Color of highlights in hex and \ndefaults to \"#FFCEFF\"", "highlight color", "General Settings"),
-        SettingEntry("bool", "Debug Mode", "", "debug mode", "General Settings"),
+        SettingEntry("bool", "Debug Mode", "This breaks stuff badly (obviously) \nOnly useful for debug/dev", "debug mode", "General Settings"),
 
         // tree/tree path
         SettingEntry("separator", "Tree Path", "", "", "Weeping Soulroot (Tree) Room"),

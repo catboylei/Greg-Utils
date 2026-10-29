@@ -31,18 +31,24 @@ object AnnieParties {
         AwawaPayloadEvents.CONNECTION_SUCCESS.register {
             requestUpdate()
         }
+
+        AwawaPayloadEvents.ANNIE_STATUS.register {
+            isActive = it.isActive
+            timestamp = it.timestamp
+        }
     }
 
     var parties: List<Party> = padded(emptyList())
         private set
     var isActive = false
+    var timestamp: Int? = null
 
     fun populate(newParties: List<Party>) { parties = padded(newParties) }
     fun joinAnnie(partyNumber: Int) {
         Utils.notifyToast("FKL Annie", "Sent a request to join party $partyNumber")
 
         if (ConfigManager.getString("annie role") == "NONE") {
-            Utils.notifyToast("FKL Annie", "You are joining without a role, make sure to select one in mod settings !")
+            Utils.notifyToast("Role Missing", "You may select a role in settings!")
         }
         val payload = SignUpOutgoingPayload(
             ConfigManager.getString("annie role")!!,

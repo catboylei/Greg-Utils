@@ -221,6 +221,16 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
             .verticalAlignment(VerticalAlignment.CENTER)
             .padding(Insets.left(2)) as FlowLayout
 
+        val removeButton = UIComponents.button(Text.empty()) {
+            //TODO: remove player manually function
+        }.apply {
+            positioning(Positioning.absolute(84, 0))
+            renderer { ctx, component, _ ->
+                NinePatchTexture.draw(GregUtils.id(if (component.isHovered) "icons/remove-icon-hovered" else "icons/remove-icon"), ctx, component)
+            }
+            sizing(Sizing.fixed(12))
+        }
+
         if (player.name != "-") {
             fullLabel.mouseDown().subscribe { click, _ ->
                 if (click.buttonInfo.button == 0) {
@@ -244,6 +254,8 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         }
 
         return fullLabel.apply {
+                if (Backend.hasPerms && player.name != "-") child(removeButton)
+
                 child(bar)
                 child(label)
                 child(icons)
@@ -259,14 +271,14 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
             .padding(Insets.left(2)) as FlowLayout
 
         row.child(UIComponents.button(Text.empty(), {
-            TODO()
+            //TODO: manual add player function
         }).apply {
             renderer { ctx, component, _ ->
                 NinePatchTexture.draw(GregUtils.id(if (component.isHovered) "icons/add-icon-hovered" else "icons/add-icon"), ctx, component)
             }
             sizing(Sizing.fixed(12))
         })
-        return row.margins(Insets.horizontal(2)) as FlowLayout
+        return row.margins(Insets.horizontal(1)) as FlowLayout
     }
 
     class ScaledLabel(text: Text, private val scale: Float) : LabelComponent(text) {

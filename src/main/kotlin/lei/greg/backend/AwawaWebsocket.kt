@@ -161,6 +161,8 @@ object Backend {
     fun send(msg: String): Boolean {
         val socket = webSocket
         if (!isLoggedIn || socket == null) return false
+
+        GregUtils.LOGGER.info("sending payload $msg")
         socket.sendText(msg, true)
         return true
     }

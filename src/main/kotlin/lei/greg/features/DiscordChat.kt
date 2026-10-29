@@ -1,6 +1,7 @@
 package lei.greg.features
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import lei.greg.GregUtils
@@ -19,11 +20,9 @@ import java.net.http.WebSocket
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
-@Serializable data class OutgoingMessagePayload(val message: String, val channel: String)
+@Serializable data class OutgoingMessagePayload(val message: String, val channelName: String, @EncodeDefault val type: String = "chat")
 
 object DiscordChat {
-
-    private var availableChannels = emptyList<String>()
 
     fun register() {
 		registerMessageCommand()

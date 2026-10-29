@@ -23,6 +23,7 @@ import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
 import lei.greg.Utils.notifyToast
 import lei.greg.backend.Backend
+import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.features.AnnieParties
 import lei.greg.features.Party
 import lei.greg.features.Player
@@ -54,6 +55,8 @@ enum class AnnieRoles(val color: Int) {
     NONE(0xFFbfbfbf.toInt());
 }
 
+private const val ADD_MARKER = "%INTERNAL_ADD%"
+
 val customIcons = mapOf(
     "AlfieCrafts" to "custom/alfie-icon", // annie manager since 1932 gets her icon
     "itsyunaya" to "custom/ashley-icon", // wife
@@ -67,7 +70,7 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
     override fun build(rootComponent: StackLayout) {
         hookButtons(rootComponent)
         applyCustomTextures(rootComponent)
-        AnnieParties.populateWithTest() // TODO: ykyk explode the test population
+
         updateParties(rootComponent)
 
         GregUtils.LOGGER.info("finished building annie screen")
@@ -177,6 +180,16 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
             })
         }
 
+        val shown = party.players.toMutableList()
+        if (Backend.hasPerms && party.active) {
+            val idx = shown.indexOfLast { it.name == "-" }
+            if (idx != -1) shown[idx] = Player(name = ADD_MARKER)
+        }
+
+        panel.apply {
+            shown.forEach { child(playerLabel(hoverLabel, it, party)) }
+        }
+
         panel.surface{ctx, component ->
             NinePatchTexture.draw(GregUtils.id("gui-textures/entry"), ctx, component)
         }
@@ -185,16 +198,20 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         }
         panel.child(hoverLabel)
 
+        /*
         panel.apply {
             party.players.forEach {
-                child(playerLabel(hoverLabel, it))
+                child(playerLabel(hoverLabel, it, party))
             }
         }
+         */
 
         return panel
     }
 
-    private fun playerLabel(hoverLabel: FlowLayout, player: Player): FlowLayout {
+    private fun playerLabel(hoverLabel: FlowLayout, player: Player, party: Party): FlowLayout {
+        if (player.name == ADD_MARKER) return addSlot(hoverLabel, party)
+
         val normal = (Text.literal(player.name))
         val hovered = (Text.literal(player.name).formatted(Formatting.BOLD))
 
@@ -240,6 +257,27 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
                 child(icons)
                 margins(Insets.horizontal(2))
             }
+    }
+
+    private fun addSlot(hoverLabel: FlowLayout, party: Party): FlowLayout {
+        val row = UIContainers.horizontalFlow(Sizing.fill(100), Sizing.fixed(12))
+            .gap(2)
+            .horizontalAlignment(HorizontalAlignment.LEFT)
+            .verticalAlignment(VerticalAlignment.CENTER)
+            .padding(Insets.left(2)) as FlowLayout
+
+        row.child(icon("add-icon", 8))
+        row.mouseDown().subscribe { click, _ ->
+            if (click.buttonInfo.button == 0) {
+                true
+            } else false
+        }
+        bindHover(hoverLabel, row, {
+            UIContainers.horizontalFlow(Sizing.content(), Sizing.content()).child(
+                UIComponents.label(Text.literal("Add a player to Party ${party.number}").withColor(0xbfbfbf) )
+            )
+        })
+        return row.margins(Insets.horizontal(2)) as FlowLayout
     }
 
     class ScaledLabel(text: Text, private val scale: Float) : LabelComponent(text) {
@@ -312,6 +350,10 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
                         1
                     }
                 )
+            }
+
+            AwawaPayloadEvents.CONNECTION_SUCCESS.register {
+                AnnieParties.populateWithTest() // TODO: ykyk explode the test population
             }
         }
     }

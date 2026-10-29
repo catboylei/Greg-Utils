@@ -1,5 +1,5 @@
 {
-  "texture": "greg-utils:textures/switches.png",
+  "texture": "greg-utils:textures/icons/switches.png",
   "texture_width": 26,
   "texture_height": 52,
   "repeat": false,

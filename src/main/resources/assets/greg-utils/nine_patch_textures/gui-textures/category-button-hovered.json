@@ -1,9 +1,9 @@
 {
-  "texture": "greg-utils:textures/category-button.png",
+  "texture": "greg-utils:textures/gui-textures/category-button.png",
   "texture_width": 40,
   "texture_height": 45,
   "repeat": false,
-  "v": 15,
+  "v": 30,
   "corner_patch_size": {
     "width": 4,
     "height": 4

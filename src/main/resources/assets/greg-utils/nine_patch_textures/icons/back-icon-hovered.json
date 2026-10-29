@@ -1,15 +1,15 @@
 {
-  "texture": "greg-utils:textures/discord-logo.png",
-  "texture_width": 14,
+  "texture": "greg-utils:textures/icons/back-icon.png",
+  "texture_width": 10,
   "texture_height": 20,
   "repeat": false,
-  "v": 0,
+  "v": 10,
   "corner_patch_size": {
     "width": 1,
     "height": 1
   },
   "center_patch_size": {
-    "width": 12,
+    "width": 8,
     "height": 8
   }
 }

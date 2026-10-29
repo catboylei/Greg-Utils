@@ -1,9 +1,9 @@
 {
-  "texture": "greg-utils:textures/refresh-button.png",
+  "texture": "greg-utils:textures/icons/refresh-button.png",
   "texture_width": 16,
   "texture_height": 34,
   "repeat": false,
-  "v": 0,
+  "v": 17,
   "corner_patch_size": {
     "width": 4,
     "height": 4

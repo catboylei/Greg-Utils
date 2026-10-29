@@ -240,7 +240,7 @@ object Utils {
         }
 
         override fun draw(context: DrawContext, textRenderer: TextRenderer, startTime: Long) {
-            NinePatchTexture.draw(GregUtils.id("entry"), OwoUIGraphics.of(context), 0, 0, width, height)
+            NinePatchTexture.draw(GregUtils.id("gui-textures/entry"), OwoUIGraphics.of(context), 0, 0, width, height)
 
             var y = 7
             for (line in titleLines) { context.drawText(textRenderer, line, textX, y, 0xFFE66AFF.toInt(), false); y += 9 }

@@ -1,5 +1,5 @@
 {
-  "texture": "greg-utils:textures/annie-separator.png",
+  "texture": "greg-utils:textures/gui-textures/annie-separator.png",
   "texture_width": 20,
   "texture_height": 3,
   "repeat": false,

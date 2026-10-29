@@ -54,9 +54,9 @@ enum class AnnieRoles(val color: Int) {
 }
 
 val customIcons = mapOf(
-    "AlfieCrafts" to "alfie-icon", // annie manager since 1932 gets her icon
-    "itsyunaya" to "ashley-icon", // wife
-    "TheWalrusMaster" to "walrus-icon" // goober gets goober icon
+    "AlfieCrafts" to "custom/alfie-icon", // annie manager since 1932 gets her icon
+    "itsyunaya" to "custom/ashley-icon", // wife
+    "TheWalrusMaster" to "custom/walrus-icon" // goober gets goober icon
 )
 
 class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("annie-subscreen"))) {
@@ -108,32 +108,32 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         horizontalAlignment(HorizontalAlignment.CENTER)
         padding(Insets.of(8))
         surface { ctx, component ->
-            NinePatchTexture.draw(GregUtils.id("entry"), ctx, component)
+            NinePatchTexture.draw(GregUtils.id("gui-textures/entry"), ctx, component)
         }
     }
 
     private fun applyCustomTextures(rootComponent: StackLayout) {
         rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "window")!!.surface {ctx, component ->
-            NinePatchTexture.draw(GregUtils.id("window"), ctx, component)
+            NinePatchTexture.draw(GregUtils.id("gui-textures/window"), ctx, component)
         }
         rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "bg")!!.surface {ctx, component ->
             NinePatchTexture.draw(GregUtils.id("bgs/annie-bg"), ctx, component)
         }
         rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "top-bar")!!.surface {ctx, component ->
-            NinePatchTexture.draw(GregUtils.id("category-button-inactive"), ctx, component)
+            NinePatchTexture.draw(GregUtils.id("gui-textures/category-button-inactive"), ctx, component)
         }
     }
 
     private fun hookButtons(rootComponent: StackLayout) {
         rootComponent.childById(ButtonComponent::class.java, "back")
             .renderer { ctx, component, _ ->
-                val texture = if (component.isHovered) GregUtils.id("back-icon-hovered") else GregUtils.id("back-icon")
+                val texture = if (component.isHovered) GregUtils.id("icons/back-icon-hovered") else GregUtils.id("icons/back-icon")
                 NinePatchTexture.draw(texture, ctx, component.x, component.y, component.width, component.height - 1)
             }
             .onPress { close() }
         rootComponent.childById(ButtonComponent::class.java, "discord")
             .renderer { ctx, component, _ ->
-                val texture = if (component.isHovered) GregUtils.id("discord-logo-hovered") else GregUtils.id("discord-logo")
+                val texture = if (component.isHovered) GregUtils.id("icons/discord-logo-hovered") else GregUtils.id("icons/discord-logo")
                 NinePatchTexture.draw(texture, ctx, component.x, component.y, component.width, component.height - 1)
             }
             .onPress {
@@ -168,8 +168,8 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
                 // TODO: implement a general cooldown for this button
                 renderer { ctx, component, _ ->
                     val texture: Identifier = when (AnnieParties.playerParty) {
-                        null -> GregUtils.id( if (!party.active || party.isFull) "join-icon-inactive" else (if (component.isHovered) "join-icon-hovered" else "join-icon"))
-                        else -> GregUtils.id( if (party.number != AnnieParties.playerParty) "leave-icon-inactive" else (if (component.isHovered) "leave-icon-hovered" else "leave-icon"))
+                        null -> GregUtils.id( if (!party.active || party.isFull) "icons/join-icon-inactive" else (if (component.isHovered) "icons/join-icon-hovered" else "icons/join-icon"))
+                        else -> GregUtils.id( if (party.number != AnnieParties.playerParty) "icons/leave-icon-inactive" else (if (component.isHovered) "icons/leave-icon-hovered" else "icons/leave-icon"))
                     }
                     NinePatchTexture.draw(texture, ctx, component.x, component.y, component.width, component.height - 1)
                 }
@@ -177,10 +177,10 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         }
 
         panel.surface{ctx, component ->
-            NinePatchTexture.draw(GregUtils.id("entry"), ctx, component)
+            NinePatchTexture.draw(GregUtils.id("gui-textures/entry"), ctx, component)
         }
         panel.childById(FlowLayout::class.java, "annie-separator").surface { ctx, component ->
-            NinePatchTexture.draw(GregUtils.id("annie-separator"), ctx, component)
+            NinePatchTexture.draw(GregUtils.id("gui-textures/annie-separator"), ctx, component)
         }
         panel.child(hoverLabel)
 
@@ -259,7 +259,7 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         }
     }
 
-    private fun icon(id: String, size: Int = 8): TextureComponent = UIComponents.texture(GregUtils.id("textures/$id.png"), 0, 0, 16, 16, 16, 16)
+    private fun icon(id: String, size: Int = 8): TextureComponent = UIComponents.texture(GregUtils.id("textures/icons/$id.png"), 0, 0, 16, 16, 16, 16)
         .apply { sizing(Sizing.fixed(size))}
 
     private fun bindHover(hoverLabel: FlowLayout, source: UIComponent, info: (() -> FlowLayout)?, extraEnter: () -> Unit = {}, extraLeave: () -> Unit = {}) {

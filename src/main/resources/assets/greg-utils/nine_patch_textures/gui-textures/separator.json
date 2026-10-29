@@ -1,5 +1,5 @@
 {
-  "texture": "greg-utils:textures/separator.png",
+  "texture": "greg-utils:textures/gui-textures/separator.png",
   "texture_width": 6,
   "texture_height": 15,
   "repeat": false,

@@ -1,5 +1,5 @@
 {
-  "texture": "greg-utils:textures/back-icon.png",
+  "texture": "greg-utils:textures/icons/back-icon.png",
   "texture_width": 10,
   "texture_height": 20,
   "repeat": false,

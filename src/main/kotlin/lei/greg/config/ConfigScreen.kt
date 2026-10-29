@@ -61,16 +61,16 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
 
     private fun applyCustomTextures(rootComponent: StackLayout) {
         rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "window")!!.surface {ctx, component ->
-            NinePatchTexture.draw(GregUtils.id("window"), ctx, component)
+            NinePatchTexture.draw(GregUtils.id("gui-textures/window"), ctx, component)
         }
         rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "separator")!!.surface {ctx, component ->
-            NinePatchTexture.draw(GregUtils.id("separator"), ctx, component)
+            NinePatchTexture.draw(GregUtils.id("gui-textures/separator"), ctx, component)
         }
         rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "bg-holder")!!.surface {ctx, component ->
             backgroundRendering(ctx, component)
         }
         rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "top-bar")!!.surface {ctx, component ->
-            NinePatchTexture.draw(GregUtils.id("category-button-inactive"), ctx, component)
+            NinePatchTexture.draw(GregUtils.id("gui-textures/category-button-inactive"), ctx, component)
         }
 
         rootComponent.forEachDescendant { component ->
@@ -86,13 +86,13 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
     }
 
     private fun buttonRendering(ctx: OwoUIGraphics, component: ButtonComponent) {
-        var texture = GregUtils.id("category-button-inactive")
+        var texture = GregUtils.id("gui-textures/category-button-inactive")
 
         // i wrote this at 5 am
         if (component.isHovered) {
-            texture = GregUtils.id("category-button-hovered")
+            texture = GregUtils.id("gui-textures/category-button-hovered")
         } else if ("category-${ConfigManager.getString("open category")}" == component.id()) {
-            texture = GregUtils.id("category-button-active")
+            texture = GregUtils.id("gui-textures/category-button-active")
         }
 
         // splendid
@@ -123,28 +123,28 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
     }
 
     private fun fieldRendering(ctx: OwoUIGraphics, component: FlowLayout) {
-        var texture = GregUtils.id("category-button-inactive")
+        var texture = GregUtils.id("gui-textures/category-button-inactive")
         val textbox = component.parent()!!.childById(TextBoxComponent::class.java, component.id()!!)
 
         if (textbox.isHovered) {
-            texture = GregUtils.id("category-button-hovered")
+            texture = GregUtils.id("gui-textures/category-button-hovered")
         } else if (textbox.isSelected) {
-            texture = GregUtils.id("category-button-active")
+            texture = GregUtils.id("gui-textures/category-button-active")
         }
 
         NinePatchTexture.draw(texture, ctx, component)
     }
 
     private fun switchRendering(ctx: OwoUIGraphics, component: ButtonComponent) {
-        var texture = GregUtils.id("switch-inactive")
+        var texture = GregUtils.id("icons/switch-inactive")
         val state = ConfigManager.getBool(component.id()!!)
 
         if (state && component.isHovered) {
-            texture = GregUtils.id("switch-active-hovered")
+            texture = GregUtils.id("icons/switch-active-hovered")
         } else if (!state && component.isHovered) {
-            texture = GregUtils.id("switch-inactive-hovered")
+            texture = GregUtils.id("icons/switch-inactive-hovered")
         } else if (state) {
-            texture = GregUtils.id("switch-active")
+            texture = GregUtils.id("icons/switch-active")
         }
 
         NinePatchTexture.draw(texture, ctx, component)
@@ -152,7 +152,7 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
 
     private fun actionButtonRendering(ctx: OwoUIGraphics, component: ButtonComponent) {
         // TODO: what is that please get rid of it
-        val type = if (component.width == 16) "refresh-button" else "external-link" // i lwk dont even know anymore
+        val type = if (component.width == 16) "icons/refresh-button" else "icons/external-link" // i lwk dont even know anymore
 
         val texture = if (component.isHovered) GregUtils.id("$type-hovered")
         else GregUtils.id(type)
@@ -165,7 +165,7 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
             "entry-${type}",
             mapOf("title" to title, "desc" to desc, "configId" to configId))
         entry.surface{ctx, component ->
-            NinePatchTexture.draw(GregUtils.id("entry"), ctx, component)
+            NinePatchTexture.draw(GregUtils.id("gui-textures/entry"), ctx, component)
         }
         if (configId == "reconnect backend") {
             val labels = mutableListOf<LabelComponent>()

@@ -1,9 +1,9 @@
 {
-  "texture": "greg-utils:textures/switches.png",
+  "texture": "greg-utils:textures/icons/switches.png",
   "texture_width": 26,
   "texture_height": 52,
   "repeat": false,
-  "v": 0,
+  "v": 26,
   "corner_patch_size": {
     "width": 12,
     "height": 6

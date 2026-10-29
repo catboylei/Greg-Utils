@@ -8,6 +8,7 @@ import lei.greg.backend.Backend
 import lei.greg.config.ConfigManager
 import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.subScreens.AnnieRoles
+import net.minecraft.client.MinecraftClient
 
 @Serializable data class LeaveAnnieOutgoingPayload(@EncodeDefault val type: String = "leaveAnnie")
 @Serializable data class SignUpOutgoingPayload(val role: String, val hasScrolls: Boolean, val canLead: Boolean, @EncodeDefault val type: String = "signUpForAnnie")
@@ -71,7 +72,7 @@ object AnnieParties {
 
     // fills missing slots with default parties numbered by their position
     private fun padded(list: List<Party>): List<Party> {
-        val player = "catboylei" // MinecraftClient.getInstance().session.username // TODO: revert this back
+        val player = MinecraftClient.getInstance().session.username
         playerParty = list.firstOrNull { party ->
             party.players.any { it.name.equals(player, ignoreCase = true) }
         }?.number

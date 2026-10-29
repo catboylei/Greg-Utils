@@ -1,5 +1,5 @@
 {
-  "texture": "greg-utils:textures/window.png",
+  "texture": "greg-utils:textures/gui-textures/window.png",
   "texture_width": 15,
   "texture_height": 15,
   "repeat": false,

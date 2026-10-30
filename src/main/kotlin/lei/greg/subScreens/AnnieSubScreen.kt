@@ -1,13 +1,14 @@
 package lei.greg.subScreens
 
-import com.mojang.brigadier.arguments.BoolArgumentType
-import io.wispforest.owo.braid.core.Alignment
 import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.ButtonComponent
+import io.wispforest.owo.ui.component.CheckboxComponent
 import io.wispforest.owo.ui.component.LabelComponent
+import io.wispforest.owo.ui.component.TextBoxComponent
 import io.wispforest.owo.ui.component.TextureComponent
 import io.wispforest.owo.ui.component.UIComponents
 import io.wispforest.owo.ui.container.FlowLayout
+import io.wispforest.owo.ui.container.OverlayContainer
 import io.wispforest.owo.ui.container.StackLayout
 import io.wispforest.owo.ui.container.UIContainers
 import io.wispforest.owo.ui.core.Color
@@ -21,32 +22,27 @@ import io.wispforest.owo.ui.core.UIComponent
 import io.wispforest.owo.ui.core.VerticalAlignment
 import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
+import lei.greg.Utils
 import lei.greg.Utils.notifyToast
 import lei.greg.backend.Backend
+import lei.greg.config.ConfigManager
 import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.features.AnnieParties
 import lei.greg.features.Party
 import lei.greg.features.Player
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.toast.SystemToast
-import net.minecraft.command.argument.Vec3ArgumentType
+import net.minecraft.client.input.KeyInput
 import net.minecraft.server.command.CommandManager
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
+import org.lwjgl.glfw.GLFW
 import java.net.URI
-import javax.swing.GroupLayout
 
-// TODO: awawa sends perm level and this shows management stuff based on it
-// ofc check the packet on awawa side too
 // TODO: subscribe to parties changed event and call updateParties then
-// TODO: the entire management system !
-// TODO: add a timer from AnnieParties.timestamp
-// TODO: last non-null player of any active party may become a "add player" management button
 
 enum class AnnieRoles(val color: Int) {
     HEAL(0xFF0fff73.toInt()),
@@ -65,6 +61,8 @@ val customIcons = mapOf(
 
 class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("annie-subscreen"))) {
 
+    private var activeOverlay: OverlayContainer<*>? = null
+    private var rootComponent: StackLayout? = null
     private var hoverOwner: UIComponent? = null
     private var isStuffRegistered = false
     private var timerLabel: ScaledLabel = ScaledLabel(Text.empty(), 0.78f).apply {
@@ -72,11 +70,14 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
     }
 
     override fun build(rootComponent: StackLayout) {
+        // TODO: change functions from passing root to using this
+        this.rootComponent = rootComponent
+
         hookButtons(rootComponent)
         applyCustomTextures(rootComponent)
-        addTimerlabel(rootComponent)
+        addTimerLabel(rootComponent)
 
-        //AnnieParties.populateWithTest()
+        AnnieParties.populateWithTest()
         updateParties(rootComponent)
 
         if (!isStuffRegistered) {
@@ -123,7 +124,7 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         }
     }
 
-    private fun addTimerlabel(rootComponent: StackLayout) {
+    private fun addTimerLabel(rootComponent: StackLayout) {
         rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "top-bar")!!.apply {
             child(timerLabel)
         }
@@ -178,6 +179,134 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
                 Util.getOperatingSystem().open(URI(GregUtils.DISCORD_LINK));
                 notifyToast("FKL Discord", "Check your browser :3")
             }
+    }
+
+    override fun keyPressed(input: KeyInput): Boolean {
+        if (input.key == GLFW.GLFW_KEY_ESCAPE) {
+            val overlay = activeOverlay
+            if (overlay?.parent() != null) {
+                overlay.remove()
+                activeOverlay = null
+                return true
+            }
+        }
+        return super.keyPressed(input)
+    }
+
+    private fun openSwitchPlayerPopup(name: String) {
+        val args = mapOf("name" to name)
+        val overlay = UIContainers.overlay(model.expandTemplate(FlowLayout::class.java, "switch-player-overlay", args).apply {
+            surface { ctx, component ->
+                NinePatchTexture.draw(GregUtils.id("gui-textures/entry"), ctx, component)
+            }
+        })
+        val switchField = overlay.childById(TextBoxComponent::class.java, "switch")
+
+        overlay.childById(ButtonComponent::class.java, "done").apply {
+
+            renderer { ctx, component, f ->
+                NinePatchTexture.draw(GregUtils.id(if (component.isHovered) "gui-textures/category-button-hovered" else "gui-textures/category-button-inactive"), ctx, component.x, component.y, component.width, component.height - 1)
+            }
+            onPress {
+                if (!AnnieParties.isPlayerSignedUp(switchField.text)) {
+                    notifyToast("FKL Annie: Management", "This player is not signed up!")
+                    return@onPress
+                }
+
+                AnnieParties.switchPlayers(name, switchField.text)
+                overlay.remove()
+            }
+        }
+        rootComponent?.child(overlay)
+        activeOverlay = overlay
+    }
+
+    private fun openMovePlayerPopup(name: String) {
+        val args = mapOf("name" to name)
+        val overlay = UIContainers.overlay(model.expandTemplate(FlowLayout::class.java, "move-player-overlay", args).apply {
+            surface { ctx, component ->
+                NinePatchTexture.draw(GregUtils.id("gui-textures/entry"), ctx, component)
+            }
+        })
+        val numberField = overlay.childById(TextBoxComponent::class.java, "number")
+
+        overlay.childById(ButtonComponent::class.java, "done").apply {
+
+            renderer { ctx, component, f ->
+                NinePatchTexture.draw(GregUtils.id(if (component.isHovered) "gui-textures/category-button-hovered" else "gui-textures/category-button-inactive"), ctx, component.x, component.y, component.width, component.height - 1)
+            }
+            onPress {
+                val party = AnnieParties.getParty(numberField.text.toIntOrNull()) ?: run {
+                    notifyToast("FKL Annie: Management", "Invalid party number bozo")
+                    return@onPress
+                }
+
+                if (party.isFull) {
+                    overlay.remove()
+                    openSwitchPlayerPopup(name)
+                } else {
+                    overlay.remove()
+                    AnnieParties.movePlayer(name, party.number)
+                }
+            }
+        }
+        rootComponent?.child(overlay)
+        activeOverlay = overlay
+    }
+
+    // TODO: maybe add textures to these lol
+    private fun openPlayerAddingPopup(name: String = "", role: String = "", hasScrolls: Boolean = false, canLead: Boolean = false) {
+        val overlay = UIContainers.overlay(model.expandTemplate(FlowLayout::class.java, "add-player-popup", emptyMap()).apply {
+            surface { ctx, component ->
+                NinePatchTexture.draw(GregUtils.id("gui-textures/entry"), ctx, component)
+            }
+        })
+        val nameField = overlay.childById(TextBoxComponent::class.java, "name").text(name)
+        val roleField = overlay.childById(TextBoxComponent::class.java, "role").text(role)
+        val scrollsCheck = overlay.childById(CheckboxComponent::class.java, "hasScrolls").checked(hasScrolls)
+        val canLead = overlay.childById(CheckboxComponent::class.java, "canLead").checked(canLead)
+
+        overlay.childById(ButtonComponent::class.java, "done").apply {
+
+            renderer { ctx, component, f ->
+                NinePatchTexture.draw(GregUtils.id(if (component.isHovered) "gui-textures/category-button-hovered" else "gui-textures/category-button-inactive"), ctx, component.x, component.y, component.width, component.height - 1)
+            }
+            onPress {
+                AnnieParties.addToAnnie(nameField.text, roleField.text, scrollsCheck.isChecked, canLead.isChecked)
+                overlay.remove()
+            }
+        }
+        rootComponent?.child(overlay)
+        activeOverlay = overlay
+    }
+
+    // if moved to a full party, it warns u and asks u if you want to switch with another
+    // (no redundant buttons needed)
+    private fun openManagementPopup(player: Player) {
+        val args = mapOf("name" to player.name)
+        val overlay = UIContainers.overlay(model.expandTemplate(FlowLayout::class.java, "management-popup", args).apply {
+            surface { ctx, component ->
+                NinePatchTexture.draw(GregUtils.id("gui-textures/entry"), ctx, component)
+            }
+        })
+        overlay.forEachDescendant { component ->
+            if (component !is ButtonComponent) return@forEachDescendant
+
+            component.apply {
+                renderer { ctx, component, _ ->
+                    NinePatchTexture.draw(GregUtils.id(if (component.isHovered) "gui-textures/category-button-hovered" else "gui-textures/category-button-inactive"), ctx, component.x, component.y, component.width, component.height - 1)
+                }
+            }
+
+            when (component.id()) {
+                "remove" -> component.onPress { AnnieParties.removeFromAnnie(player.name); overlay.remove()}
+                "edit" -> component.onPress { openPlayerAddingPopup(player.name, player.role.name, player.hasScrolls, player.canLead); overlay.remove()}
+                "move" -> component.onPress { openMovePlayerPopup(player.name); overlay.remove()}
+            }
+        }
+
+        activeOverlay = overlay
+        rootComponent?.child(overlay)
     }
 
     private fun partyPanel(party: Party): FlowLayout {
@@ -255,8 +384,9 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
             .verticalAlignment(VerticalAlignment.CENTER)
             .padding(Insets.left(2)) as FlowLayout
 
+        /*
         val removeButton = UIComponents.button(Text.empty()) {
-            //TODO: remove player manually function
+
         }.apply {
             positioning(Positioning.absolute(84, 0))
             renderer { ctx, component, _ ->
@@ -264,16 +394,17 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
             }
             sizing(Sizing.fixed(12))
         }
+         */
 
         if (player.name != "-") {
             fullLabel.mouseDown().subscribe { click, _ ->
-                if (click.buttonInfo.button == 0) {
-                    MinecraftClient.getInstance().keyboard.clipboard = player.name
-                    notifyToast("Player name copied", player.name)
-                    true
-                } else if (click.buttonInfo.button == 1) {
+                if (click.buttonInfo.button == 0) { // left click
                     MinecraftClient.getInstance().keyboard.clipboard = "/party invite ${player.name}"
                     notifyToast("Command copied", "/party invite ${player.name}")
+                    true
+                } else if (click.buttonInfo.button == 1) { // right click
+                    if (!Backend.hasPerms) return@subscribe false
+                    openManagementPopup(player)
                     true
                 } else false
             }
@@ -288,7 +419,7 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         }
 
         return fullLabel.apply {
-                if (Backend.hasPerms && player.name != "-") child(removeButton)
+                //if (Backend.hasPerms && player.name != "-") child(removeButton)
 
                 child(bar)
                 child(label)
@@ -305,7 +436,7 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
             .padding(Insets.left(2)) as FlowLayout
 
         row.child(UIComponents.button(Text.empty(), {
-            //TODO: manual add player function
+            openPlayerAddingPopup()
         }).apply {
             renderer { ctx, component, _ ->
                 NinePatchTexture.draw(GregUtils.id(if (component.isHovered) "icons/add-icon-hovered" else "icons/add-icon"), ctx, component)

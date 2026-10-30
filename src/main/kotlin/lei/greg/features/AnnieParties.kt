@@ -14,6 +14,10 @@ import net.minecraft.client.MinecraftClient
 @Serializable data class LeaveAnnieOutgoingPayload(@EncodeDefault val type: String = "leaveAnnie")
 @Serializable data class SignUpOutgoingPayload(val role: String, val hasScrolls: Boolean, val canLead: Boolean, @EncodeDefault val type: String = "signUpForAnnie")
 @Serializable data class RequestPartiesOutgoingPayload(@EncodeDefault val type: String = "getAnnieParties")
+@Serializable data class RemoveAnnieOutgoingPayload(val name: String, @EncodeDefault val type: String = "removeFromAnnie")
+@Serializable data class MovePlayerOutgoingPayload(val name: String, val party: Int, @EncodeDefault val type: String = "moveToParty")
+@Serializable data class SwitchPlayersOutgoingPayload(val name1: String, val name2: String, @EncodeDefault val type: String = "switchParties")
+@Serializable data class AddToAnnieOutgoingPayload(val name: String, val role: String, val hasScrolls: Boolean, val canLead: Boolean, @EncodeDefault val type: String = "addToAnnie")
 data class Player(val name: String = "-", val hasScrolls: Boolean = false, val canLead: Boolean = false, val role: AnnieRoles = AnnieRoles.NONE)
 
 class Party(players: List<Player> = emptyList(), val number: Int, val active: Boolean = false) {
@@ -47,6 +51,13 @@ object AnnieParties {
     var timestamp: Int? = null
     var playerParty: Int? = null
 
+    fun getParty(number: Int?): Party? {
+        return parties.firstOrNull { it.number == number }
+    }
+    fun isPlayerSignedUp(name: String): Boolean {
+        return parties.any { party -> party.players.any { it.name.equals(name, ignoreCase = true) }  }
+    }
+
     fun populate(newParties: List<Party>) { parties = padded(newParties) }
     fun joinAnnie(partyNumber: Int) {
         Utils.notifyToast("FKL Annie", "Sent a request to join party $partyNumber")
@@ -69,6 +80,20 @@ object AnnieParties {
     }
     fun requestUpdate() {
         Backend.send(Json.encodeToString(RequestPartiesOutgoingPayload.serializer(), RequestPartiesOutgoingPayload()))
+    }
+
+    fun addToAnnie(name: String, role: String, hasScrolls: Boolean, canLead: Boolean) {
+        val payload = AddToAnnieOutgoingPayload(name, role, hasScrolls, canLead)
+        Backend.send(Json.encodeToString(AddToAnnieOutgoingPayload.serializer(), payload))
+    }
+    fun removeFromAnnie(name: String) {
+        Backend.send(Json.encodeToString(RemoveAnnieOutgoingPayload.serializer(), RemoveAnnieOutgoingPayload(name)))
+    }
+    fun movePlayer(name: String, party: Int) {
+        Backend.send(Json.encodeToString(MovePlayerOutgoingPayload.serializer(), MovePlayerOutgoingPayload(name, party)))
+    }
+    fun switchPlayers(name1: String, name2: String) {
+        Backend.send(Json.encodeToString(SwitchPlayersOutgoingPayload.serializer(), SwitchPlayersOutgoingPayload(name1, name2)))
     }
 
     // fills missing slots with default parties numbered by their position

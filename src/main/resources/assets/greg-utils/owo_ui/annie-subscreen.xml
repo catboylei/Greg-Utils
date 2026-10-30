@@ -150,5 +150,165 @@
                 <vertical-alignment>top</vertical-alignment>
             </flow-layout>
         </template>
+
+        <template name="management-popup">
+            <flow-layout direction="vertical">
+                <children>
+                    <label>
+                        <text>{{name}}</text>
+                    </label>
+
+                    <button id="remove">
+                        <text>Remove Player</text>
+                    </button>
+                    <button id="edit">
+                        <text>Change Roles</text>
+                    </button>
+                    <button id="move">
+                        <text>Move Player</text>
+                    </button>
+                </children>
+
+                <padding><all>8</all></padding>
+                <gap>4</gap>
+                <horizontal-alignment>center</horizontal-alignment>
+            </flow-layout>
+        </template>
+
+        <template name="add-player-popup">
+            <flow-layout direction="vertical">
+                <children>
+                    <label>
+                        <text>Add a player</text>
+                    </label>
+
+                    <flow-layout direction="horizontal">
+                        <children>
+                            <label><text>Name:</text></label>
+
+                            <text-box id="name">
+                                <sizing><horizontal method="fixed">50</horizontal></sizing>
+                            </text-box>
+                        </children>
+                        <vertical-alignment>center</vertical-alignment>
+                        <gap>4</gap>
+                    </flow-layout>
+
+                    <flow-layout direction="horizontal">
+                        <children>
+                            <label><text>Role:</text></label>
+
+                            <text-box id="role">
+                                <sizing><horizontal method="fixed">50</horizontal></sizing>
+                            </text-box>
+                        </children>
+                        <vertical-alignment>center</vertical-alignment>
+                        <gap>4</gap>
+                    </flow-layout>
+
+                    <flow-layout direction="horizontal">
+                        <children>
+                            <label><text>Has Scrolls:</text></label>
+
+                            <checkbox id="hasScrolls">
+                                <sizing>
+                                    <horizontal method="fixed">17</horizontal>
+                                    <vertical method="fixed">17</vertical>
+                                </sizing>
+                            </checkbox>
+                        </children>
+                        <vertical-alignment>center</vertical-alignment>
+                        <gap>4</gap>
+                    </flow-layout>
+
+                    <flow-layout direction="horizontal">
+                        <children>
+                            <label><text>Can Lead:</text></label>
+
+                            <checkbox id="canLead">
+                                <sizing>
+                                    <horizontal method="fixed">17</horizontal>
+                                    <vertical method="fixed">17</vertical>
+                                </sizing>
+                            </checkbox>
+                        </children>
+                        <vertical-alignment>center</vertical-alignment>
+                        <gap>4</gap>
+                    </flow-layout>
+
+                    <button id="done">
+                        <text>Done!</text>
+                    </button>
+                </children>
+
+                <padding><all>8</all></padding>
+                <gap>4</gap>
+                <horizontal-alignment>center</horizontal-alignment>
+            </flow-layout>
+        </template>
+
+        <template name="move-player-overlay">
+            <flow-layout direction="vertical">
+                <children>
+                    <label>
+                        <text>Move {{name}}</text>
+                    </label>
+
+                    <flow-layout direction="horizontal">
+                        <children>
+                            <label><text>Party Number:</text></label>
+
+                            <text-box id="number">
+                                <sizing><horizontal method="fixed">50</horizontal></sizing>
+                            </text-box>
+                        </children>
+                        <vertical-alignment>center</vertical-alignment>
+                        <gap>4</gap>
+                    </flow-layout>
+
+                    <button id="done">
+                        <text>Done!</text>
+                    </button>
+                </children>
+
+                <padding>
+                    <all>8</all>
+                </padding>
+                <gap>4</gap>
+                <horizontal-alignment>center</horizontal-alignment>
+            </flow-layout>
+        </template>
+
+        <template name="switch-player-overlay">
+            <flow-layout direction="vertical">
+                <children>
+                    <label>
+                        <text>Party full!</text>
+                    </label>
+
+                    <flow-layout direction="horizontal">
+                        <children>
+                            <label><text>Player to switch:</text></label>
+
+                            <text-box id="switch">
+                                <sizing><horizontal method="fixed">50</horizontal></sizing>
+                            </text-box>
+                        </children>
+                        <vertical-alignment>center</vertical-alignment>
+                        <gap>4</gap>
+                    </flow-layout>
+
+                    <button id="done">
+                        <text>Done!</text>
+                    </button>
+                </children>
+
+                <padding>
+                    <all>8</all>
+                </padding>
+                <gap>4</gap>
+                <horizontal-alignment>center</horizontal-alignment>
+            </flow-layout>
+        </template>
     </templates>
 </owo-ui>

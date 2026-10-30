@@ -64,6 +64,7 @@
                                             <all>4</all>
                                         </padding>
                                         <horizontal-alignment>center</horizontal-alignment>
+                                        <vertical-alignment>center</vertical-alignment>
                                     </flow-layout>
                                     <sizing>
                                         <horizontal method="fixed">326</horizontal>

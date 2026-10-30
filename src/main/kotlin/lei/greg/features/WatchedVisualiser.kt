@@ -1,5 +1,7 @@
 package lei.greg.features
 
+// TODO: apparently there may be a memleak in this (?)
+
 import lei.greg.Utils.notifyChat
 import lei.greg.Utils.notifyTitle
 import lei.greg.config.ConfigManager

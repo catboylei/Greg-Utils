@@ -66,12 +66,19 @@ val customIcons = mapOf(
 class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("annie-subscreen"))) {
 
     private var hoverOwner: UIComponent? = null
+    private var isStuffRegistered = false
 
     override fun build(rootComponent: StackLayout) {
         hookButtons(rootComponent)
         applyCustomTextures(rootComponent)
 
         updateParties(rootComponent)
+
+        if (!isStuffRegistered) {
+            AwawaPayloadEvents.ANNIE_STATUS.register {
+                updateParties(rootComponent)
+            }
+        }
 
         GregUtils.LOGGER.info("finished building annie screen")
     }
@@ -80,15 +87,16 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         client?.setScreen(parent)
     }
 
-    private fun updateParties(rootComponent: StackLayout) {
+    fun updateParties(rootComponent: StackLayout) {
         rootComponent.childById(FlowLayout::class.java, "party-holder").apply {
             clearChildren()
-            AnnieParties.isActive = true; // TODO: explode this
+            horizontalSizing(Sizing.content())
+            //alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
 
             when {
                 !Backend.isLoggedIn -> {
-                    sizing(Sizing.fill())
-                    alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
+                    horizontalSizing(Sizing.fill())
+                    //alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
                     child(warningMessage("Not Connected to Awawa :("))
                 }
                 !AnnieParties.isActive -> {
@@ -351,10 +359,6 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
                         1
                     }
                 )
-            }
-
-            AwawaPayloadEvents.CONNECTION_SUCCESS.register {
-                AnnieParties.populateWithTest() // TODO: ykyk explode the test population
             }
         }
     }

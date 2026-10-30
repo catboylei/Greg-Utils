@@ -19,6 +19,7 @@ import java.net.http.HttpClient
 import java.net.http.WebSocket
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
+import kotlin.reflect.typeOf
 
 @Serializable data class OutgoingAuthPayload(val uuid: String, val password: String)
 
@@ -146,7 +147,8 @@ object Backend {
             }
         }
 
-        val urlToUse = if (ConfigManager.getBool("use unsecured socket")) UNSECURED_URL else URL
+        GregUtils.LOGGER.warn("url is null: ${ConfigManager.getString("awawa url") == null}")
+        val urlToUse = ConfigManager.getString("awawa url") ?: if (ConfigManager.getBool("use unsecured socket")) UNSECURED_URL else URL
         return client.newWebSocketBuilder()
             .buildAsync(URI.create(urlToUse), listener)
             .thenApply { ws -> webSocket = ws; ws }

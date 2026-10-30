@@ -34,6 +34,7 @@ private val defaults: Map<String, *> = mapOf(
     "raid pings" to true,
     "bridge chat" to true,
     "use unsecured socket" to false,
+    "awawa url" to null,
 
     "watched visualiser" to false,
     "watched chat" to false,
@@ -64,6 +65,7 @@ object ScreenEntries {
         SettingEntry("separator", "Other", "", "", "General Settings"),
         SettingEntry("field", "Highlight Color", "Color of highlights in hex and \ndefaults to \"#FFCEFF\"", "highlight color", "General Settings"),
         SettingEntry("bool", "Debug Mode", "This breaks stuff badly (obviously) \nOnly useful for debug/dev", "debug mode", "General Settings"),
+        SettingEntry("field", "Custom Awawa url", "Custom ip if you want to host \nour lord and saviour locally", "awawa url", "General Settings"),
 
         // tree/tree path
         SettingEntry("separator", "Tree Path", "", "", "Weeping Soulroot (Tree) Room"),
@@ -136,7 +138,10 @@ object ConfigManager {
         GregUtils.LOGGER.info("saved key $key to value $value")
     }
 
-    fun getString(key: String): String? = properties.getProperty(key)
+    fun getString(key: String): String? {
+        val value = properties.getProperty(key)
+        return if (value == "null") null else value // for some reason properties saves null as a string and then gives you a "null" string lol
+    }
     fun getBool(key: String): Boolean = properties.getProperty(key).toBoolean()
     fun getInt(key: String): Int = properties.getProperty(key).toIntOrNull() ?: 0
 

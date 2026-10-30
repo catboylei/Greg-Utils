@@ -67,11 +67,16 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
 
     private var hoverOwner: UIComponent? = null
     private var isStuffRegistered = false
+    private var timerLabel: ScaledLabel = ScaledLabel(Text.empty(), 0.78f).apply {
+        positioning(Positioning.absolute(240, 5))
+    }
 
     override fun build(rootComponent: StackLayout) {
         hookButtons(rootComponent)
         applyCustomTextures(rootComponent)
+        addTimerlabel(rootComponent)
 
+        //AnnieParties.populateWithTest()
         updateParties(rootComponent)
 
         if (!isStuffRegistered) {
@@ -85,6 +90,11 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
 
     override fun close() {
         client?.setScreen(parent)
+    }
+
+    override fun tick() {
+        super.tick()
+        timerLabel.text(formatRemaining())
     }
 
     fun updateParties(rootComponent: StackLayout) {
@@ -111,6 +121,22 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
                 }
             }
         }
+    }
+
+    private fun addTimerlabel(rootComponent: StackLayout) {
+        rootComponent.childById<FlowLayout?>(FlowLayout::class.java, "top-bar")!!.apply {
+            child(timerLabel)
+        }
+    }
+
+    private fun formatRemaining(): Text {
+        AnnieParties.timestamp ?: return Text.empty()
+
+        val remaining = (AnnieParties.timestamp!! - System.currentTimeMillis() / 1000L).coerceAtLeast(0L)
+        val h = remaining / 3600
+        val m = (remaining % 3600) / 60
+        val s = remaining % 60
+        return Text.literal("%02d:%02d:%02d".format(h, m, s)).withColor(0xbfbfbf)
     }
 
     private fun warningMessage(msg: String): FlowLayout = UIContainers.verticalFlow(Sizing.content(), Sizing.content()).apply {

@@ -95,16 +95,24 @@ object AnnieParties {
     }
 
     fun addToAnnie(name: String, role: String, hasScrolls: Boolean, canLead: Boolean) {
+        Utils.notifyToast("FKL Annie: Management", "Added $name to Annie")
+
         val payload = AddToAnnieOutgoingPayload(name, role, hasScrolls, canLead)
         Backend.send(Json.encodeToString(AddToAnnieOutgoingPayload.serializer(), payload))
     }
     fun removeFromAnnie(name: String) {
+        Utils.notifyToast("FKL Annie: Management", "Removed $name from Annie")
+
         Backend.send(Json.encodeToString(RemoveAnnieOutgoingPayload.serializer(), RemoveAnnieOutgoingPayload(name)))
     }
     fun movePlayer(name: String, party: Int) {
+        Utils.notifyToast("FKL Annie: Management", "Moved $name to party $party")
+
         Backend.send(Json.encodeToString(MovePlayerOutgoingPayload.serializer(), MovePlayerOutgoingPayload(name, party)))
     }
     fun switchPlayers(name1: String, name2: String) {
+        Utils.notifyToast("FKL Annie: Management", "Switched players $name1 and $name2")
+
         Backend.send(Json.encodeToString(SwitchPlayersOutgoingPayload.serializer(), SwitchPlayersOutgoingPayload(name1, name2)))
     }
 

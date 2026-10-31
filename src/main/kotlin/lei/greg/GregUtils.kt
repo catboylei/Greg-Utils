@@ -26,14 +26,14 @@ object GregUtils : ModInitializer {
 	// uses dummy uuid in debug mode for testing in gradle dev env
 	val PLAYER_UUID: String by lazy {
 		// NOTE: remember to always uncomment this line before pushing
-		// MinecraftClient.getInstance().session.uuidOrNull.toString()
+		MinecraftClient.getInstance().session.uuidOrNull.toString()
 		// and comment this one !
-		"4a451026-c279-40fa-80de-6fcd02169bc5"
+		//"4a451026-c279-40fa-80de-6fcd02169bc5"
 	}
 	val PLAYER_NAME: String by lazy {
 		// same thing here
-		//MinecraftClient.getInstance().session.username
-		"catboylei"
+		MinecraftClient.getInstance().session.username
+		//"catboylei"
 	}
 
 	override fun onInitialize() {

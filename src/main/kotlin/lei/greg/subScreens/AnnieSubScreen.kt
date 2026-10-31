@@ -86,7 +86,6 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         applyCustomTextures(rootComponent)
         addTimerLabel(rootComponent)
 
-        //AnnieParties.populateWithTest()
         AnnieParties.requestUpdate()
         updateParties()
 
@@ -120,12 +119,10 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         rootComponent!!.childById(FlowLayout::class.java, "party-holder").apply {
             clearChildren()
             horizontalSizing(Sizing.content())
-            //alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
 
             when {
                 !Backend.isLoggedIn -> {
                     horizontalSizing(Sizing.fill())
-                    //alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
                     child(warningMessage("Not Connected to Awawa :("))
                 }
                 !AnnieParties.isActive -> {

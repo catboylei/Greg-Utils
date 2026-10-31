@@ -25,7 +25,7 @@ data class Player(val name: String = "-", val hasScrolls: Boolean = false, val c
         name = dto.name,
         hasScrolls = dto.hasScrolls != 0,
         canLead = dto.canLead != 0,
-        role = AnnieRoles.entries.firstOrNull { it.name.equals(dto.role, ignoreCase = true) } ?: AnnieRoles.NONE,
+        role = AnnieRoles.fromBackend(dto.role),
     )
 }
 
@@ -70,10 +70,7 @@ object AnnieParties {
         return parties.any { party -> party.players.any { it.name.equals(name, ignoreCase = true) }  }
     }
 
-    fun populate(newParties: List<Party>) {
-        parties = padded(newParties)
-        GregUtils.LOGGER.info("populated: ${parties.map { "#${it.number} active=${it.active} players=${it.players.size}" }}")
-    }
+    fun populate(newParties: List<Party>) { parties = padded(newParties) }
     fun joinAnnie(partyNumber: Int) {
         Utils.notifyToast("FKL Annie", "Sent a request to join party $partyNumber")
 

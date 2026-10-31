@@ -43,13 +43,21 @@ import net.minecraft.util.Util
 import org.lwjgl.glfw.GLFW
 import java.net.URI
 
-// TODO: subscribe to parties changed event and call updateParties then
-
-enum class AnnieRoles(val color: Int) {
-    HEAL(0xFF0fff73.toInt()),
+enum class AnnieRoles(val color: Int, vararg val aliases: String) {
+    HEAL(0xFF0fff73.toInt(), "healer"),
     TANK(0xFF0fbbff.toInt()),
     DPS(0xFFFF6B8A.toInt()),
     NONE(0xFFbfbfbf.toInt());
+
+    companion object {
+        fun fromBackend(value: String?): AnnieRoles {
+            if (value == null) return NONE
+            return entries.firstOrNull { role ->
+                role.name.equals(value, ignoreCase = true) ||
+                        role.aliases.any { it.equals(value, ignoreCase = true) }
+            } ?: NONE
+        }
+    }
 }
 
 private const val ADD_MARKER = "%INTERNAL_ADD%"

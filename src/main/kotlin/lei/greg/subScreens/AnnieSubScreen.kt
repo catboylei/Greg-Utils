@@ -28,6 +28,7 @@ import lei.greg.backend.Backend
 import lei.greg.config.ConfigManager
 import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.features.AnnieParties
+import lei.greg.features.AnnieParties.populate
 import lei.greg.features.Party
 import lei.greg.features.Player
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
@@ -77,12 +78,20 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         applyCustomTextures(rootComponent)
         addTimerLabel(rootComponent)
 
-        AnnieParties.populateWithTest()
-        updateParties(rootComponent)
+        //AnnieParties.populateWithTest()
+        AnnieParties.requestUpdate()
+        updateParties()
 
         if (!isStuffRegistered) {
-            AwawaPayloadEvents.ANNIE_STATUS.register {
-                updateParties(rootComponent)
+            isStuffRegistered = true
+
+            AwawaPayloadEvents.ANNIE_PARTIES_UPDATE.register { payload ->
+
+                populate(payload.partyList.mapIndexed { index, party ->
+                    Party(party.map { Player(it) }, index + 1, true)
+                })
+
+                updateParties()
             }
         }
 
@@ -98,8 +107,8 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         timerLabel.text(formatRemaining())
     }
 
-    fun updateParties(rootComponent: StackLayout) {
-        rootComponent.childById(FlowLayout::class.java, "party-holder").apply {
+    fun updateParties() {
+        rootComponent!!.childById(FlowLayout::class.java, "party-holder").apply {
             clearChildren()
             horizontalSizing(Sizing.content())
             //alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)

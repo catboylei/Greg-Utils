@@ -6,9 +6,11 @@ import kotlinx.serialization.json.Json
 import lei.greg.GregUtils
 import lei.greg.Utils
 import lei.greg.backend.Backend
+import lei.greg.backend.CitronsDefinitionOfAPlayer
 import lei.greg.config.ConfigManager
 import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.subScreens.AnnieRoles
+import lei.greg.subScreens.AnnieSubScreen
 import net.minecraft.client.MinecraftClient
 
 @Serializable data class LeaveAnnieOutgoingPayload(@EncodeDefault val type: String = "leaveAnnie")
@@ -18,7 +20,14 @@ import net.minecraft.client.MinecraftClient
 @Serializable data class MovePlayerOutgoingPayload(val name: String, val party: Int, @EncodeDefault val type: String = "moveToParty")
 @Serializable data class SwitchPlayersOutgoingPayload(val name1: String, val name2: String, @EncodeDefault val type: String = "switchParties")
 @Serializable data class AddToAnnieOutgoingPayload(val name: String, val role: String, val hasScrolls: Boolean, val canLead: Boolean, @EncodeDefault val type: String = "addToAnnie")
-data class Player(val name: String = "-", val hasScrolls: Boolean = false, val canLead: Boolean = false, val role: AnnieRoles = AnnieRoles.NONE)
+data class Player(val name: String = "-", val hasScrolls: Boolean = false, val canLead: Boolean = false, val role: AnnieRoles = AnnieRoles.NONE) {
+    constructor(dto: CitronsDefinitionOfAPlayer) : this(
+        name = dto.name,
+        hasScrolls = dto.hasScrolls != 0,
+        canLead = dto.canLead != 0,
+        role = AnnieRoles.entries.firstOrNull { it.name.equals(dto.role, ignoreCase = true) } ?: AnnieRoles.NONE,
+    )
+}
 
 class Party(players: List<Player> = emptyList(), val number: Int, val active: Boolean = false) {
 
@@ -97,6 +106,7 @@ object AnnieParties {
     }
 
     // fills missing slots with default parties numbered by their position
+    // also handles activating empty parties if all others are full
     private fun padded(list: List<Party>): List<Party> {
         playerParty = list.firstOrNull { party ->
             party.players.any { it.name.equals(GregUtils.PLAYER_NAME, ignoreCase = true) }
@@ -104,41 +114,16 @@ object AnnieParties {
 
         val byNumber = list.associateBy { it.number }
         val count = maxOf(4, list.maxOfOrNull { it.number } ?: 0)
-        return (1..count).map { n -> byNumber[n] ?: Party(number = n) }
-    }
 
-    // values taken from the 2026/10/26 fkl annie
-    fun populateWithTest() {
-        populate(listOf(
-            Party(
-                listOf(
-                    Player(name = "Crixx007", hasScrolls = true, canLead = true, role = AnnieRoles.HEAL),
-                    Player(name = "Cryotheum", hasScrolls = false, canLead = false, role = AnnieRoles.HEAL),
-                    Player(name = "AlfieCrafts", hasScrolls = false, canLead = true, role = AnnieRoles.DPS),
-                    Player(name = "TheWalrusMaster", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                    Player(name = "ItsFlyingCactus", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                    Player(name = "Pyrotheum", hasScrolls = false, canLead = true, role = AnnieRoles.TANK),
-                    Player(name = "TheseusTheBoss", hasScrolls = false, canLead = true, role = AnnieRoles.DPS),
-                    Player(name = "Yqdy", hasScrolls = false, canLead = false, role = AnnieRoles.HEAL),
-                    Player(name = "catboylei", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                    Player(name = "GamblingManiac", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                ),
-                1,
-                true
-            ),
-            Party(
-                listOf(
-                    Player(name = "Icyglowleaf", hasScrolls = true, canLead = false, role = AnnieRoles.HEAL),
-                    Player(name = "bigmoneyfiber", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                    Player(name = "Ams_017", hasScrolls = false, canLead = false, role = AnnieRoles.TANK),
-                    Player(name = "itsyunaya", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                    Player(name = "Siel_oschen", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                    Player(name = "Citr_n", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                    Player(name = "elolunis", hasScrolls = false, canLead = false, role = AnnieRoles.DPS),
-                ),
-                2,
-                true
-            ),
-        ))
+        val base = (1..count).map { n -> byNumber[n] ?: Party(number = n) }
+        val firstEmpty = base.firstOrNull { it.players.isEmpty() }
+
+        val activateNumber = firstEmpty?.number?.takeIf {
+            base.filter { p -> p.players.isNotEmpty() }.all { p -> p.isFull }
+        }
+
+        return base.map { p ->
+            if (p.number == activateNumber) Party(p.players, p.number, active = true) else p
+        }
     }
 }

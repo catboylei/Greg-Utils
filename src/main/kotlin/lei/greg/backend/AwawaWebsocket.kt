@@ -21,6 +21,10 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import kotlin.reflect.typeOf
 
+// why are you an int what the fuck citron
+@Serializable
+data class CitronsDefinitionOfAPlayer(val name: String, val role: String, val hasScrolls: Int, val canLead: Int)
+
 @Serializable data class OutgoingAuthPayload(val uuid: String, val password: String)
 
 @Serializable
@@ -45,6 +49,9 @@ sealed class AwawaPayload {
 
     @Serializable @SerialName("annieStatus")
     data class AnnieStatus(val isActive: Boolean, val timestamp: Int?) : AwawaPayload()
+
+    @Serializable @SerialName("anniePartyList")
+    data class AnniePartyList(val partyList: List<List<CitronsDefinitionOfAPlayer>>) : AwawaPayload()
 }
 
 object Backend {
@@ -206,6 +213,7 @@ object Backend {
                     is AwawaPayload.ConnectionFail -> AwawaPayloadEvents.CONNECTION_FAIL.invoker().on(parsed)
                     is AwawaPayload.Error -> AwawaPayloadEvents.ERROR.invoker().on(parsed)
                     is AwawaPayload.AnnieStatus -> AwawaPayloadEvents.ANNIE_STATUS.invoker().on(parsed)
+                    is AwawaPayload.AnniePartyList -> AwawaPayloadEvents.ANNIE_PARTIES_UPDATE.invoker().on(parsed)
                 }
             } catch (e: Exception) {
                 GregUtils.LOGGER.warn("GregBridge: listener failed on \"$payload\": $e")

@@ -31,6 +31,8 @@ data class Player(val name: String = "-", val hasScrolls: Boolean = false, val c
 
 class Party(players: List<Player> = emptyList(), val number: Int, val active: Boolean = false) {
 
+    private val realPlayers = players.filter { it.name != "-" }
+
     // takes the first 10 players and pads with empty if <10
     val players: List<Player> = players.sortedBy { it.role }.take(10).run {
         this + List((10 - this.size).coerceAtLeast(0)) { Player() }
@@ -38,7 +40,8 @@ class Party(players: List<Player> = emptyList(), val number: Int, val active: Bo
 
     // true if any player has scrolls
     val hasScrolls: Boolean = this.players.any { it.hasScrolls }
-    val isFull: Boolean = players.lastIndex >= 9
+    val isFull: Boolean = realPlayers.size >= 10
+    val isEmpty: Boolean = realPlayers.isEmpty()
 }
 
 object AnnieParties {
@@ -67,7 +70,10 @@ object AnnieParties {
         return parties.any { party -> party.players.any { it.name.equals(name, ignoreCase = true) }  }
     }
 
-    fun populate(newParties: List<Party>) { parties = padded(newParties) }
+    fun populate(newParties: List<Party>) {
+        parties = padded(newParties)
+        GregUtils.LOGGER.info("populated: ${parties.map { "#${it.number} active=${it.active} players=${it.players.size}" }}")
+    }
     fun joinAnnie(partyNumber: Int) {
         Utils.notifyToast("FKL Annie", "Sent a request to join party $partyNumber")
 
@@ -116,14 +122,15 @@ object AnnieParties {
         val count = maxOf(4, list.maxOfOrNull { it.number } ?: 0)
 
         val base = (1..count).map { n -> byNumber[n] ?: Party(number = n) }
-        val firstEmpty = base.firstOrNull { it.players.isEmpty() }
+        val firstEmpty = base.firstOrNull { it.isEmpty }
 
         val activateNumber = firstEmpty?.number?.takeIf {
-            base.filter { p -> p.players.isNotEmpty() }.all { p -> p.isFull }
+            base.filter { p -> !p.isEmpty }.all { p -> p.isFull }
         }
 
         return base.map { p ->
-            if (p.number == activateNumber) Party(p.players, p.number, active = true) else p
+            val shouldBeActive = p.active || !p.isEmpty || p.number == activateNumber
+            if (shouldBeActive == p.active) p else Party(p.players, p.number, active = shouldBeActive)
         }
     }
 }

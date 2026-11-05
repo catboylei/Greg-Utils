@@ -34,7 +34,7 @@ private val defaults: Map<String, *> = mapOf(
     "raid pings" to true,
     "bridge chat" to true,
     "use unsecured socket" to false,
-    "awawa url" to null,
+    //"awawa url" to null,
 
     "watched visualiser" to false,
     "watched chat" to false,
@@ -65,7 +65,7 @@ object ScreenEntries {
         SettingEntry("separator", "Other", "", "", "General Settings"),
         SettingEntry("field", "Highlight Color", "Color of highlights in hex and \ndefaults to \"#FFCEFF\"", "highlight color", "General Settings"),
         SettingEntry("bool", "Debug Mode", "This breaks stuff badly (obviously) \nOnly useful for debug/dev", "debug mode", "General Settings"),
-        SettingEntry("field", "Custom Awawa url", "Custom ip if you want to host \nour lord and saviour locally", "awawa url", "General Settings"),
+        //SettingEntry("field", "Custom Awawa url", "Custom ip if you want to host \nour lord and saviour locally", "awawa url", "General Settings"),
 
         // tree/tree path
         SettingEntry("separator", "Tree Path", "", "", "Weeping Soulroot (Tree) Room"),

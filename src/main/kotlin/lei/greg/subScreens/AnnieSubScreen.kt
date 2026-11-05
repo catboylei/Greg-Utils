@@ -31,6 +31,8 @@ import lei.greg.features.AnnieParties
 import lei.greg.features.AnnieParties.populate
 import lei.greg.features.Party
 import lei.greg.features.Player
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
@@ -523,10 +525,10 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
 
     companion object {
         fun registerCommand() {
-            CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+            ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
                 dispatcher.register(
-                    CommandManager.literal("annie").executes {
-                        val client = MinecraftClient.getInstance();
+                    ClientCommandManager.literal("annie").executes {
+                        val client = MinecraftClient.getInstance()
                         client.execute { client.setScreen(AnnieSubScreen()) }
                         1
                     }

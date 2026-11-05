@@ -12,6 +12,8 @@ import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.GregUtils
 import lei.greg.backend.Backend.status
 import lei.greg.events.backend.AwawaStatusUpdated
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.server.command.CommandManager
@@ -232,9 +234,9 @@ class ConfigScreen: BaseUIModelScreen<StackLayout>(StackLayout::class.java, Data
 
     companion object {
         fun registerCommand() {
-            CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+            ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
                 dispatcher.register(
-                    CommandManager.literal("greg").executes {
+                    ClientCommandManager.literal("greg").executes {
                         val client = MinecraftClient.getInstance();
                         client.execute { client.setScreen(ConfigScreen()) }
                         1

@@ -95,7 +95,7 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
             isStuffRegistered = true
 
             AwawaPayloadEvents.ANNIE_PARTIES_UPDATE.register { payload ->
-                GregUtils.LOGGER.info("updating annie parties with ${payload.partyList}")
+                //GregUtils.LOGGER.info("updating annie parties with ${payload.partyList}")
 
                 populate(payload.partyList.mapIndexed { index, party ->
                     Party(party.map { Player(it) }, index + 1)

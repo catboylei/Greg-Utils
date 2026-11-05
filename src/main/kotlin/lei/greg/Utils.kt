@@ -87,8 +87,9 @@ object Utils {
         }
     }
 
-    fun notifyChat(msg: String) {
+    fun notifyChat(message: String) {
         val client = MinecraftClient.getInstance()
+        val msg = Text.literal(message).withColor(0xAAAAAA).styled { it.withItalic(true) }
         client.execute {
             client.inGameHud.chatHud.addMessage(
                 Text.empty()
@@ -110,16 +111,12 @@ object Utils {
         }
     }
 
-
-	// TODO: remove info thingy here and add its style to notifyChat
     fun discordMessage(type: String, message: String, player: String = "", channel: String = "") {
         val client = MinecraftClient.getInstance()
         client.execute {
             var msg = Text.empty()
 
-            if (type == "info") {
-                msg = Text.literal(message).withColor(0xAAAAAA).styled { it.withItalic(true) }
-            } else if (type == "chat") {
+            if (type == "chat") {
                 if (!ConfigManager.getBool("bridge chat")) return@execute
                 msg = Text.empty()
                     .append(Text.literal("#$channel ").withColor(0xAAAAAA).styled { it.withItalic(true) })

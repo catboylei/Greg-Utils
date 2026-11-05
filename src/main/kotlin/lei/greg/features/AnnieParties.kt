@@ -1,5 +1,7 @@
 package lei.greg.features
 
+// TODO: clean up log prints
+
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

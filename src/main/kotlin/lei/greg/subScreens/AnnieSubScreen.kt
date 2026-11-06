@@ -64,12 +64,6 @@ enum class AnnieRoles(val color: Int, vararg val aliases: String) {
 
 private const val ADD_MARKER = "%INTERNAL_ADD%"
 
-val customIcons = mapOf(
-    "AlfieCrafts" to "custom/alfie-icon", // annie manager since 1932 gets her icon
-    "itsyunaya" to "custom/ashley-icon", // wife
-    "TheWalrusMaster" to "custom/walrus-icon" // goober gets goober icon
-)
-
 class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<StackLayout>(StackLayout::class.java, DataSource.asset(GregUtils.id("annie-subscreen"))) {
 
     private var activeOverlay: OverlayContainer<*>? = null
@@ -390,7 +384,7 @@ class AnnieSubScreen(private val parent: Screen? = null) : BaseUIModelScreen<Sta
         val label = ScaledLabel(Text.literal(player.name), 0.70f).color(Color.ofRgb(0xbfbfbf))
 
         val icons = UIContainers.horizontalFlow(Sizing.content(), Sizing.fixed(8))
-        if (player.name in customIcons.keys) { icons.child(icon(customIcons.getValue(player.name))) }
+        if (player.name in Backend.customIcons.keys) { icons.child(icon(Backend.customIcons.getValue(player.name))) }
 
         val bar = UIContainers.verticalFlow(Sizing.fixed(1), Sizing.fixed(12))
             .surface(if (player.role == AnnieRoles.NONE) Surface.BLANK else Surface.flat(player.role.color))

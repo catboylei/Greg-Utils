@@ -21,4 +21,5 @@ object AwawaPayloadEvents {
     @JvmField val ERROR = event<AwawaPayload.Error>()
     @JvmField val ANNIE_STATUS = event<AwawaPayload.AnnieStatus>()
     @JvmField val ANNIE_PARTIES_UPDATE = event<AwawaPayload.AnniePartyList>()
+    @JvmField val PLAYER_ICONS_UPDATE = event<AwawaPayload.PlayerIcons>()
 }

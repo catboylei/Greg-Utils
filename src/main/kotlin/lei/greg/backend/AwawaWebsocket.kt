@@ -1,5 +1,6 @@
 package lei.greg.backend
 
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -10,13 +11,18 @@ import lei.greg.Utils
 import lei.greg.config.ConfigManager
 import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.events.backend.AwawaStatusUpdated
+import lei.greg.features.LeaveAnnieOutgoingPayload
 import lei.greg.utils.Scheduler
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.texture.NativeImage
+import net.minecraft.client.texture.NativeImageBackedTexture
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import net.minecraft.util.Identifier
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
+import java.util.Base64
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import kotlin.reflect.typeOf
@@ -26,6 +32,7 @@ import kotlin.reflect.typeOf
 data class CitronsDefinitionOfAPlayer(val name: String, val role: String, val hasScrolls: Int, val canLead: Int)
 
 @Serializable data class OutgoingAuthPayload(val uuid: String, val password: String)
+@Serializable data class OutgoingRequestIconsPayload(@EncodeDefault val type: String = "getPlayerIcons")
 
 @Serializable
 sealed class AwawaPayload {
@@ -52,6 +59,9 @@ sealed class AwawaPayload {
 
     @Serializable @SerialName("anniePartyList")
     data class AnniePartyList(val partyList: List<List<CitronsDefinitionOfAPlayer>>) : AwawaPayload()
+
+    @Serializable @SerialName("playerIcons")
+    data class PlayerIcons(val icons: Map<String, String>) : AwawaPayload()
 }
 
 object Backend {
@@ -68,6 +78,10 @@ object Backend {
         private set
     @Volatile var isConnecting = false
         private set
+    private var requestedIcons = false
+
+    // TODO: pull icons from awawa
+    var customIcons = mutableMapOf<String, String>()
 
     @Volatile
     var isLoggedIn = false
@@ -172,6 +186,10 @@ object Backend {
             }
     }
 
+    private fun requestIcons() {
+        send(Json.encodeToString(OutgoingRequestIconsPayload.serializer(), OutgoingRequestIconsPayload()))
+    }
+
     // returns false if not connected
     fun send(msg: String): Boolean {
         val socket = webSocket
@@ -214,6 +232,7 @@ object Backend {
                     is AwawaPayload.Error -> AwawaPayloadEvents.ERROR.invoker().on(parsed)
                     is AwawaPayload.AnnieStatus -> AwawaPayloadEvents.ANNIE_STATUS.invoker().on(parsed)
                     is AwawaPayload.AnniePartyList -> AwawaPayloadEvents.ANNIE_PARTIES_UPDATE.invoker().on(parsed)
+                    is AwawaPayload.PlayerIcons -> AwawaPayloadEvents.PLAYER_ICONS_UPDATE.invoker().on(parsed)
                 }
             } catch (e: Exception) {
                 GregUtils.LOGGER.warn("GregBridge: listener failed on \"$payload\": $e")
@@ -230,6 +249,11 @@ object Backend {
             setStatus(Text.literal("CONNECTED").formatted(Formatting.GREEN))
             isConnecting = false
             if (it.permissions != 0) hasPerms = true
+
+            if (!requestedIcons) {
+                requestIcons()
+                requestedIcons = true
+            }
         }
 
         AwawaPayloadEvents.CONNECTION_FAIL.register {
@@ -241,5 +265,29 @@ object Backend {
 		AwawaPayloadEvents.INFO.register {
 			Utils.notifyChat(it.message)
 		}
+
+        AwawaPayloadEvents.PLAYER_ICONS_UPDATE.register {
+
+            val client = MinecraftClient.getInstance()
+            client.execute {
+                it.icons.forEach { (name, b64) ->
+                    try {
+                        val key = name.lowercase()
+                        val id = GregUtils.id("textures/icons/$key.png")
+
+                        // avoid duplicate textures (this shouldnt happen but better to avoid a crash lol)
+                        if (customIcons.containsKey(key)) client.textureManager.destroyTexture(id)
+
+                        val image = NativeImage.read(Base64.getDecoder().decode(b64).inputStream())
+                        client.textureManager.registerTexture(id, NativeImageBackedTexture({ id.toString() }, image))
+
+                        customIcons[name] = key
+                        GregUtils.LOGGER.info("registered custom icon for $name as $key ($id)")
+                    } catch (e: Exception) {
+                        GregUtils.LOGGER.warn("bad icon for $name", e)
+                    }
+                }
+            }
+        }
     }
 }

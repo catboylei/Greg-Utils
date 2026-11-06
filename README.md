@@ -18,7 +18,7 @@ also meow mraow mrrp purr mrreaw purrrr :3
 
 ## Config
 
-Open the config gui through modmenu or the command that i forgor to add
+Open the config gui through modmenu or ```/greg```
 
 <img src="./assets/config.png" alt="config gui">
 
@@ -26,15 +26,18 @@ Open the config gui through modmenu or the command that i forgor to add
 
 obviously many more planned eventually
 
-- client-side FKL discord bridge
 - Tree Path highlight
 - Watched beam progress
 - very cool gui
 
-## How to enable the bridge 
+<sub><i>FKL or allies only (need link): </i></sub>
+- client-side FKL discord bridge
+- view and sign up to FKL Annies
+
+## How to link to Awawa/FKL backend
 
 > [!IMPORTANT]
-> This will NEVER ask for any email address or external passwords/codes. We only use the internal awawa password as to manage who has access to the bridge.
+> This will NEVER ask for any email address or external passwords/codes. We only use the internal awawa password as to manage who has access to the fkl features.
 
 <details>
 <summary>Tutorial</summary>
@@ -58,7 +61,7 @@ obviously many more planned eventually
 3. Input your password into the mod
 
     Now just enter that password into the mod, and you are done! \
-    (go into the Random category and paste the password into the password field)
+    (General <i>(1)</i> > password field <i>(2)</i> then press the reconnect button <i>(3)</i>)
 
     <img src="assets/modgui.png" width="50%">
 

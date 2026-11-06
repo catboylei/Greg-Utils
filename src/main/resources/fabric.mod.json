@@ -9,8 +9,8 @@
 		"citr_n"
 	],
 	"contact": {
-		"homepage": "https://github.com/catboylei/Greg-Utils",
-		"sources": "https://github.com/catboylei/Greg-Utils"
+		"homepage": "https://tangled.org/catboylei.bsky.social/Greg-Utils",
+		"sources": "https://tangled.org/catboylei.bsky.social/Greg-Utils"
 	},
 	"license": "AGPL-3.0",
 	"icon": "assets/greg-utils/icon.png",

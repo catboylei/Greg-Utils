@@ -1,8 +1,13 @@
-## [UNRELEASED]
+## [PLANNED]
+
+- Custom icons to chat/tab
+- lwk idk
+
+## [v1.2.0] - 2026/11/06
 
 ### Added
-- Backend status display and reconnect button
-- Annie Parties screen (`/annie`)
+- Backend status display and reconnect button (Backend [@citr_n](https://github.com/Citrnn))
+- Annie Parties screen (`/annie`) (Backend [@citr_n](https://github.com/Citrnn))
 - Command to open main config (`/greg`)
 
 ### Changed

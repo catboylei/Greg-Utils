@@ -80,7 +80,6 @@ object Backend {
         private set
     private var requestedIcons = false
 
-    // TODO: pull icons from awawa
     var customIcons = mutableMapOf<String, String>()
 
     @Volatile

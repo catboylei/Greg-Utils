@@ -24,13 +24,13 @@ object WatchedVisualiser {
                 notifyChat("§fBeam $beamNr")
             }
 
-            if(ConfigManager.getBool("watched title")) {
-                if ( beamNr == 1)
-                    notifyTitle(title = "§a.§7...§a.", stayTicks = 30)
-                else if (beamNr == 2)
-                    notifyTitle(title = "§7.§e.§7.§e.§7.", stayTicks = 30)
-                else if (beamNr == 3)
-                    notifyTitle(title = "§c!", stayTicks = 5, fadeOutTicks = 10)
+            // i made this a match statement because i dont want my kotlin to look like python
+            if (ConfigManager.getBool("watched title")) {
+                when (beamNr) {
+                    1 -> notifyTitle(title = "§a.§7...§a.", stayTicks = 30)
+                    2 -> notifyTitle(title = "§7.§e.§7.§e.§7.", stayTicks = 30)
+                    3 ->  notifyTitle(title = "§dYou are being watched", stayTicks = 5, fadeOutTicks = 10)
+                }
             }
         }
 

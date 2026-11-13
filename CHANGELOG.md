@@ -1,7 +1,13 @@
 ## [PLANNED]
 
 - Custom icons to chat/tab
+- Replies in bridge chat
 - lwk idk
+
+## [UNRELEASED]
+
+### Changed
+- Display the old "You are being watched" as watched title
 
 ## [v1.2.0] - 2026/11/06
 

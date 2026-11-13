@@ -40,7 +40,7 @@ sealed class AwawaPayload {
     data class Info(val message: String) : AwawaPayload()
 
     @Serializable @SerialName("chat")
-    data class Chat(val message: String, val name: String, val channelName: String) : AwawaPayload()
+    data class Chat(val message: String, val name: String, val channelName: String, val repliedMessage: List<String>?) : AwawaPayload()
 
     @Serializable @SerialName("raid")
     data class Raid(val message: String, val name: String) : AwawaPayload()

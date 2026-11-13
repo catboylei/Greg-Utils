@@ -6,6 +6,9 @@
 
 ## [UNRELEASED]
 
+### Added 
+- Registered Nerd fonts publicly under `greg-utils:nerd`
+
 ### Changed
 - Display the old "You are being watched" as watched title
 

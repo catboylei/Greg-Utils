@@ -10,6 +10,7 @@ import net.minecraft.client.toast.SystemToast
 import net.minecraft.client.toast.Toast
 import net.minecraft.client.toast.ToastManager
 import net.minecraft.sound.SoundEvents
+import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
@@ -87,9 +88,13 @@ object Utils {
         }
     }
 
+    // overload so you can just give it a string
     fun notifyChat(message: String) {
+        notifyChat(Text.literal(message).styled { it.withItalic(true) })
+    }
+    fun notifyChat(message: MutableText) {
         val client = MinecraftClient.getInstance()
-        val msg = Text.literal(message).withColor(0xAAAAAA).styled { it.withItalic(true) }
+        val msg = message.withColor(0xAAAAAA)
         client.execute {
             client.inGameHud.chatHud.addMessage(
                 Text.empty()

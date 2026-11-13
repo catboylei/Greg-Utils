@@ -7,6 +7,7 @@ import lei.greg.config.ConfigManager
 import lei.greg.backend.Backend
 import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.highlights.Highlights
+import lei.greg.utils.NerdFonts
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.argument.Vec3ArgumentType
 import net.minecraft.server.command.CommandManager
@@ -23,6 +24,7 @@ object Debug {
 		registerBackendRelogCommand()
         registerConfigCommand()
         registerBackendErrorPrints()
+        registerTestNerdFontCommand()
     }
 
     private fun registerHighlightCommand() {
@@ -54,6 +56,28 @@ object Debug {
             Highlights.removeBlockCoords(blockPos)
         }
 
+        return 1
+    }
+
+    private fun registerTestNerdFontCommand() {
+        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+            dispatcher.register(
+                CommandManager.literal("testnerdfonts")
+                    .then(CommandManager.argument("pretext", StringArgumentType.string())
+                        .then(CommandManager.argument("codepoint", StringArgumentType.string())
+                            .executes { context -> testNerdFonts(context) }
+                        )
+                    )
+            )
+        }
+    }
+
+    @Suppress("SameReturnValue")
+    private fun testNerdFonts(context: CommandContext<ServerCommandSource>): Int {
+        val pretext = StringArgumentType.getString(context, "pretext")
+        val codepoint = StringArgumentType.getString(context, "codepoint")
+
+        Utils.notifyChat(Text.literal(pretext).append(NerdFonts.icon(codepoint.hexToInt())))
         return 1
     }
 

@@ -34,7 +34,7 @@ private val defaults: Map<String, *> = mapOf(
     "raid pings" to true,
     "bridge chat" to true,
     "use unsecured socket" to false,
-    //"awawa url" to null,
+    "awawa url" to null,
 
     "watched visualiser" to false,
     "watched chat" to false,

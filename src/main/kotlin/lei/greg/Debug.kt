@@ -7,6 +7,7 @@ import lei.greg.config.ConfigManager
 import lei.greg.backend.Backend
 import lei.greg.events.backend.AwawaPayloadEvents
 import lei.greg.highlights.Highlights
+import lei.greg.utils.GregFont
 import lei.greg.utils.NerdFonts
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.command.argument.Vec3ArgumentType
@@ -81,6 +82,7 @@ object Debug {
         val posttext = StringArgumentType.getString(context, "posttext")
 
         Utils.notifyChat(Text.literal(pretext).append(NerdFonts.icon(codepoint.hexToInt())).append(Text.literal(posttext)))
+        Utils.notifyChat((GregFont.getText("╭")))
         return 1
     }
 

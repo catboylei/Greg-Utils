@@ -3,18 +3,15 @@ package lei.greg
 import io.wispforest.owo.ui.core.OwoUIGraphics
 import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.config.ConfigManager
-import lei.greg.utils.NerdFonts
+import lei.greg.utils.GregFont
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.toast.SystemToast
 import net.minecraft.client.toast.Toast
 import net.minecraft.client.toast.ToastManager
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
-import net.minecraft.util.Formatting
-import net.minecraft.util.Identifier
 
 object Utils {
 
@@ -125,7 +122,7 @@ object Utils {
             if (trimmed != message) trimmed += "..."
 
             msg.apply {
-                append(NerdFonts.icon(0xf17ab).withColor(0x636363)) // arrow icon
+                append(GregFont.getText("╭").withColor(0xAAAAAA))
                 append(Text.literal(" $player: ").withColor(0x007575))
                 append(Text.literal(trimmed).withColor(0x009e9e))
             }

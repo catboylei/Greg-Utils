@@ -20,8 +20,6 @@ object DiscordChat {
 		registerMessageCommand()
 
 		AwawaPayloadEvents.CHAT.register {
-            // TODO: hook to Utils.discordReplyMessage() here
-
 			if (isEnabled()) {
                 if (it.repliedMessage != null) Utils.discordReplyMessage(it.repliedMessage[1], it.repliedMessage[0])
                 Utils.discordMessage("chat", it.message, it.name, it.channelName)

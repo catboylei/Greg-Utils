@@ -10,5 +10,12 @@ object NerdFonts {
     private val FONT = StyleSpriteSource.Font(GregUtils.id("nerd"))
 
     fun icon(codepoint: Int): MutableText =
-        Text.literal(String(Character.toChars(codepoint))).setStyle(Style.EMPTY.withFont(FONT))   // see note below
+        Text.literal(String(Character.toChars(codepoint))).setStyle(Style.EMPTY.withFont(FONT))
+}
+
+object GregFont {
+    private val FONT = StyleSpriteSource.Font(GregUtils.id("greg"))
+
+    fun getText(text: String): MutableText =
+        Text.literal(text).setStyle(Style.EMPTY.withFont(FONT))
 }

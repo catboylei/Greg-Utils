@@ -65,7 +65,9 @@ object Debug {
                 CommandManager.literal("testnerdfonts")
                     .then(CommandManager.argument("pretext", StringArgumentType.string())
                         .then(CommandManager.argument("codepoint", StringArgumentType.string())
-                            .executes { context -> testNerdFonts(context) }
+                            .then(CommandManager.argument("posttext", StringArgumentType.string())
+                                .executes { context -> testNerdFonts(context) }
+                            )
                         )
                     )
             )
@@ -76,8 +78,9 @@ object Debug {
     private fun testNerdFonts(context: CommandContext<ServerCommandSource>): Int {
         val pretext = StringArgumentType.getString(context, "pretext")
         val codepoint = StringArgumentType.getString(context, "codepoint")
+        val posttext = StringArgumentType.getString(context, "posttext")
 
-        Utils.notifyChat(Text.literal(pretext).append(NerdFonts.icon(codepoint.hexToInt())))
+        Utils.notifyChat(Text.literal(pretext).append(NerdFonts.icon(codepoint.hexToInt())).append(Text.literal(posttext)))
         return 1
     }
 

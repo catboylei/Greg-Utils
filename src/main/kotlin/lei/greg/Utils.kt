@@ -3,6 +3,7 @@ package lei.greg
 import io.wispforest.owo.ui.core.OwoUIGraphics
 import io.wispforest.owo.ui.util.NinePatchTexture
 import lei.greg.config.ConfigManager
+import lei.greg.utils.NerdFonts
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
@@ -113,6 +114,23 @@ object Utils {
             hud.setTitleTicks(fadeInTicks, stayTicks, fadeOutTicks)
             hud.setTitle(Text.literal(title))
             hud.setSubtitle(Text.literal(subtitle))
+        }
+    }
+
+    fun discordReplyMessage(message: String, player: String) {
+        val client = MinecraftClient.getInstance()
+        client.execute {
+            val msg = Text.literal("     ")
+            var trimmed = message.take(20) // only keep first 20 chars
+            if (trimmed != message) trimmed += "..."
+
+            msg.apply {
+                append(NerdFonts.icon(0xf17ab).withColor(0x636363)) // arrow icon
+                append(Text.literal(" $player: ").withColor(0x007575))
+                append(Text.literal(trimmed).withColor(0x009e9e))
+            }
+
+            client.inGameHud.chatHud.addMessage(msg)
         }
     }
 

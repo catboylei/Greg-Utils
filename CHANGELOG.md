@@ -1,13 +1,15 @@
 ## [PLANNED]
 
 - Custom icons to chat/tab
-- Replies in bridge chat
 - lwk idk
+- reorganize config ui to have more shit i.e. slot binding meowing etc
 
-## [UNRELEASED]
+## [v1.2.1] - 2026/11/14
 
 ### Added 
 - Registered Nerd fonts publicly under `greg-utils:nerd`
+- Added a little discord banner before discord messages, wynn style
+- Display discord replies in the bridge messages
 
 ### Changed
 - Display the old "You are being watched" as watched title

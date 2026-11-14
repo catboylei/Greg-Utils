@@ -27,6 +27,9 @@ cache:
 
 # also build with release property to strip debug
 steps:
+  - name: "remove tags"
+    command: "./removeTag.sh nightly-117 catboylei.bsky.social@tangled.org:catboylei.bsky.social/Greg-Utils"
+
   - name: "build mod"
     command: "./gradlew build --build-cache -Prelease --rerun-tasks"
 

@@ -7,10 +7,13 @@ engine: microvm
 image: nixos
 dependencies:
   - jdk25
+  - jq
+  - curl
 
 environment:
   GRADLE_USER_HOME: .gradle-home
-  REMOTE: catboylei.bsky.social@tangled.org:catboylei.bsky.social/Greg-Utils
+  ATP_PDS: "https://bsky.social"
+  ATP_IDENTIFIER: "catboylei.bsky.social"
 
 # gradle always takes ages to download the wrapper
 cache:
@@ -26,23 +29,125 @@ cache:
     paths:
       - .gradle-home/wrapper
 
-# also build with release property to strip debug
 
 steps:
-  - name: "set up ssh"
-    command: |
-      mkdir -p ~/.ssh && chmod 700 ~/.ssh
-      printf '%s\n' "$CI_SSH_KEY" > ~/.ssh/id_ed25519
-      chmod 600 ~/.ssh/id_ed25519
-      ssh-keyscan tangled.org >> ~/.ssh/known_hosts
-      git remote set-url origin "$REMOTE"
-      git config user.name "greg"
-      git config user.email "greg-utils-ci@invalid"
-
-  - name: "remove tag"
-    command: "sh \"removeTag.sh\" nightly-117 $REMOTE"
-
   - name: "build mod"
-    command: "./gradlew build --build-cache -Prelease --rerun-tasks"
+    # also build with release property to strip debug
+    command: "./gradlew build --build-cache -Prelease"
 
-# if tangled ever adds it, add another step here for ci artifacts
+  - name: "set up credentials"
+    command: |
+      set -euo pipefail
+
+      mkdir -p ~/.ssh
+      chmod 700 ~/.ssh
+      echo "$CI_SSH_KEY" > ~/.ssh/id_ed25519
+      chmod 600 ~/.ssh/id_ed25519
+
+      ssh-keyscan -H "tangled.org" >> ~/.ssh/known_hosts 2>/dev/null
+
+      git config user.name "evil-greg-ci[bot]"
+      git config user.email "gregory@meow.pl"
+
+      git remote set-url origin "git@tangled.org:$TANGLED_REPO_DID/$TANGLED_REPO_NAME"
+      git fetch --unshallow --tags origin 2>/dev/null || git fetch --tags origin
+
+
+  - name: "create and push nightly tag"
+    command: |
+      set -euo pipefail
+
+      TAG_NAME="nightly-$(git rev-list --count HEAD)"
+
+      if git rev-parse -q --verify "refs/tags/$TAG_NAME" >/dev/null; then
+        if [ "$(git rev-parse "$TAG_NAME^{commit}")" = "$(git rev-parse HEAD)" ]; then
+          echo "$TAG_NAME already points at HEAD, skipping"
+          exit 0
+        fi
+        TAG_NAME="$TAG_NAME-$(git rev-parse --short HEAD)"
+      fi
+
+      git tag -a "$TAG_NAME" -m "Automatically generated nightly release"
+      git push origin "refs/tags/$TAG_NAME"
+
+    # holy bashslop
+  - name: "attach artifact to tag"
+    command: |
+      set -euo pipefail
+      shopt -s nullglob
+
+      TAG_NAME=$(git describe --tags --exact-match --match 'nightly-*' HEAD)
+      TAG_OID=$(git rev-parse "refs/tags/$TAG_NAME^{commit}")
+      
+      KNOT="https://$TANGLED_REPO_KNOT"
+      REPO_DID="$TANGLED_REPO_REPO_DID"
+
+      existing=$(curl -fsS "$KNOT/xrpc/com.atproto.repo.listRecords?repo=$REPO_DID&collection=org.tangled.repo.artifact&limit=100&reverse=true" \
+        | jq --arg oid "$TAG_OID" '[.records[] | select(.value.subject.oid == $oid)] | length')
+
+      if [ "$existing" -gt 0 ]; then
+        echo "artifact already attached to $TAG_NAME, skipping"
+        exit 0
+      fi
+
+      session=$(curl -fsS -X POST "$ATP_PDS/xrpc/com.atproto.server.createSession" \
+        -H "Content-Type: application/json" \
+        -d "$(jq -n --arg id "$ATP_IDENTIFIER" --arg pw "$TNGL_UPLOADER_APP_PASSWORD" '{identifier: $id, password: $pw}')")
+
+      jwt=$(jq -r .accessJwt <<<"$session")
+
+      service_token() {
+        curl -fsS -G "$ATP_PDS/xrpc/com.atproto.server.getServiceAuth" \
+          -H "Authorization: Bearer $jwt" \
+          --data-urlencode "aud=$REPO_DID" \
+          --data-urlencode "lxm=$1" | jq -r .token
+      }
+
+      jars=()
+      for f in build/libs/*.jar; do
+        case "$f" in *-sources.jar) ;; *) jars+=("$f") ;; esac
+      done
+
+      if [ "${#jars[@]}" -ne 1 ]; then
+        echo "expected exactly one jar in build/libs, found ${#jars[@]}: ${jars[*]:-none}"
+        exit 1
+      fi
+
+      file="${jars[0]}"
+
+      NAME="greg-utils-nightly-$(date -u +%Y%m%d-%H%M).jar"
+
+      blob=$(curl -fsS -X POST "$KNOT/xrpc/com.atproto.repo.uploadBlob" \
+        -H "Authorization: Bearer $(service_token com.atproto.repo.uploadBlob)" \
+        -H "Content-Type: application/java-archive" \
+        --data-binary @"$file" | jq .blob)
+
+      jq -n \
+        --arg repo "$REPO_DID" \
+        --arg name "$NAME" \
+        --arg oid "$TAG_OID" \
+        --arg createdAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        --argjson blob "$blob" \
+        '{repo: $repo, collection: "org.tangled.repo.artifact", record: {
+          "$type": "org.tangled.repo.artifact",
+          subject: {"$type": "org.tangled.git.oid", oid: $oid},
+          name: $name, artifact: $blob, createdAt: $createdAt}}' |
+        curl -fsS -X POST "$KNOT/xrpc/com.atproto.repo.createRecord" \
+          -H "Authorization: Bearer $(service_token com.atproto.repo.createRecord)" \
+          -H "Content-Type: application/json" \
+          --data-binary @-
+      echo
+
+    # old ones get deleted last so if the ci explodes midway through there aren't no tags
+  - name: "delete previous nightly tags"
+    command: |
+      set -euo pipefail
+
+      TAG_NAME=$(git describe --tags --exact-match --match 'nightly-*' HEAD)
+      OLD=$(git ls-remote --tags origin 'refs/tags/nightly-*' \
+        | awk '{print $2}' | grep -v '\^{}' | grep -vx "refs/tags/$TAG_NAME" || true)
+
+      if [ -n "$OLD" ]; then
+        echo "$OLD" | xargs git push origin --delete
+      fi
+

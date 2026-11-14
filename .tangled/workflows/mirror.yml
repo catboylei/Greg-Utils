@@ -1,22 +1,21 @@
 when:
-  - event: ["push"]
-    branch: ["master"]
+  - event: push
+    branch: master
+  - event: manual
 
-engine: nixery
-
+engine: microvm
+image: nixos
 dependencies:
-  nixpkgs:
-    - git
-    - openssh
+  - git
+
+clone:
+  skip: true
 
 steps:
-  - name: mirror to github
-    command: |
-      mkdir -p ~/.ssh
-      echo "$GITHUB_MIRROR_KEY" > ~/.ssh/id_ed25519
-      chmod 600 ~/.ssh/id_ed25519
-      ssh-keyscan github.com >> ~/.ssh/known_hosts
+  - name: "clone repo"
+    command: 'git clone --mirror "$TANGLED_REPO_URL" "$TANGLED_REPO_NAME.git"'
 
-      git clone --mirror https://tangled.org/catboylei.bsky.social/greg-utils
-      cd greg-utils.git
-      git push --mirror git@github.com:catboylei/Greg-Utils.git
+  - name: "push to github"
+    command: |
+      cd "$TANGLED_REPO_NAME.git"
+      git push --mirror "https://x-access-token:$GITHUB_TOKEN@github.com/catboylei/Greg-Utils.git"

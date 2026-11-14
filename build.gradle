@@ -7,6 +7,14 @@ plugins {
 	id 'org.jetbrains.kotlin.plugin.serialization' version '2.4.10'
 }
 
+// disable debug stuff on builds with -Prelease
+processResources {
+	inputs.property 'isrelease', project.hasProperty('release')
+	filesMatching('greg-build.properties') {
+		expand(isrelease: project.hasProperty('release'))
+	}
+}
+
 version = project.mod_version
 group = project.maven_group
 

@@ -25,10 +25,10 @@ cache:
     paths:
       - .gradle-home/wrapper
 
-
+# also build with release property to strip debug
 steps:
   - name: "build mod"
-    command: "./gradlew build --build-cache"
+    command: "./gradlew build --build-cache -Prelease --rerun-tasks"
 
 # if tangled ever adds it, add another step here for ci artifacts
 

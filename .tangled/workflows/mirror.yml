@@ -18,5 +18,5 @@ steps:
       ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       git clone --mirror https://tangled.org/catboylei.bsky.social/greg-utils
-      cd repo.git
+      cd greg-utils.git
       git push --mirror https://github.com/catboylei/Greg-Utils

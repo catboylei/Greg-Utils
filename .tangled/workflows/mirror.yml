@@ -1,0 +1,22 @@
+when:
+  - event: ["push"]
+    branch: ["master"]
+
+engine: nixery
+
+dependencies:
+  nixpkgs:
+    - git
+    - openssh
+
+steps:
+  - name: mirror to github
+    command: |
+      mkdir -p ~/.ssh
+      echo "$GITHUB_MIRROR_KEY" > ~/.ssh/id_ed25519
+      chmod 600 ~/.ssh/id_ed25519
+      ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      git clone --mirror https://tangled.org/yourhandle/yourrepo.git repo.git
+      cd repo.git
+      git push --mirror git@github.com:youruser/yourrepo.git

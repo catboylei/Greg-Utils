@@ -19,4 +19,4 @@ steps:
 
       git clone --mirror https://tangled.org/catboylei.bsky.social/greg-utils
       cd greg-utils.git
-      git push --mirror https://github.com/catboylei/Greg-Utils
+      git push --mirror git@github.com:catboylei/Greg-Utils.git

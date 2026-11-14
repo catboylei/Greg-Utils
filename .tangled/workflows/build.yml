@@ -7,6 +7,13 @@ engine: microvm
 image: nixos
 dependencies:
   - jdk25
+  - git
+  - openssh
+  - coreutils
+  - curl
+  - jq
+  - xxd
+  - bash
 
 environment:
   GRADLE_USER_HOME: .gradle-home
@@ -28,7 +35,46 @@ cache:
 # also build with release property to strip debug
 steps:
   - name: "build mod"
-    command: "./gradlew build --build-cache -Prelease --rerun-tasks"
+    command: "./gradlew build --build-cache -Prelease"
 
-# if tangled ever adds it, add another step here for ci artifacts
+  - name: "setup git + ssh"
+    command: |
+      set -eu
+      mkdir -p "$HOME/.ssh"
+      printf '%s\n' "$CI_SSH_KEY" > "$HOME/.ssh/privkey"
+      chmod 600 "$HOME/.ssh/privkey"
+      ssh-keyscan -t rsa,ed25519 tangled.org >> "$HOME/.ssh/known_hosts"
 
+      git config core.sshCommand "ssh -i $HOME/.ssh/privkey -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=15 -o AddressFamily=inet -o IPQoS=none -o KexAlgorithms=curve25519-sha256"
+      git remote set-url origin "git@tangled.org:$ATP_IDENTIFIER/greg-utils"
+      git config user.name "greg-utils CI"
+      git config user.email "ci@greg-utils.invalid"
+
+  - name: "create tag and upload jar"
+    command: |
+      set -eux
+      git fetch --unshallow || true
+      
+      N=$(git rev-list --count HEAD)
+      TAG="nightly-$N"
+      JAR=$(ls build/libs/*.jar | grep -v -- '-sources' | head -1)
+      
+      # leftover tag from an earlier (failed or repeated) run: clean it up first
+      if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+        bash .tangled/scripts/tangled-artifact.sh delete "$TAG"   # drop stale records while the tag still exists
+        # bash .tangled/scripts/delete-tag.sh "$TAG"
+      fi
+
+      git tag -a "$TAG" -m "Nightly $N ($(git rev-parse --short HEAD))"
+      git push origin "$TAG"
+
+      bash .tangled/scripts/tangled-artifact.sh upload "$TANGLED_REPO_NAME" "$TAG" "$JAR"
+
+  - name: "remove old tags"
+    command: |
+      set -eu
+      git fetch --tags -q
+      for t in $(git tag -l 'nightly-*' | sort -t- -k2 -n | head -n -1); do
+        bash .tangled/scripts/tangled-artifact.sh delete "$t"   # records first, while the tag still exists
+        git push origin --delete "$t"
+      done

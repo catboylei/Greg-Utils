@@ -17,6 +17,6 @@ steps:
       chmod 600 ~/.ssh/id_ed25519
       ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      git clone --mirror https://tangled.org/yourhandle/yourrepo.git repo.git
+      git clone --mirror https://tangled.org/catboylei.bsky.social/greg-utils
       cd repo.git
-      git push --mirror git@github.com:youruser/yourrepo.git
+      git push --mirror https://github.com/catboylei/Greg-Utils

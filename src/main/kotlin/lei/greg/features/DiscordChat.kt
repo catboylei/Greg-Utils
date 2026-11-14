@@ -10,11 +10,14 @@ import lei.greg.Utils
 import lei.greg.config.ConfigManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.minecraft.command.CommandSource
 
 @Serializable data class OutgoingMessagePayload(val message: String, val channelName: String, @EncodeDefault val type: String = "chat")
 
 object DiscordChat {
+    @Volatile var lastWasDiscord = false
+        private set
 
     fun register() {
 		registerMessageCommand()
@@ -22,14 +25,17 @@ object DiscordChat {
 		AwawaPayloadEvents.CHAT.register {
 			if (isEnabled()) {
                 if (it.repliedMessage != null) Utils.discordReplyMessage(it.repliedMessage[1], it.repliedMessage[0])
-                Utils.discordMessage("chat", it.message, it.name, it.channelName)
+                Utils.discordMessage("chat", it.message, it.name, it.channelName, lastWasDiscord)
+                lastWasDiscord = true
             }
 		} 
 
 		AwawaPayloadEvents.RAID.register {
 			if (isEnabled()) Utils.discordMessage("raid", it.message, it.name)
 		}
-		
+
+        ClientReceiveMessageEvents.GAME.register { _, _ -> lastWasDiscord = false }
+        ClientReceiveMessageEvents.CHAT.register { _, _, _, _, _ -> lastWasDiscord = false }
     }
 
     private fun isEnabled(): Boolean {

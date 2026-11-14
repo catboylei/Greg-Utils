@@ -82,7 +82,9 @@ object Debug {
         val posttext = StringArgumentType.getString(context, "posttext")
 
         Utils.notifyChat(Text.literal(pretext).append(NerdFonts.icon(codepoint.hexToInt())).append(Text.literal(posttext)))
-        Utils.notifyChat((GregFont.getText("╭")))
+        Utils.discordMessage("chat", "hiii hello :3", "kitty", "guild-chat")
+        Utils.discordMessage("chat", "look look", "kitty", "guild-chat", true)
+        Utils.discordMessage("chat", "fancy banner thingy", "kitty", "guild-chat", true)
         return 1
     }
 

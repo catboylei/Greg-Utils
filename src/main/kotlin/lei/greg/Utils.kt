@@ -11,7 +11,13 @@ import net.minecraft.client.toast.Toast
 import net.minecraft.client.toast.ToastManager
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.MutableText
+import net.minecraft.text.Style
+import net.minecraft.text.StyleSpriteSource
 import net.minecraft.text.Text
+import net.minecraft.text.TextColor
+import net.minecraft.util.Identifier
+
+private const val DISCORD_ACCENT = 0x5865F2
 
 object Utils {
 
@@ -84,6 +90,16 @@ object Utils {
             val EIGHT get() = Text.literal("\uE068")
             val NINE get() = Text.literal("\uE069")
         }
+
+        // TODO: fix this lmao
+        object badges {
+            val DISCORD get() = spacing.CHAR_OVERLAPPER_SHORT.append(
+                Text.literal("\uF8FD\uF8FD\uF8F2\uF8FD\uF8FD\uF8FD").setStyle(Style.EMPTY.withFont(StyleSpriteSource.Font(GregUtils.id("textures/discord-chat-icon")))).withColor(DISCORD_ACCENT))
+            val DISCORD_SIMPLE get() =
+                // i think i did this at like 4am and i was reallly tired and just wanted it to work real bad
+                // sorry
+                Text.literal("\uF8FE\uF8FE\uF8FE\uF8FE\uF8F3\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD").setStyle(Style.EMPTY.withFont(StyleSpriteSource.Font(GregUtils.id("textures/discord-chat-icon")))).withColor(DISCORD_ACCENT)
+        }
     }
 
     // overload so you can just give it a string
@@ -131,7 +147,7 @@ object Utils {
         }
     }
 
-    fun discordMessage(type: String, message: String, player: String = "", channel: String = "") {
+    fun discordMessage(type: String, message: String, player: String = "", channel: String = "", simpleIcon: Boolean = false) {
         val client = MinecraftClient.getInstance()
         client.execute {
             var msg = Text.empty()
@@ -153,7 +169,7 @@ object Utils {
             } else return@execute
 
             client.inGameHud.chatHud.addMessage(Text.empty()
-                .append(Text.literal("   "))
+                .append(if (simpleIcon) characters.badges.DISCORD_SIMPLE else characters.badges.DISCORD)
                 .append(discordPill)
                 .append(msg)
             )

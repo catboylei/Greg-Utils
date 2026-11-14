@@ -1,0 +1,29 @@
+{
+  "providers": [
+    {
+      "comment": "lwk this asset is stolen from seqmod but surely theyll never notice",
+      "type": "bitmap",
+      "file": "greg-utils:icons/discord-chat-icon.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\uF8F2"
+      ]
+    },
+    {
+      "type": "space",
+      "advances": {
+        "\uF8FD": 1,
+        "\uF8FE": -1
+      }
+    },
+    {
+      "comment": "look im not gonna pretend this is good code, i could have looked for the wynnpack one, but this will stay a TODO for now <3",
+      "type": "bitmap",
+      "file": "greg-utils:icons/banner.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": ["\uF8F3"]
+    }
+  ]
+}

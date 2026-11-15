@@ -22,12 +22,6 @@
                     LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath libs;
                     JAVA_HOME = "${pkgs.jdk25}/lib/openjdk/";
                 };
-
-                shellHook = ''
-                    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-                        git pull --ff-only --quiet || echo "git pull skipped (local changes or no network)"
-                    fi
-                '';
             };
         });
     };

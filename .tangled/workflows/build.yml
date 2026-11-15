@@ -46,7 +46,7 @@ steps:
 
       ssh-keyscan -H "tangled.org" >> ~/.ssh/known_hosts 2>/dev/null
 
-      git config user.name "evil-greg-ci[bot]"
+      git config user.name "greg-ci [bot]"
       git config user.email "gregory@meow.pl"
 
       git remote set-url origin "git@tangled.org:$TANGLED_REPO_DID/$TANGLED_REPO_NAME"
@@ -67,7 +67,9 @@ steps:
         TAG_NAME="$TAG_NAME-$(git rev-parse --short HEAD)"
       fi
 
-      git tag -a "$TAG_NAME" -m "Automatically generated nightly release"
+      git tag -a "$TAG_NAME" -m "Auto-generated nightly release
+      
+      Only official releases are tested!"
       git push origin "refs/tags/$TAG_NAME"
 
     # holy bashslop
@@ -115,7 +117,8 @@ steps:
 
       file="${jars[0]}"
 
-      NAME="greg-utils-nightly-$(date -u +%Y%m%d-%H%M).jar"
+      # jar name formatted "greg-utils-nightly.122-20261115"
+      NAME="greg-utils-nightly.$(git rev-list --count HEAD)-$(date -u +%Y%m%d).jar"
 
       blob=$(curl -fsS -X POST "$KNOT/xrpc/com.atproto.repo.uploadBlob" \
         -H "Authorization: Bearer $(service_token com.atproto.repo.uploadBlob)" \

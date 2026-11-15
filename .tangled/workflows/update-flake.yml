@@ -45,7 +45,7 @@ steps:
       {
         echo "Inputs: update flake.lock [CI]"
         echo
-        grep -v '^warning:' /tmp/update.log
+        grep -v '^warning:|unpacking ' /tmp/update.log
       } > /tmp/commit-msg
       
       git add flake.lock

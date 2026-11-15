@@ -4,6 +4,11 @@
 - lwk idk
 - reorganize config ui to have more shit i.e. slot binding meowing etc
 
+## [UNRELEASED]
+
+### Fixed
+- Fixed 1 pixel off on the discord bridge messags (oops)
+
 ## [v1.2.1] - 2026/11/14
 
 ### Added 

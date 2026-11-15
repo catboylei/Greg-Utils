@@ -94,11 +94,11 @@ object Utils {
         // TODO: fix this lmao
         object badges {
             val DISCORD get() = spacing.CHAR_OVERLAPPER_SHORT.append(
-                Text.literal("\uF8FD\uF8FD\uF8F2\uF8FD\uF8FD\uF8FD").setStyle(Style.EMPTY.withFont(StyleSpriteSource.Font(GregUtils.id("textures/discord-chat-icon")))).withColor(DISCORD_ACCENT))
+                Text.literal("\uF8FD\uF8FD\uF8F2\uF8FD\uF8FD").setStyle(Style.EMPTY.withFont(StyleSpriteSource.Font(GregUtils.id("textures/discord-chat-icon")))).withColor(DISCORD_ACCENT))
             val DISCORD_SIMPLE get() =
                 // i think i did this at like 4am and i was reallly tired and just wanted it to work real bad
                 // sorry
-                Text.literal("\uF8FE\uF8FE\uF8FE\uF8FE\uF8F3\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD").setStyle(Style.EMPTY.withFont(StyleSpriteSource.Font(GregUtils.id("textures/discord-chat-icon")))).withColor(DISCORD_ACCENT)
+                Text.literal("\uF8FE\uF8FE\uF8FE\uF8FE\uF8F3\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD\uF8FD").setStyle(Style.EMPTY.withFont(StyleSpriteSource.Font(GregUtils.id("textures/discord-chat-icon")))).withColor(DISCORD_ACCENT)
         }
     }
 

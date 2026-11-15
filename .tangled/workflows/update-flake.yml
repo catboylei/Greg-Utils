@@ -1,0 +1,53 @@
+when:
+  - event: schedule
+    schedule:
+      - cron: "0 4 * * 1" # once per week, every monday at 4 UTC
+  - event: manual
+
+engine: microvm
+image: nixos
+dependencies:
+  - openssh
+
+steps:
+  - name: "set up credentials"
+    command: |
+      set -euo pipefail
+
+      mkdir -p ~/.ssh
+      chmod 700 ~/.ssh
+      echo "$CI_SSH_KEY" > ~/.ssh/id_ed25519
+      chmod 600 ~/.ssh/id_ed25519
+
+      ssh-keyscan -H "tangled.org" >> ~/.ssh/known_hosts 2>/dev/null
+
+      git config user.name "greg-ci [bot]"
+      git config user.email "gregory@meow.pl"
+
+      git remote set-url origin "git@tangled.org:$TANGLED_REPO_DID/$TANGLED_REPO_NAME"
+
+  - name: "check for update"
+    command: |
+      set -euo pipefail
+      # log the update contents to add them to the commit body
+      nix --extra-experimental-features 'nix-command flakes' flake update 2>&1 | tee /tmp/update.log
+
+  - name: "commit and push"
+    command: |
+      set -euo pipefail
+      
+      if git diff --quiet flake.lock; then
+        echo "lock unchanged, nothing to commit"
+        exit 0
+      fi
+      
+      # create commit msg
+      {
+        echo "Inputs: update flake.lock [CI]"
+        echo
+        grep -v '^warning:' /tmp/update.log
+      } > /tmp/commit-msg
+      
+      git add flake.lock
+      git commit -F /tmp/commit-msg
+      git push origin HEAD:master

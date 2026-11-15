@@ -81,6 +81,16 @@ eventually these will be made into public helpers so you can reference them from
 - [more-outlines](https://github.com/burneikis/more-outlines) for inspiring the block highlight
 - [FKL discord](https://discord.gg/CN4GfgXZMm)
 
+## About Usage of AI and AI Agents 
+
+Any contributions with or by an AI agent will be immediately closed without any inspection or appeal.\
+You may use GenAI tools in your workflow however you wish, that is not for me to control, however what I do control
+is the quality of the code in my projects.\
+If you, as a developer, cannot explain any part of the code you produce then
+I kindly invite you to not interact with any of my projects.
+
+Feel free to consult [AGENTS.md](./AGENTS.md) and the [no-agents.md initiative](https://codeberg.org/rossabaker/no-agents.md).
+
 --- 
 
 <div align="center">

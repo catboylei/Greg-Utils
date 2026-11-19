@@ -83,8 +83,8 @@ object Debug {
 
         Utils.notifyChat(Text.literal(pretext).append(NerdFonts.icon(codepoint.hexToInt())).append(Text.literal(posttext)))
         Utils.discordMessage("chat", "hiii hello :3", "kitty", "guild-chat")
-        Utils.discordMessage("chat", "look look", "kitty", "guild-chat", true)
-        Utils.discordMessage("chat", "fancy banner thingy", "kitty", "guild-chat", true)
+        Utils.discordMessage("chat", "look look", "kitty", "guild-chat")
+        Utils.discordMessage("chat", "fancy banner thingy", "kitty", "guild-chat")
         return 1
     }
 

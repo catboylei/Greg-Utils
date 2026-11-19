@@ -29,7 +29,7 @@ object WatchedVisualiser {
                 when (beamNr) {
                     1 -> notifyTitle(title = "§a.§7...§a.", stayTicks = 30)
                     2 -> notifyTitle(title = "§7.§e.§7.§e.§7.", stayTicks = 30)
-                    3 ->  notifyTitle(title = "§dYou are being watched", stayTicks = 5, fadeOutTicks = 10)
+                    3 ->  notifyTitle(title = "§l§dYou are being watched", stayTicks = 5, fadeOutTicks = 10)
                 }
             }
         }

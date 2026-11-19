@@ -7,16 +7,20 @@ plugins {
 	id 'org.jetbrains.kotlin.plugin.serialization' version '2.4.10'
 }
 
+version = project.mod_version
+group = project.maven_group
+
 // disable debug stuff on builds with -Prelease
 processResources {
 	inputs.property 'isrelease', project.hasProperty('release')
 	filesMatching('greg-build.properties') {
-		expand(isrelease: project.hasProperty('release'))
+		expand(
+				isrelease: project.hasProperty('release'),
+				version: version,
+				isnightly: project.hasProperty('nightly')
+		)
 	}
 }
-
-version = project.mod_version
-group = project.maven_group
 
 repositories {
 	// Add repositories to retrieve artifacts from in here.

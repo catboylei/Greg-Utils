@@ -1,13 +1,16 @@
 ## [PLANNED]
 
 - Custom icons to chat/tab
-- lwk idk
 - reorganize config ui to have more shit i.e. slot binding meowing etc
+- add auto update prompt pulling from awawa
+- fix gif links showing in awawa (hardcode klipy and discord links)
+- maybe make it so hovering an attachment opens the link
 
 ## [UNRELEASED]
 
 ### Fixed
 - Fixed 1 pixel off on the discord bridge messags (oops)
+- Fixed discord icon thing never simplifying
 
 ## [v1.2.1] - 2026/11/14
 

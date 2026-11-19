@@ -17,14 +17,31 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.Properties
 
+/**
+ * Use `-Prelease` to get a proper non-debug build
+ *
+ * Set mod version with `-Pmod_version={ver}`
+ *
+ * Flag as nightly with -Pnightly
+ *
+ * Ex. ```./gradlew runClient -Prelease -Pnightly -Pmod_version=nightly-123```
+ */
 object GregUtils : ModInitializer {
-	val isRelease = getReleaseState()
-
-	const val MOD_ID: String = "greg-utils"
-	@JvmField
-    val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
+	@JvmField val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
 	const val DISCORD_LINK = "https://discord.gg/CN4GfgXZMm"
+	const val MOD_ID: String = "greg-utils"
 	fun id(path: String): Identifier { return Identifier.of(MOD_ID, path) }
+
+	val BUILD_PROPS: Properties by lazy {
+		Properties().apply {
+			GregUtils::class.java.getResourceAsStream("/greg-build.properties").use { `in` ->
+				load(`in`)
+			}
+		}
+	}
+	val isRelease: Boolean by lazy { BUILD_PROPS.getProperty("isrelease").toBoolean() }
+	val isNightly: Boolean by lazy { BUILD_PROPS.getProperty("isnightly").toBoolean() }
+	val version: String by lazy { BUILD_PROPS.getProperty("version") }
 
 	// uses dummy uuid in debug mode for testing in gradle dev env
 	val PLAYER_UUID: String by lazy {
@@ -61,6 +78,7 @@ object GregUtils : ModInitializer {
 	}
 }
 
+/*
 fun getReleaseState(): Boolean {
 	val p = Properties()
 	GregUtils::class.java.getResourceAsStream("/greg-build.properties").use { `in` ->
@@ -68,3 +86,5 @@ fun getReleaseState(): Boolean {
 	}
 	return p.getProperty("isrelease").toBoolean()
 }
+
+ */

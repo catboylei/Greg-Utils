@@ -34,20 +34,18 @@ steps:
 
   - name: "commit and push"
     command: |
-      set -euo pipefail
-      
+      set -eo pipefail
+
       if git diff --quiet flake.lock; then
         echo "lock unchanged, nothing to commit"
-        exit 0
+      else
+        {
+          echo "Inputs: update flake.lock [CI]"
+          echo
+          grep -vE '^(warning:|unpacking )' /tmp/update.log || true
+        } > /tmp/commit-msg
+
+        git add flake.lock
+        git commit -F /tmp/commit-msg
+        git push origin HEAD:master
       fi
-      
-      # create commit msg
-      {
-        echo "Inputs: update flake.lock [CI]"
-        echo
-        grep -v '^warning:|unpacking ' /tmp/update.log
-      } > /tmp/commit-msg
-      
-      git add flake.lock
-      git commit -F /tmp/commit-msg
-      git push origin HEAD:master

@@ -31,10 +31,6 @@ cache:
 
 
 steps:
-  - name: "build mod"
-    # also build with release property to strip debug
-    command: "./gradlew build --build-cache -Prelease"
-
   - name: "set up credentials"
     command: |
       set -euo pipefail
@@ -53,7 +49,7 @@ steps:
       git fetch --unshallow --tags origin 2>/dev/null || git fetch --tags origin
 
 
-  - name: "create and push nightly tag"
+  - name: "create and push nightly tag + build mod"
     command: |
       set -euo pipefail
 
@@ -71,6 +67,9 @@ steps:
       
       Only official releases are tested!"
       git push origin "refs/tags/$TAG_NAME"
+      
+      # build here
+      ./gradlew build --build-cache -Prelease -Pnightly -Pmod_version=nightly-123
 
     # holy bashslop
   - name: "attach artifact to tag"
@@ -153,4 +152,3 @@ steps:
       if [ -n "$OLD" ]; then
         echo "$OLD" | xargs git push origin --delete
       fi
-

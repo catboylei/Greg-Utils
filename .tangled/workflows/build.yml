@@ -21,8 +21,11 @@ cache:
     hash:
       - build.gradle
       - settings.gradle
+      - gradle.properties
+    fallback: true
     paths:
-      - .gradle-home/caches
+      - .gradle-home/caches/modules-2
+      - .gradle-home/caches/fabric-loom
   - key: gradle-dist
     hash:
       - gradle/wrapper/gradle-wrapper.properties
@@ -64,12 +67,12 @@ steps:
       fi
 
       git tag -a "$TAG_NAME" -m "Auto-generated nightly release
-      
+
       Only official releases are tested!"
       git push origin "refs/tags/$TAG_NAME"
-      
+
       # build here
-      ./gradlew build --build-cache -Prelease -Pnightly -Pmod_version=nightly-123
+      ./gradlew build --no-daemon -Prelease -Pnightly -Pmod_version="$TAG_NAME"
 
     # holy bashslop
   - name: "attach artifact to tag"
@@ -79,11 +82,11 @@ steps:
 
       TAG_NAME=$(git describe --tags --exact-match --match 'nightly-*' HEAD)
       TAG_OID=$(git rev-parse "refs/tags/$TAG_NAME^{commit}")
-      
+
       KNOT="https://$TANGLED_REPO_KNOT"
       REPO_DID="$TANGLED_REPO_REPO_DID"
 
-      existing=$(curl -fsS "$KNOT/xrpc/com.atproto.repo.listRecords?repo=$REPO_DID&collection=org.tangled.repo.artifact&limit=100&reverse=true" \
+      existing=$(curl -fsS "$KNOT/xrpc/com.atproto.repo.listRecords?repo=$REPO_DID&collection=org.tangled.repo.artifact&limit=100" \
         | jq --arg oid "$TAG_OID" '[.records[] | select(.value.subject.oid == $oid)] | length')
 
       if [ "$existing" -gt 0 ]; then
@@ -117,7 +120,7 @@ steps:
       file="${jars[0]}"
 
       # jar name formatted "greg-utils-nightly.122-20261115"
-      NAME="greg-utils-nightly.$(git rev-list --count HEAD)-$(date -u +%Y%m%d).jar"
+      NAME="greg-utils-${TAG_NAME/nightly-/nightly.}-$(date -u +%Y%m%d).jar"
 
       blob=$(curl -fsS -X POST "$KNOT/xrpc/com.atproto.repo.uploadBlob" \
         -H "Authorization: Bearer $(service_token com.atproto.repo.uploadBlob)" \

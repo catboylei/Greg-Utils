@@ -86,7 +86,7 @@ steps:
       KNOT="https://$TANGLED_REPO_KNOT"
       REPO_DID="$TANGLED_REPO_REPO_DID"
 
-      existing=$(curl -fsS "$KNOT/xrpc/com.atproto.repo.listRecords?repo=$REPO_DID&collection=org.tangled.repo.artifact&limit=100" \
+      existing=$(curl -fsS "$KNOT/xrpc/com.atproto.repo.listRecords?repo=$REPO_DID&collection=org.tangled.repo.artifact&limit=100&reverse=true" \
         | jq --arg oid "$TAG_OID" '[.records[] | select(.value.subject.oid == $oid)] | length')
 
       if [ "$existing" -gt 0 ]; then

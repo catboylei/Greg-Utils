@@ -85,7 +85,7 @@ object OutdatedNotifier {
                     literal("update").executes {
                         selfUpdate(
                             if (GregUtils.isNightly) latestNightlyDownload else latestVerDownload,
-                            "greg-utils-${if (GregUtils.isNightly) latestNightly else latestVer}"
+                            "greg-utils-${if (GregUtils.isNightly) latestNightly else latestVer}+1.21.11.jar"
                         ); 1
                     }
                 )

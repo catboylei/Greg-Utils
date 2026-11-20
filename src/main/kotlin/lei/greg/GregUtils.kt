@@ -5,6 +5,7 @@ import lei.greg.config.ConfigManager
 import lei.greg.config.ConfigScreen
 import lei.greg.features.AnnieParties
 import lei.greg.features.DiscordChat
+import lei.greg.features.OutdatedNotifier
 import lei.greg.features.TreeHelper
 import lei.greg.features.WatchedVisualiser
 import lei.greg.highlights.Highlights
@@ -71,6 +72,7 @@ object GregUtils : ModInitializer {
 		DiscordChat.register()
 		WatchedVisualiser.register()
 		AnnieParties.register()
+		OutdatedNotifier.register()
 
 		// screens
 		AnnieSubScreen.registerCommand()

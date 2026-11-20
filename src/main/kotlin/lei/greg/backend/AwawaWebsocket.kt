@@ -62,6 +62,9 @@ sealed class AwawaPayload {
 
     @Serializable @SerialName("playerIcons")
     data class PlayerIcons(val icons: Map<String, String>) : AwawaPayload()
+
+    @Serializable @SerialName("versions")
+    data class Versions(val stable: String, val stable_link: String, val nightly: String, val nightly_link: String) : AwawaPayload()
 }
 
 object Backend {
@@ -167,8 +170,8 @@ object Backend {
             }
         }
 
-        GregUtils.LOGGER.warn("url is null: ${ConfigManager.getString("awawa url") == null}")
-        val urlToUse = ConfigManager.getString("awawa url") ?: if (ConfigManager.getBool("use unsecured socket")) UNSECURED_URL else URL
+        //GregUtils.LOGGER.warn("url is null: ${ConfigManager.getString("awawa url") == null}")
+        val urlToUse =  if (ConfigManager.getBool("debug mode")) "ws://localhost:26529" else if (ConfigManager.getBool("use unsecured socket")) UNSECURED_URL else URL
         return client.newWebSocketBuilder()
             .buildAsync(URI.create(urlToUse), listener)
             .thenApply { ws -> webSocket = ws; ws }
@@ -232,6 +235,7 @@ object Backend {
                     is AwawaPayload.AnnieStatus -> AwawaPayloadEvents.ANNIE_STATUS.invoker().on(parsed)
                     is AwawaPayload.AnniePartyList -> AwawaPayloadEvents.ANNIE_PARTIES_UPDATE.invoker().on(parsed)
                     is AwawaPayload.PlayerIcons -> AwawaPayloadEvents.PLAYER_ICONS_UPDATE.invoker().on(parsed)
+                    is AwawaPayload.Versions -> AwawaPayloadEvents.VERSIONS_UPDATE.invoker().on(parsed)
                 }
             } catch (e: Exception) {
                 GregUtils.LOGGER.warn("GregBridge: listener failed on \"$payload\": $e")

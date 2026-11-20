@@ -106,9 +106,9 @@ object Utils {
     fun notifyChat(message: String) {
         notifyChat(Text.literal(message).styled { it.withItalic(true) })
     }
-    fun notifyChat(message: MutableText) {
+    fun notifyChat(message: MutableText, overrideStyle: Boolean = false) {
         val client = MinecraftClient.getInstance()
-        val msg = message.withColor(0xAAAAAA)
+        val msg = if (!overrideStyle) message.withColor(0xAAAAAA) else message
         client.execute {
             client.inGameHud.chatHud.addMessage(
                 Text.empty()

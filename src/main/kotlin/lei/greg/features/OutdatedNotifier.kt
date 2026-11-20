@@ -38,7 +38,7 @@ object OutdatedNotifier {
 
     val notifyMessage: MutableText by lazy {
         Text.empty().apply {
-            append(NerdFonts.icon(0xf06b0).withColor(0xAAAAAA).styled {
+            append(NerdFonts.icon(0xf01da).withColor(0xa784e1).styled {
                 it.withClickEvent(ClickEvent.RunCommand("gregutils update"))
                     .withHoverEvent(HoverEvent.ShowText(Text.literal("Download and install update")))
             })
@@ -46,7 +46,7 @@ object OutdatedNotifier {
             append(Text.literal(GregUtils.version.removeSuffix("+1.21.11") + " ").withColor(0xFF5555))
             append(NerdFonts.icon(0xf432).withColor(0xAAAAAA))
             append(Text.literal(" " + (if (GregUtils.isNightly) latestNightly else latestVer) + " ").withColor(0x55FF55))
-            append(NerdFonts.icon(0xf465).withColor(0xAAAAAA).styled {
+            append(NerdFonts.icon(0xf465).withColor(0xa784e1).styled {
                 it.withClickEvent(ClickEvent.OpenUrl(URI.create("https://tangled.org/catboylei.bsky.social/Greg-Utils/tags/${if (GregUtils.isNightly) latestNightly else latestVer}")))
                     .withHoverEvent(HoverEvent.ShowText(Text.literal("Open in browser")))
             })

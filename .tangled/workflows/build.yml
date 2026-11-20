@@ -119,8 +119,8 @@ steps:
 
       file="${jars[0]}"
 
-      # jar name formatted "greg-utils-nightly.122"
-      NAME="greg-utils-${TAG_NAME/nightly-/nightly.}.jar"
+      # jar name formatted "greg-utils-nightly-122"
+      NAME="greg-utils-${TAG_NAME/nightly-/nightly-}.jar"
 
       blob=$(curl -fsS -X POST "$KNOT/xrpc/com.atproto.repo.uploadBlob" \
         -H "Authorization: Bearer $(service_token com.atproto.repo.uploadBlob)" \

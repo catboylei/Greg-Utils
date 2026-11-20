@@ -45,7 +45,7 @@ object OutdatedNotifier {
             append(NerdFonts.icon(0xf432).withColor(0xAAAAAA))
             append(Text.literal(" " + (if (GregUtils.isNightly) latestNightly else latestVer) + " ").withColor(0x55FF55))
             append(NerdFonts.icon(0xf465).withColor(0xAAAAAA).styled {
-                it.withClickEvent(ClickEvent.OpenUrl(URI.create(latestVerDownload))) // TODO: open tag link here instead
+                it.withClickEvent(ClickEvent.OpenUrl(URI.create("https://tangled.org/catboylei.bsky.social/Greg-Utils/tags/${if (GregUtils.isNightly) latestNightly else latestVer}"))) // TODO: open tag link here instead
                     .withHoverEvent(HoverEvent.ShowText(Text.literal("Open in browser")))
             })
         }
